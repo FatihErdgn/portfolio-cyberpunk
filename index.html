@@ -551,6 +551,126 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 .wanted .wreward{text-align:center;font-size:9px;letter-spacing:.12em;color:var(--dim);border-top:1px dashed var(--line);padding-top:9px}
 .wanted .wreward b{color:var(--neon);font-weight:400}
 
+/* ===== KEYBOARD NAVIGATION HINT ===== */
+#keyhint {
+  position: fixed;
+  top: 68px;
+  right: 18px;
+  z-index: 920;
+  min-width: 218px;
+  padding: 11px 13px;
+
+  color: var(--dim);
+  background: rgba(7, 10, 18, .82);
+  backdrop-filter: blur(7px);
+
+  border: 1px solid var(--line);
+  box-shadow: 0 0 22px rgba(0, 0, 0, .35);
+
+  clip-path: polygon(
+    9px 0,
+    100% 0,
+    100% calc(100% - 9px),
+    calc(100% - 9px) 100%,
+    0 100%,
+    0 9px
+  );
+
+  transition:
+    opacity .35s var(--ease),
+    transform .35s var(--ease),
+    border-color .25s,
+    box-shadow .25s;
+}
+
+#keyhint::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--neon);
+  box-shadow: 0 0 8px var(--neon);
+}
+
+#keyhint .kh-title {
+  margin-bottom: 8px;
+  color: var(--neon);
+  font-size: 9px;
+  letter-spacing: .16em;
+}
+
+#keyhint .kh-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 3px 0;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+#keyhint .kh-keys {
+  display: flex;
+  gap: 4px;
+}
+
+#keyhint kbd {
+  min-width: 24px;
+  padding: 1px 5px;
+  text-align: center;
+
+  color: var(--fg);
+  background: var(--panel2);
+  border: 1px solid color-mix(
+    in srgb,
+    var(--neon) 42%,
+    var(--line)
+  );
+
+  border-radius: 2px;
+  box-shadow: 0 0 5px color-mix(
+    in srgb,
+    var(--neon) 15%,
+    transparent
+  );
+}
+
+/* Kullanıcı klavyeyi kullandıktan sonra geri çekilir */
+#keyhint.used {
+  opacity: .28;
+  transform: translateY(-4px);
+}
+
+#keyhint.used:hover,
+#keyhint.deckmode {
+  opacity: 1;
+  transform: none;
+}
+
+#keyhint.deckmode {
+  border-color: color-mix(
+    in srgb,
+    var(--neon) 60%,
+    var(--line)
+  );
+
+  box-shadow: 0 0 22px color-mix(
+    in srgb,
+    var(--neon) 18%,
+    transparent
+  );
+}
+
+/* Dokunmatik cihazlarda göstermeye gerek yok */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  #keyhint {
+    display: none;
+  }
+}
+
 /* ===== TARGETING RETICLE CURSOR ===== */
 #cursor{
   position:fixed;top:0;left:0;width:24px;height:24px;pointer-events:none;z-index:9999;
@@ -602,6 +722,25 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 <canvas id="city"></canvas>
 
 <div id="boot"><div id="bootlines"></div><button class="skip" id="skipBoot">skip [esc]</button></div>
+<div id="keyhint" aria-label="Keyboard controls">
+  <div class="kh-title">KEYBOARD LINK // ACTIVE</div>
+
+  <div class="kh-row">
+    <span class="kh-keys">
+      <kbd>↑</kbd>
+      <kbd>↓</kbd>
+    </span>
+    <span>SCROLL / FILES</span>
+  </div>
+
+  <div class="kh-row">
+    <span class="kh-keys">
+      <kbd>←</kbd>
+      <kbd>→</kbd>
+    </span>
+    <span>PREV / NEXT FILE</span>
+  </div>
+</div>
 
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small></div>
@@ -1781,15 +1920,190 @@ function czProg(){
 }
 
 /* folder click -> scroll to that file's slot so the engine opens it on the right */
-if(!deckStatic && fdeck){
-  folders.forEach((f,i)=>f.addEventListener('click',()=>{
-    const dtop=fdeck.getBoundingClientRect().top+scrollY;
-    const sc=Math.max(fdeck.offsetHeight-innerHeight,1);
-    const iceLen=sc*ICE_FRAC;
-    // center of file i's window, mapped past the ice phase
-    const dp=clamp((i+0.4)/Math.max(_deckN-0.38,1),0,1);
-    scrollTo({top:dtop+iceLen+dp*(sc-iceLen),behavior:'smooth'});
-  }));
+/* Scroll directly to a dossier's completed decrypt position */
+function scrollToDeckFile(index) {
+  if (deckStatic || !fdeck || !_deckN) return;
+
+  const safeIndex = clamp(index, 0, _deckN - 1);
+
+  const deckTop =
+    fdeck.getBoundingClientRect().top + scrollY;
+
+  const scrollRange = Math.max(
+    fdeck.offsetHeight - innerHeight,
+    1
+  );
+
+  const iceLength = scrollRange * ICE_FRAC;
+
+  /*
+    Decryption reaches 100% when the file's local
+    progress reaches approximately 0.62.
+  */
+  const targetTimeline = safeIndex + 0.62;
+
+  const deckProgress = clamp(
+    targetTimeline / Math.max(_deckN - 0.38, 1),
+    0,
+    1
+  );
+
+  scrollTo({
+    top:
+      deckTop +
+      iceLength +
+      deckProgress * (scrollRange - iceLength),
+    behavior: 'smooth'
+  });
+}
+
+/* Folder click navigation */
+if (!deckStatic && fdeck) {
+  folders.forEach((folder, index) => {
+    folder.addEventListener('click', () => {
+      scrollToDeckFile(index);
+      /* ===== KEYBOARD SCROLL + DOSSIER NAVIGATION ===== */
+(function initKeyboardNavigation() {
+  const keyHint = document.getElementById('keyhint');
+
+  let keyLocked = false;
+
+  function isTextInput(element) {
+    return element && (
+      element.matches(
+        'input, textarea, select, [contenteditable="true"]'
+      ) ||
+      element.closest(
+        'input, textarea, select, [contenteditable="true"]'
+      )
+    );
+  }
+
+  function overlayIsOpen() {
+    return Boolean(
+      document.querySelector('.fview.show') ||
+      document.querySelector('#wreveal.show') ||
+      document.querySelector('#palette.open')
+    );
+  }
+
+  function getCurrentDeckFile() {
+    if (!_deckN) return 0;
+
+    const progress = czProg().deck;
+    const timeline = progress * (_deckN - 0.38);
+
+    return clamp(
+      Math.floor(timeline),
+      0,
+      _deckN - 1
+    );
+  }
+
+  function dossierModeIsActive() {
+    if (deckStatic || !fdeck || !_deckN) return false;
+
+    const stageRect = fdeck.getBoundingClientRect();
+    const progress = czProg();
+
+    const stageIsPinned =
+      stageRect.top <= 2 &&
+      stageRect.bottom >= innerHeight - 2;
+
+    return (
+      stageIsPinned &&
+      progress.ice >= 0.995
+    );
+  }
+
+  function updateKeyboardHint() {
+    if (!keyHint) return;
+
+    const deckMode = dossierModeIsActive();
+
+    keyHint.classList.toggle(
+      'deckmode',
+      deckMode
+    );
+
+    const title = keyHint.querySelector('.kh-title');
+
+    if (title) {
+      title.textContent = deckMode
+        ? 'FILE NAVIGATION // ACTIVE'
+        : 'KEYBOARD LINK // ACTIVE';
+    }
+  }
+
+  addEventListener('scroll', updateKeyboardHint, {
+    passive: true
+  });
+
+  addEventListener('keydown', event => {
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey ||
+      isTextInput(event.target) ||
+      overlayIsOpen()
+    ) {
+      return;
+    }
+
+    const navigationKeys = [
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight'
+    ];
+
+    if (!navigationKeys.includes(event.key)) return;
+
+    if (keyHint) {
+      keyHint.classList.add('used');
+    }
+
+    /*
+      Normal sayfada ↑ ve ↓ için tarayıcının doğal
+      scroll davranışına dokunmuyoruz.
+    */
+    if (!dossierModeIsActive()) return;
+
+    event.preventDefault();
+
+    if (keyLocked) return;
+
+    const currentIndex = getCurrentDeckFile();
+
+    const movingForward =
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowRight';
+
+    const nextIndex = movingForward
+      ? currentIndex + 1
+      : currentIndex - 1;
+
+    const safeIndex = clamp(
+      nextIndex,
+      0,
+      _deckN - 1
+    );
+
+    if (safeIndex === currentIndex) return;
+
+    keyLocked = true;
+
+    scrollToDeckFile(safeIndex);
+
+    setTimeout(() => {
+      keyLocked = false;
+    }, 420);
+  });
+
+  updateKeyboardHint();
+})();
+    });
+  });
 }
 
 /* SEE FULL DETAILS button -> full-screen decrypted overlay (reuses the fview overlays) */
