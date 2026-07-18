@@ -118,7 +118,8 @@ section{padding:96px 0}
 @keyframes pulse{50%{opacity:.35}}
 
 /* ===== GARAGE ===== */
-#garage{padding:80px 0 96px}
+#garage{padding:80px 0 40px}
+#implants{padding:24px 0 60px}
 .gwrap{display:grid;grid-template-columns:1fr 330px;gap:30px;align-items:stretch}
 .carbox{position:relative;min-height:min(58vh,520px);overflow:hidden}
 #carcv{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -140,25 +141,47 @@ section{padding:96px 0}
 @media(max-width:900px){.gwrap{grid-template-columns:1fr}.carbox{min-height:52vh}}
 
 /* LOADOUT */
-.loadout{display:grid;grid-template-columns:400px 1fr;gap:32px;align-items:start}
-.radarbox{padding:18px 18px 14px;position:sticky;top:70px;z-index:3;background:var(--panel2)}
-.radarbox canvas{width:100%;height:auto;display:block;margin:0 auto}
-.radarbox .rl{margin-top:6px;font-size:10px;letter-spacing:.16em;color:var(--dim)}
-.radarbox .rl b{color:var(--neon);font-weight:400}
-#stats{
-  background:var(--panel2);border:1px solid var(--line);padding:24px 24px 10px;
-  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
-}
-.sgroup{margin-bottom:22px}
-.sgroup:last-child{margin-bottom:14px}
-.sgroup h4{font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--neon);margin-bottom:10px}
-.stat{display:grid;grid-template-columns:150px 1fr 48px;gap:12px;align-items:center;font-size:12px;padding:4px 0;color:var(--dim)}
-.stat .sn{color:var(--fg)}
-.sb{display:flex;gap:3px}
-.sb i{flex:1;height:10px;background:var(--line)}
+.loadout{display:grid;grid-template-columns:1fr 288px 1fr;gap:26px;align-items:start;position:relative}
+#conn{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0}
+#conn path{stroke:var(--neon);fill:none;stroke-width:1.1;opacity:.62}
+#conn .cn>path:first-child{stroke-dasharray:5 6;animation:connflow 1.5s linear infinite}
+#conn rect{fill:none;stroke:var(--neon);stroke-width:1.1;opacity:.85}
+#conn circle.ring{fill:none;stroke:var(--neon);stroke-width:1.1;opacity:.8}
+#conn .tick{stroke:var(--neon);stroke-width:1;opacity:.7;animation:none}
+#conn .cn{opacity:0;transform:translateX(var(--sx,0));animation:cnin .5s var(--ease) forwards;animation-delay:calc(var(--i)*.09s + .2s)}
+@keyframes cnin{to{opacity:1;transform:none}}
+@keyframes connflow{to{stroke-dashoffset:-11}}
+.loadout>*{position:relative;z-index:1}
+.bodybox{padding:16px 12px 14px;position:sticky;top:76px;background:var(--panel2);text-align:center;overflow:hidden}
+.bodyfig{width:100%;max-width:236px;height:auto;display:block;margin:0 auto;stroke:rgba(165,182,215,.9);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.bodyfig .fb{fill:rgba(9,13,23,.72)}
+.bodyfig .acc{stroke:var(--neon);filter:drop-shadow(0 0 5px color-mix(in srgb,var(--neon) 55%,transparent))}
+.bodybox .rl{margin-top:8px;font-size:10px;letter-spacing:.16em;color:var(--dim)}
+.bodybox .rl b{color:var(--neon);font-weight:400}
+.banchor{position:absolute;width:9px;height:9px;margin:-4.5px;border:1px solid var(--neon);border-radius:50%;box-shadow:0 0 9px color-mix(in srgb,var(--neon) 70%,transparent);z-index:2;pointer-events:none}
+.banchor::after{content:"";position:absolute;inset:-5px;border:1px solid var(--neon);border-radius:50%;opacity:.5;animation:apulse 2.1s ease-out infinite}
+@keyframes apulse{0%{transform:scale(.5);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+.statcol{background:none;border:none;padding:0;clip-path:none;display:flex;flex-direction:column;gap:16px}
+#statsL{align-items:flex-end}
+#statsR{align-items:flex-start}
+.sgroup{margin:0;width:100%;max-width:290px;background:var(--panel2);border:1px solid var(--line);
+  padding:12px 14px 10px;position:relative;
+  clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,11px 100%,0 calc(100% - 11px));
+  transition:border-color .3s,box-shadow .3s}
+#statsR .sgroup{clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px)}
+.sgroup::before{content:"";position:absolute;top:-1px;width:24px;height:2px;background:var(--neon);box-shadow:0 0 8px var(--neon)}
+#statsL .sgroup::before{right:11px}
+#statsR .sgroup::before{left:11px}
+.sgroup:hover{border-color:color-mix(in srgb,var(--neon) 55%,var(--line));box-shadow:0 0 22px color-mix(in srgb,var(--neon) 18%,transparent)}
+.sgroup h4{font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--neon);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.sgroup h4::before{content:"◢";font-size:8px;opacity:.8}
+.stat{display:grid;grid-template-columns:118px 1fr 40px;gap:9px;align-items:center;font-size:11px;padding:3px 0;color:var(--dim)}
+.stat .sn{color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb{display:flex;gap:2px}
+.sb i{flex:1;height:9px;background:var(--line)}
 .sb i.f{background:var(--neon);box-shadow:0 0 6px color-mix(in srgb,var(--neon) 70%,transparent)}
-.stat .sv{text-align:right}
-@media(max-width:1000px){.loadout{grid-template-columns:1fr}.radarbox{position:static}}
+.stat .sv{text-align:right;font-family:'Share Tech Mono',monospace;font-size:10px}
+@media(max-width:1000px){.loadout{grid-template-columns:1fr}.bodybox{position:static;order:-1;max-width:320px;margin:0 auto;width:100%}#conn{display:none}}
 
 /* ===== ICE WALL (hex iris breach) ===== */
 .icewall{height:300vh;position:relative;z-index:2}
@@ -176,8 +199,36 @@ section{padding:96px 0}
 @media(max-width:760px){.icewall{height:240vh}.ihud{font-size:9px;padding:0 14px}}
 
 /* DOSSIERS */
-#gigs main{background:rgba(5,7,12,.88);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-bottom:30px}
-.dossier{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 80px 30px;position:relative;border-bottom:1px dashed var(--line)}
+#gigs main{background:rgba(5,7,12,.88);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-bottom:30px;position:relative}
+#warp{position:sticky;top:0;height:100vh;width:100%;display:block;z-index:0;pointer-events:none;margin-bottom:-100vh;opacity:.6}
+#gigs .sec-label{position:relative;z-index:1}
+.dossier{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 80px 30px;position:relative;z-index:1;border-bottom:1px dashed var(--line);perspective:1100px}
+.dfx{will-change:transform,opacity;
+  transform:translate3d(0,calc((1 - var(--dp,1))*var(--yf,26px)),calc((1 - var(--dp,1))*var(--zf,-150px)));
+  opacity:min(1,calc(var(--dp,1)*1.35));}
+.dstamp.dfx{transform:rotate(7deg) scale(calc(1 + (1 - var(--dp,1))*1.3));opacity:calc(var(--dp,1)*.65)}
+.redact.zap{animation:rzap .55s var(--ease)}
+@keyframes rzap{0%{text-shadow:0 0 26px var(--neon),0 0 8px var(--neon)}100%{text-shadow:none}}
+
+/* ===== HOVER HOLO-OBJECT ===== */
+#hovobj{position:fixed;left:0;top:0;z-index:930;pointer-events:none;will-change:transform}
+#hovobj .hcard{
+  width:196px;border:1px solid var(--line);background:rgba(7,10,18,.86);backdrop-filter:blur(6px);
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  box-shadow:0 0 26px color-mix(in srgb,var(--neon) 30%,transparent);
+  opacity:0;transform:scale(.82) translateY(10px);transform-origin:top left;
+  transition:opacity .22s var(--ease),transform .3s var(--ease);position:relative;overflow:hidden;
+}
+#hovobj .hcard::before{content:"";position:absolute;top:0;left:0;width:26px;height:2px;background:var(--neon)}
+#hovobj .hcard::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+#hovobj.show .hcard{opacity:1;transform:scale(1) translateY(0)}
+#hovobj svg{display:block;width:100%;height:132px;padding:12px 14px 4px;stroke:var(--neon);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px color-mix(in srgb,var(--neon) 60%,transparent))}
+#hovobj .hcap{padding:6px 12px 10px;font-size:9.5px;letter-spacing:.2em;color:var(--neon);border-top:1px dashed var(--line)}
+#hovobj .hcap::before{content:"◢ "}
+.commit{cursor:none}
+.commit:hover .msg{color:var(--neon);text-shadow:0 0 10px var(--neon)}
+@media(hover:none),(pointer:coarse){#hovobj{display:none}}
+@media(prefers-reduced-motion:reduce){.dfx{transform:none!important;opacity:1!important}}
 .dossier:last-child{border-bottom:0}
 .dspine{position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--line)}
 .dspine i{position:absolute;top:0;left:0;right:0;height:100%;background:var(--neon);box-shadow:0 0 10px var(--neon);transform-origin:top;transform:scaleY(0)}
@@ -290,6 +341,31 @@ body.party{animation:hue 3s linear infinite}
   .dossier{padding-left:20px}
   .dstamp{display:none}
 }
+/* ===== BODY3D VIEWER ===== */
+.bodyview{position:relative;height:min(74vh,640px)}
+.bodyview canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block}
+.bodyview .bodyfig{position:absolute;left:50%;top:0;height:100%;width:auto;max-width:none;transform:translateX(-50%)}
+.bodybox.gl3d .bodyfig{display:none}
+.bodyview .xlayer{z-index:3}
+@media(max-width:1000px){.bodyview{height:520px}}
+
+/* ===== X-RAY SCAN LENS ===== */
+.xhost{position:relative}
+.xlayer{
+  position:absolute;inset:0;z-index:3;pointer-events:none;background:#04070D;
+  clip-path:circle(var(--xr,0px) at var(--xx,50%) var(--xy,50%));
+  transition:clip-path .3s cubic-bezier(.2,.8,.2,1);
+}
+.xlayer svg{position:absolute;inset:0;width:100%;height:100%;stroke:var(--neon);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--neon) 55%,transparent))}
+.xlayer svg text{stroke:none;fill:var(--dim);font-family:'Share Tech Mono',monospace;letter-spacing:.08em}
+.xlayer::before{content:"";position:absolute;left:8%;right:8%;top:10%;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:.55;animation:xscan 2.6s linear infinite;z-index:2}
+@keyframes xscan{0%{top:8%}100%{top:92%}}
+.xlayer::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+.xread{position:absolute;left:10px;right:10px;bottom:8px;font-size:8.5px;line-height:1.6;color:var(--dim);letter-spacing:.1em;z-index:1}
+.xread b{color:var(--neon);font-weight:400}
+.xhint{position:absolute;top:8px;right:10px;z-index:4;font-size:9px;letter-spacing:.18em;color:var(--dim);pointer-events:none}
+@media(hover:none),(pointer:coarse){.xlayer,.xhint{display:none}}
+
 /* ===== TARGETING RETICLE CURSOR ===== */
 #cursor{
   position:fixed;top:0;left:0;width:24px;height:24px;pointer-events:none;z-index:9999;
@@ -395,7 +471,8 @@ body.party{animation:hue 3s linear infinite}
       <div class="row"><b>CHASSIS</b><span>Modular monolith — clean, layered, bounded modules</span></div>
       <div class="row"><b>POWERPLANT</b><span>.NET · .NET Core · C# · Node.js · Express.js</span></div>
       <div class="row"><b>DRIVE-BY-WIRE</b><span>TypeScript · React · Next.js · JavaScript</span></div>
-      <div class="row"><b>ICE</b><span>Keycloak — OAuth 2.0 / OIDC / IAM / RBAC · ClamAV · Tesseract OCR</span></div>
+      <div class="row"><b>DATA</b><span>PostgreSQL · Redis · Entity Framework · MongoDB</span></div>
+      <div class="row"><b>SECURITY</b><span>Keycloak — OAuth 2.0 / OIDC / IAM / RBAC · ClamAV · Tesseract OCR</span></div>
       <div class="row"><b>FUEL TANK</b><span>PostgreSQL · MongoDB · Entity Framework · RESTful APIs</span></div>
       <div class="row"><b>HUD</b><span>WebGL 3D · Power BI · SQL · DAX · Python · Matlab</span></div>
       <div class="row"><b>PIT CREW</b><span>Docker · Azure (Container Apps, SWA, Blob, ACS) · GitHub Actions</span></div>
@@ -409,13 +486,32 @@ body.party{animation:hue 3s linear infinite}
 <section id="implants" data-accent="#00F0FF">
   <div class="sec-label"><b>02</b> <span data-decode>render ./loadout --character-sheet</span><span class="jp">サイバーウェア</span></div>
   <div class="loadout">
-    <div class="radarbox hud-frame">
-      <canvas id="radar"></canvas>
-      <div class="rl">COMBAT RADAR — <b>SIX DISCIPLINES, ONE RUNNER</b></div>
+    <svg id="conn" preserveAspectRatio="none"></svg>
+    <div id="statsL" class="statcol"></div>
+    <div class="bodybox hud-frame" id="bodybox">
+      <svg class="bodyfig" viewBox="0 0 220 470" aria-label="unit schematic">
+        <path class="fb" d="M110 22c-14 0-23 10-23 23 0 9 4 16 9 21v8h28v-8c5-5 9-12 9-21 0-13-9-23-23-23z"/>
+        <path d="M88 86l22-10 22 10"/>
+        <path class="fb" d="M73 94c16-9 58-9 74 0l9 70-10 64H74l-10-64z"/>
+        <path d="M110 96v134"/>
+        <path d="M86 120h48M84 152h52"/>
+        <path d="M80 228h60M104 224h12v9h-12z"/>
+        <path d="M73 96l-17 20-6 58 9 42M85 108l-11 22-4 50 6 34"/>
+        <path d="M59 216l15 6-2 15-17-4z"/>
+        <path d="M147 96l17 20 6 58-9 42M135 108l11 22 4 50-6 34"/>
+        <path d="M161 216l-15 6 2 15 17-4z"/>
+        <path d="M84 237l-6 92-4 74h23l6-82M136 237l6 92 4 74h-23l-6-82"/>
+        <path d="M107 241l-2 80M113 241l2 80"/>
+        <path d="M79 330h23M118 330h23"/>
+        <path class="fb" d="M71 403h27l4 19H68zM122 403h27l3 19h-31z"/>
+        <path class="acc" d="M110 102v16M93 158h34"/>
+        <path class="acc" d="M64 132l-3 30M156 132l3 30"/>
+      </svg>
+      <div class="rl">UNIT <b>F.E.-08</b> — HOVER TO OVERLAY DERMAL</div>
     </div>
-    <div id="stats"></div>
+    <div id="statsR" class="statcol"></div>
   </div>
-  <p class="dep-note">// levels self-assessed on an 18-segment scale — dispute them in the terminal below. bars &amp; radar animate with scroll, both directions.</p>
+  <p class="dep-note">// levels self-assessed on an 18-segment scale — dispute them in the terminal below. bars fill with scroll; run the lens over the unit for an internal scan.</p>
   <details class="rawman hud-frame">
     <summary>&nbsp;view raw cyberware.manifest</summary>
     <div class="pkg">
@@ -480,19 +576,19 @@ body.party{animation:hue 3s linear infinite}
     <div class="dspine"><i></i></div><div class="dstamp">TOP SECRET</div>
     <div class="dhead"><span>FILE <b>02/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SOURCE <b>PRIVATE NODE — NIGHT JOB</b></span><span>ROLE <b>SOLO RUN</b></span></div>
     <h3 class="dtitle glitch" data-text="LOGISTICS PLATFORM"><span data-decode>LOGISTICS PLATFORM</span></h3>
-    <div class="dsub">FULL SHIPMENT LIFECYCLE // BUILT ALONE, END TO END</div>
+    <div class="dsub">FULL SHIPMENT LIFECYCLE — BUILT SOLO, END TO END</div>
     <div class="dmeta">
       <div><b>CHASSIS</b><span>.NET modular monolith</span></div>
       <div><b>INTERFACE</b><span>React / TypeScript</span></div>
-      <div><b>ICE</b><span>Keycloak — OAuth2/OIDC/RBAC</span></div>
+      <div><b>AUTH</b><span>Keycloak — OAuth2/OIDC/RBAC</span></div>
       <div><b>DELIVERY</b><span>Docker → GH Actions → Azure</span></div>
     </div>
     <div class="dbody">
-      <p>Runs the <span class="redact">full shipment lifecycle</span> — raise a transport request, contract a carrier through the system, track the operation live, close out final delivery. <span class="redact">Role-aware notifications</span> fire instantly, all the way down to the driver, and analytics modules surface insight at every stage.</p>
-      <p>Under the hood: bounded operational, transactional and analytical modules sharing one deployable, so each domain evolves on its own. <span class="redact">Keycloak ICE</span> guards a React/TypeScript front end over .NET services on PostgreSQL + Entity Framework.</p>
-      <p>Centerpiece: a real-time, document-driven agreement module where two counterparties review terms on a shared screen — every upload read by <span class="redact">Tesseract OCR</span> and scanned by <span class="redact">ClamAV</span>. Above it, a <span class="redact">WebGL layer renders operations in motion</span>. Full DevOps ownership: Docker builds, GitHub Actions pipelines, Azure Container Apps / Static Web Apps / Blob / ACS.</p>
+      <p>A platform that handles the <span class="redact">full shipment lifecycle</span>: a user raises a transport request, contracts a carrier through the system, tracks the operation in real time, and closes out the final delivery. Role-aware notifications keep everyone informed at each step, down to the driver, and analytics are available at every stage.</p>
+      <p>It's built as a modular monolith — operational, transactional and analytical modules share one deployable, so each part can evolve independently. Keycloak handles authentication for a React/TypeScript front end over .NET services on PostgreSQL with Entity Framework.</p>
+      <p>A key part is a real-time, document-driven agreement module where two parties review terms on a shared screen; each uploaded document is read with <span class="redact">Tesseract OCR</span> and scanned with ClamAV. There's also a WebGL view that shows vehicles moving along their routes. I owned the DevOps side too: Docker builds, GitHub Actions pipelines, and deployment to Azure (Container Apps, Static Web Apps, Blob Storage, Communication Services).</p>
     </div>
-    <div class="dtags"><span>.net</span><span>react</span><span>typescript</span><span>postgresql</span><span>keycloak</span><span>ocr</span><span>clamav</span><span>webgl</span><span>azure</span></div>
+    <div class="dtags"><span>.net</span><span>react</span><span>typescript</span><span>postgresql</span><span>redis</span><span>keycloak</span><span>ocr</span><span>clamav</span><span>webgl</span><span>azure</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
   </section>
 
@@ -500,7 +596,7 @@ body.party{animation:hue 3s linear infinite}
     <div class="dspine"><i></i></div><div class="dstamp">TOP SECRET</div>
     <div class="dhead"><span>FILE <b>03/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SOURCE <b>SOCAR MAINFRAME</b></span><span>ROLE <b>OT MOM/MES</b></span></div>
     <h3 class="dtitle glitch" data-text="MES INTEGRATIONS"><span data-decode>MES INTEGRATIONS</span></h3>
-    <div class="dsub">PRODUCTION IRON // NOT A DEMO BUILD</div>
+    <div class="dsub">RUNNING IN PRODUCTION, REFINERY-WIDE</div>
     <div class="dmeta">
       <div><b>REACH</b><span>Refinery-wide</span></div>
       <div><b>SIGNAL</b><span>MES · PHD data systems</span></div>
@@ -508,8 +604,8 @@ body.party{animation:hue 3s linear infinite}
       <div><b>SINCE</b><span>2023 — ongoing</span></div>
     </div>
     <div class="dbody">
-      <p>Industrial &amp; process operations wired into MES for <span class="redact">real-time production monitoring</span> and operational transparency.</p>
-      <p>Executive-level reporting piped straight from process and production data systems; delivered with operations, maintenance and IT crews so the OT solutions scale <span class="redact">refinery-wide</span>, not demo-wide.</p>
+      <p>Integrated industrial and process operations into MES for <span class="redact">real-time production monitoring</span> and better operational visibility.</p>
+      <p>Built executive-level reporting drawn directly from process and production data systems. I delivered these alongside operations, maintenance and IT teams so the OT solutions work across the whole refinery.</p>
     </div>
     <div class="dtags"><span>mes integration</span><span>phd</span><span>process analysis</span><span>executive reporting</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
@@ -519,7 +615,7 @@ body.party{animation:hue 3s linear infinite}
     <div class="dspine"><i></i></div><div class="dstamp">ACTIVE OP</div>
     <div class="dhead"><span>FILE <b>04/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SPONSOR <b>EXECUTIVE</b></span><span>ROLE <b>LEAD — END TO END</b></span></div>
     <h3 class="dtitle glitch" data-text="PROCUREMENT ORACLE"><span data-decode>PROCUREMENT ORACLE</span></h3>
-    <div class="dsub">TARGET REFERENCE PRICING // WHAT IT SHOULD COST</div>
+    <div class="dsub">TARGET REFERENCE PRICING — WHAT IT SHOULD COST</div>
     <div class="dmeta">
       <div><b>STATUS</b><span>Live — delivering in production</span></div>
       <div><b>ORACLE SAYS</b><span>Target reference prices</span></div>
@@ -527,8 +623,8 @@ body.party{animation:hue 3s linear infinite}
       <div><b>SCOPE</b><span>Built end to end (ML model aside)</span></div>
     </div>
     <div class="dbody">
-      <p>A procurement cost-optimization decision-support platform, <span class="redact">led and built end to end</span> (the ML model excepted). It estimates <span class="redact">target reference prices</span> — what a given material or service <em>should</em> cost — arming purchasing teams in tenders, bid evaluation and supplier discount negotiations. Executive-sponsored, and already delivering reliable results in production.</p>
-      <p>Underneath sits a comprehensive <span class="redact">workflow engine</span> with an interactive model-execution UI: meaningful outputs surface at every stage, and when confidence drops at a critical milestone the system <span class="redact">stops and asks the operator a targeted question</span>. The human can intervene at any point. Usability wasn't a nice-to-have — it was the spec.</p>
+      <p>A procurement cost-optimization and decision-support platform that I <span class="redact">led and built end to end</span> (apart from the ML model). It estimates <span class="redact">target reference prices</span> — what a given material or service should cost — to help purchasing teams in tenders, bid evaluation and supplier discount negotiations. It's executive-sponsored and already running in production.</p>
+      <p>Underneath is a workflow engine with an interactive model-execution UI: useful outputs appear at each stage, and when confidence is low at a critical step the system <span class="redact">pauses and asks the operator a specific question</span>. The user can step in at any point. Usability was a core requirement, not an afterthought.</p>
     </div>
     <div class="dtags"><span>target pricing</span><span>workflow engine</span><span>human-in-the-loop</span><span>tender support</span><span>ux ownership</span><span>end-to-end lead</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
@@ -538,7 +634,7 @@ body.party{animation:hue 3s linear infinite}
     <div class="dspine"><i></i></div><div class="dstamp">ARCHIVED</div>
     <div class="dhead"><span>FILE <b>05/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SOURCE <b>NORM DIGITAL ARCHIVE</b></span><span>ROLE <b>BI ANALYST</b></span></div>
     <h3 class="dtitle glitch" data-text="BI PIPELINES"><span data-decode>BI PIPELINES</span></h3>
-    <div class="dsub">DATA COURIER ERA // ERP → INSIGHT</div>
+    <div class="dsub">ERP DATA → REPORTING &amp; FORECASTS</div>
     <div class="dmeta">
       <div><b>SOURCES</b><span>ERP · SAP · ICRON</span></div>
       <div><b>OUTPUT</b><span>Power BI dashboards</span></div>
@@ -546,8 +642,8 @@ body.party{animation:hue 3s linear infinite}
       <div><b>NOVELTY</b><span>AI forecasting</span></div>
     </div>
     <div class="dbody">
-      <p>SQL-based reporting pipelines from ERP systems, and Power BI dashboards visualizing financial, operational and sales metrics. ETL workflows plus a hand in <span class="redact">AI-driven forecasting</span> for strategic planning.</p>
-      <p>Also ran: a planning optimization gig with the supply-chain team on <span class="redact">ICRON platform + SAP</span> data — broad exposure to supply-chain data modeling and analytics.</p>
+      <p>Built SQL-based reporting pipelines from ERP systems, and Power BI dashboards showing financial, operational and sales metrics. Set up ETL workflows and worked on <span class="redact">AI-driven forecasting</span> for planning.</p>
+      <p>I also worked on a planning-optimization project with the supply-chain team using <span class="redact">ICRON and SAP</span> data, which gave me solid exposure to supply-chain data modeling and analytics.</p>
     </div>
     <div class="dtags"><span>sql</span><span>power bi</span><span>etl/ssis</span><span>ssas</span><span>dax</span><span>ai forecasting</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
@@ -560,10 +656,10 @@ body.party{animation:hue 3s linear infinite}
 <section id="runlog" data-accent="#9D4EDD">
   <div class="sec-label"><b>04</b> <span data-decode>git log --graph --street-history</span><span class="jp">ランログ</span></div>
   <div class="gitlog">
-    <div class="commit"><span class="st">*</span> <span class="hash">a7f3c21</span> <span class="ref">(HEAD -&gt; main, origin/main)</span> <span class="msg">feat(socar): OT MOM/MES Specialist</span><span class="meta">Runner: Fatih Erdoğan · May 2023 → now · İzmir grid</span><span class="desc">MES integrations for industrial &amp; process ops; tech lead of the medal-winning Decision Tool; leading + building the executive-sponsored procurement oracle end to end; exec reporting from process data systems.</span></div>
-    <div class="commit"><span class="st">*</span> <span class="hash">e91b8d4</span> <span class="msg">feat(norm-digital): Business Intelligence Analyst</span><span class="meta">Oct 2022 → May 2023 · İzmir grid</span><span class="desc">SQL reporting pipelines off ERP; Power BI dashboards for finance/ops/sales; ETL workflows; AI-driven forecasting; supply-chain planning optimization on ICRON + SAP data.</span></div>
-    <div class="commit"><span class="st">*</span> <span class="hash">c04d7aa</span> <span class="msg">feat(yatsan): ERP &amp; Reporting Specialist</span><span class="meta">Jun 2022 → Oct 2022 · İzmir grid</span><span class="desc">Reporting apps + the SQL databases under them, feeding daily ops/production calls; ERP production planning &amp; inventory on MS Dynamics; process optimization; technical docs + SolidWorks part modeling.</span></div>
-    <div class="commit"><span class="st">*</span> <span class="hash">1nit001</span> <span class="msg">init(dokuz-eylul): B.Sc. Industrial Engineering</span><span class="meta">graduated Jun 2022 · İzmir</span><span class="desc">The systems mindset. Languages: TR native · EN B2 · DE A2 · JP A1.</span></div>
+    <div class="commit" data-obj="socar"><span class="st">*</span> <span class="hash">a7f3c21</span> <span class="ref">(HEAD -&gt; main, origin/main)</span> <span class="msg">feat(socar): OT MOM/MES Specialist</span><span class="meta">Runner: Fatih Erdoğan · May 2023 → now · İzmir grid</span><span class="desc">MES integrations for industrial and process operations; tech lead on the award-winning Decision Tool; leading and building an executive-sponsored procurement pricing platform end to end; executive reporting from process data systems.</span></div>
+    <div class="commit" data-obj="norm"><span class="st">*</span> <span class="hash">e91b8d4</span> <span class="msg">feat(norm-digital): Business Intelligence Analyst</span><span class="meta">Oct 2022 → May 2023 · İzmir grid</span><span class="desc">SQL reporting pipelines from ERP systems; Power BI dashboards for finance, operations and sales; ETL workflows; AI-driven forecasting; and supply-chain planning optimization on ICRON and SAP data.</span></div>
+    <div class="commit" data-obj="yatsan"><span class="st">*</span> <span class="hash">c04d7aa</span> <span class="msg">feat(yatsan): ERP &amp; Reporting Specialist</span><span class="meta">Jun 2022 → Oct 2022 · İzmir grid</span><span class="desc">Reporting applications and the SQL databases behind them, supporting daily operations and production; ERP production planning and inventory on MS Dynamics; process optimization; technical documentation and SolidWorks part modeling.</span></div>
+    <div class="commit" data-obj="uni"><span class="st">*</span> <span class="hash">1nit001</span> <span class="msg">init(dokuz-eylul): B.Sc. Industrial Engineering</span><span class="meta">graduated Jun 2022 · İzmir</span><span class="desc">Where the systems mindset started. Languages: Turkish (native), English (B2), German (A2), Japanese (A1).</span></div>
   </div>
 </section>
 
@@ -581,7 +677,7 @@ body.party{animation:hue 3s linear infinite}
 <footer id="contact" data-accent="#FF2E88">
   <div class="bounty hud-frame">
     <div class="w">⚠ WANTED ⚠</div>
-    <div class="r">REWARD: ONE (1) SENIOR-READY FULL-STACK ENGINEER — ALIVE &amp; CAFFEINATED</div>
+    <div class="r">REWARD: ONE (1) FULL-STACK ENGINEER — ALIVE &amp; CAFFEINATED</div>
     <div class="n">FATIH <b>ERDOGAN</b></div>
     <div style="font-size:12px;color:var(--dim)">last seen: İzmir grid · armed with .NET &amp; React · approach with job offers</div>
     <a class="cta" href="mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER">▸ CONTACT FIXER (EMAIL)</a>
@@ -640,7 +736,7 @@ typeLine();
 
 /* ============ HERO TYPED CODE ============ */
 const CODE=[
- ['c-key','const'],['',' '],['c-fn','runner'],['',' = {\n  handle: '],['c-str','"Fatih Erdoğan"'],['',',\n  grid: '],['c-str','"İzmir // remote uplink"'],['',',\n  class: ['],['c-str','"industrial-eng"'],['',', '],['c-str','"full-stack"'],['',', '],['c-str','"MES/OT"'],['','],\n  loadout: {\n    backend: ['],['c-str','".NET Core"'],['',', '],['c-str','"C#"'],['',', '],['c-str','"Node"'],['','],\n    frontend: ['],['c-str','"TypeScript"'],['',', '],['c-str','"React"'],['',', '],['c-str','"Next.js"'],['','],\n    heavy: ['],['c-str','"Keycloak"'],['',', '],['c-str','"WebGL"'],['',', '],['c-str','"Docker→Azure"'],['','],\n  },\n  currentGig: '],['c-str','"pricing what a refinery buys, before it buys it"'],['',',\n  streetCred: ['],['c-str','"Brandon Hall Silver ★"'],['','],\n  acceptingContracts: '],['c-neo','true'],['',',\n};\n\n'],['c-com','// scroll: the garage, then the dossiers ↓'],
+ ['c-key','const'],['',' '],['c-fn','engineer'],['',' = {\n  handle: '],['c-str','"Fatih Erdoğan"'],['',',\n  base: '],['c-str','"İzmir // open to remote"'],['',',\n  roles: ['],['c-str','"industrial-eng"'],['',', '],['c-str','"full-stack"'],['',', '],['c-str','"MES/OT"'],['','],\n  stack: {\n    backend: ['],['c-str','".NET Core"'],['',', '],['c-str','"C#"'],['',', '],['c-str','"Node"'],['',', '],['c-str','"Redis"'],['','],\n    frontend: ['],['c-str','"TypeScript"'],['',', '],['c-str','"React"'],['',', '],['c-str','"Next.js"'],['','],\n    infra: ['],['c-str','"Keycloak"'],['',', '],['c-str','"WebGL"'],['',', '],['c-str','"Docker→Azure"'],['','],\n  },\n  currentGig: '],['c-str','"pricing what a refinery buys, before it buys it"'],['',',\n  recognition: ['],['c-str','"Brandon Hall Silver ★"'],['','],\n  openToWork: '],['c-neo','true'],['',',\n};\n\n'],['c-com','// scroll: the garage, then the dossiers ↓'],
 ];
 const typed=$('#typedCode');
 let started=false;
@@ -663,15 +759,15 @@ setTimeout(()=>{if(!started)startHeroTyping()},10000);
 
 /* ============ STAT BARS ============ */
 const LOADOUT=[
- {g:'CORTEX // backend',rows:[['.NET / .NET Core',17],['C#',17],['Node · Express',12],['Entity Framework',13]]},
- {g:'OPTICS // frontend',rows:[['TypeScript',16],['React',16],['Next.js',15],['WebGL 3D',12]]},
- {g:'FRAME // architecture',rows:[['Modular monolith',16],['Clean / layered',15],['RESTful APIs',15],['PostgreSQL',14]]},
- {g:'ICE // security',rows:[['Keycloak',14],['OAuth2 / OIDC / RBAC',14],['ClamAV',10],['Tesseract OCR',10]]},
- {g:'DRONES // devops & cloud',rows:[['Docker',13],['Azure',12],['GitHub Actions',13],['CI/CD',13]]},
- {g:'ANALOG // industrial & data',rows:[['MES / OT · PHD',17],['SQL',16],['Power BI · DAX',15],['ETL/SSIS · SSAS',13],['Python · Matlab',11]]},
+ {g:'CORTEX // backend',side:'L',ax:.50,ay:.075,rows:[['.NET / .NET Core',17],['C#',17],['Node · Express',12],['Entity Framework',14]]},
+ {g:'FRAME // architecture',side:'L',ax:.50,ay:.315,rows:[['Modular monolith',13],['Clean / layered',13],['RESTful APIs',15],['PostgreSQL',12],['Redis',10]]},
+ {g:'DRONES // devops & cloud',side:'L',ax:.255,ay:.42,rows:[['Docker',11],['Azure',10],['GitHub Actions',11],['CI/CD',10]]},
+ {g:'OPTICS // frontend',side:'R',ax:.565,ay:.10,rows:[['TypeScript',17],['React',17],['Next.js',14],['WebGL 3D',10]]},
+ {g:'ICE // security',side:'R',ax:.745,ay:.42,rows:[['Keycloak',11],['OAuth2 / OIDC / RBAC',11],['ClamAV',8],['Tesseract OCR',8]]},
+ {g:'ANALOG // industrial & data',side:'R',ax:.545,ay:.70,rows:[['MES / OT · PHD',16],['SQL',15],['Power BI · DAX',12],['ETL/SSIS · SSAS',11],['Python · Matlab',10]]},
 ];
-const statsRoot=$('#stats');
-const statRows=[];
+const statsL=$('#statsL'),statsR=$('#statsR'),bodybox=$('#bodybox');
+const statRows=[],statGroups=[];
 LOADOUT.forEach(gr=>{
   const g=document.createElement('div');g.className='sgroup';
   g.innerHTML=`<h4>${gr.g}</h4>`;
@@ -681,84 +777,50 @@ LOADOUT.forEach(gr=>{
     g.appendChild(row);
     statRows.push({lvl,segs:[...row.querySelectorAll('.sb i')],idx:statRows.length});
   });
-  statsRoot.appendChild(g);
+  (gr.side==='L'?statsL:statsR).appendChild(g);
+  statGroups.push({el:g,side:gr.side,ax:gr.ax,ay:gr.ay});
+  const dot=document.createElement('i');dot.className='banchor';
+  dot.style.left=(gr.ax*100)+'%';dot.style.top=(gr.ay*100)+'%';
+  bodybox.appendChild(dot);
 });
 
-/* ============ RADAR ============ */
-const radar=$('#radar'),rctx=radar.getContext('2d');
-const AXES=[['SYSTEMS',92],['INTERFACE',88],['DATAWARE',85],['ICE',80],['DEVOPS',78],['INDUSTRIAL',96]];
-let radarP=0,RS=380,RDPR=1;
-function sizeRadar(){
-  RDPR=Math.min(devicePixelRatio,2);
-  RS=Math.min(380,(radar.parentElement.clientWidth||360)-36);
-  radar.width=RS*RDPR;radar.height=RS*RDPR;
-  radar.style.width=RS+'px';radar.style.height=RS+'px';
-  rctx.setTransform(RDPR,0,0,RDPR,0,0);
+/* ---- connectors: skill panels wired to body parts ---- */
+const connSvg=$('#conn'),loadoutBox=document.querySelector('.loadout');
+function drawConn(){
+  if(!connSvg)return;
+  if(innerWidth<1000){connSvg.innerHTML='';return}
+  const lb=loadoutBox.getBoundingClientRect(),bb=bodybox.getBoundingClientRect();
+  connSvg.setAttribute('viewBox',`0 0 ${Math.round(lb.width)} ${Math.round(lb.height)}`);
+  let h='';
+  statGroups.forEach((g,gi)=>{
+    const gr=g.el.getBoundingClientRect();
+    const y=Math.round(gr.top-lb.top+15);
+    const x=Math.round(g.side==='L'?gr.right-lb.left:gr.left-lb.left);
+    const ax=Math.round(bb.left-lb.left+bb.width*g.ax);
+    const ay=Math.round(bb.top-lb.top+bb.height*g.ay);
+    const dir=g.side==='L'?1:-1;
+    const k1=x+dir*22;           /* short spur off the panel */
+    const k2=ax-dir*16;          /* elbow near the model */
+    h+=`<g class="cn" style="--i:${gi}">
+      <path d="M${x},${y} H${k1} L${k2},${ay} H${ax}"/>
+      <rect x="${x-3}" y="${y-3}" width="6" height="6" transform="rotate(45 ${x} ${y})"/>
+      <circle class="ring" cx="${ax}" cy="${ay}" r="4.5"/>
+      <path class="tick" d="M${ax-6},${ay} H${ax+6} M${ax},${ay-6} V${ay+6}"/>
+    </g>`;
+  });
+  connSvg.innerHTML=h;
 }
-sizeRadar();addEventListener('resize',sizeRadar);
-function drawRadar(neonCss){
-  const c=RS/2,R=RS*0.30;
-  rctx.clearRect(0,0,RS,RS);
-  rctx.save();
-  const hex=r=>{
-    rctx.beginPath();
-    for(let i=0;i<=6;i++){const a=-Math.PI/2+i/6*Math.PI*2;const x=c+Math.cos(a)*r,y=c+Math.sin(a)*r;i?rctx.lineTo(x,y):rctx.moveTo(x,y)}
-    rctx.closePath();
-  };
-  /* --- opaque scope backdrop, drawn FIRST --- */
-  hex(R*1.06);
-  const bgg=rctx.createRadialGradient(c,c*0.86,R*0.05,c,c,R*1.12);
-  bgg.addColorStop(0,'#1B2540');bgg.addColorStop(.55,'#111A30');bgg.addColorStop(1,'#080C18');
-  rctx.fillStyle=bgg;rctx.fill();
-  rctx.strokeStyle='rgba(130,160,215,.4)';rctx.lineWidth=1.4;rctx.stroke();
-  /* faint scanlines inside the scope */
-  rctx.save();hex(R*1.06);rctx.clip();
-  rctx.fillStyle='rgba(0,0,0,.16)';
-  for(let y=0;y<RS;y+=4)rctx.fillRect(0,y,RS,1);
-  rctx.restore();
-  /* --- rings on top of the backdrop --- */
-  for(let ring=1;ring<=4;ring++){
-    hex(R*ring/4);
-    rctx.fillStyle=ring%2?'rgba(120,155,210,.05)':'rgba(0,0,0,0)';rctx.fill();
-    rctx.strokeStyle='rgba(125,155,205,.3)';rctx.lineWidth=1;rctx.stroke();
-  }
-  rctx.strokeStyle='rgba(125,155,205,.28)';
-  AXES.forEach((_,i)=>{
-    const a=-Math.PI/2+i/6*Math.PI*2;
-    rctx.beginPath();rctx.moveTo(c,c);rctx.lineTo(c+Math.cos(a)*R,c+Math.sin(a)*R);rctx.stroke();
-  });
-  const e=1-Math.pow(1-radarP,3);
-  rctx.beginPath();
-  AXES.forEach(([,v],i)=>{
-    const a=-Math.PI/2+i/6*Math.PI*2,r=R*(v/100)*e;
-    const x=c+Math.cos(a)*r,y=c+Math.sin(a)*r;
-    i?rctx.lineTo(x,y):rctx.moveTo(x,y);
-  });
-  rctx.closePath();
-  rctx.shadowColor=neonCss;rctx.shadowBlur=18;
-  rctx.strokeStyle=neonCss;rctx.lineWidth=2.2;rctx.stroke();
-  rctx.shadowBlur=0;rctx.globalAlpha=.18;rctx.fillStyle=neonCss;rctx.fill();
-  rctx.globalAlpha=1;
-  AXES.forEach(([n,v],i)=>{
-    const a=-Math.PI/2+i/6*Math.PI*2,r=R*(v/100)*e;
-    rctx.fillStyle=neonCss;
-    rctx.beginPath();rctx.arc(c+Math.cos(a)*r,c+Math.sin(a)*r,3.4,0,Math.PI*2);rctx.fill();
-    const lx=c+Math.cos(a)*(R+30),ly=c+Math.sin(a)*(R+26);
-    rctx.textAlign=Math.abs(Math.cos(a))<.3?'center':(Math.cos(a)>0?'left':'right');
-    rctx.font='700 12px "Chakra Petch",sans-serif';
-    rctx.fillStyle='#D6E4F0';rctx.fillText(n,lx,ly);
-    rctx.font='11px "Share Tech Mono",monospace';
-    rctx.fillStyle=neonCss;rctx.fillText(Math.round(v*e)+'%',lx,ly+14);
-  });
-  rctx.restore();
-}
+addEventListener('resize',drawConn);
+addEventListener('load',drawConn);
+document.fonts&&document.fonts.ready.then(drawConn);
+setTimeout(drawConn,400);
 
 /* ============ PIXEL-ART NEON CITY ============ */
 const cv=$('#city'),ctx=cv.getContext('2d');
 const mkc=()=>document.createElement('canvas');
 const bakeC=[mkc(),mkc(),mkc()],bakeX=bakeC.map(c=>c.getContext('2d'));
 const PXS=3;
-let W=0,H=0,layers=[],rain=[],streaks=[],beams=[];
+let W=0,H=0,layers=[],rain=[],streaks=[],beams=[],cars=[],lastCarL=0,lastCarR=0;
 const NEONS=['#FF2E88','#00F0FF','#F5D90A','#9D4EDD','#00FF9C'];
 const KANJI=['未来','電脳','夢','霓虹','麺','鬼','出口','龍'];
 const RR=(a,b)=>a+Math.random()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
@@ -798,7 +860,7 @@ function buildCity(){
     layers.push(b);
   }
   rain=Array.from({length:90},()=>({x:RR(0,W),y:RR(0,H),l:RI(3,6),s:RR(2.6,4.2)}));
-  streaks=[];
+  streaks=[];cars=[];lastCarL=lastCarR=0;
   beams=[{x:W*.22,base:-.5,sp:.00023,amp:.42},{x:W*.7,base:-.62,sp:.00017,amp:.5}];
   bakeCity();
 }
@@ -975,16 +1037,49 @@ function city(t){
     }
     lights.push({x:sx.x,w:14,col:sx.col});
   });
-  const bandTop=H-24;
-  ctx.fillStyle='rgba(7,9,16,.6)';ctx.fillRect(0,bandTop,W,24);
-  ctx.fillStyle='rgba(130,170,255,.14)';ctx.fillRect(0,bandTop,W,1);
+  /* ---- street level: road with two-way traffic ---- */
+  const roadTop=H-32;
+  ctx.fillStyle='#070A12';ctx.fillRect(0,roadTop,W,32);
+  ctx.fillStyle='rgba(130,170,255,.16)';ctx.fillRect(0,roadTop,W,1);
+  ctx.fillStyle='#0B101E';ctx.fillRect(0,roadTop+1,W,3);
+  ctx.fillStyle='rgba(200,215,240,.13)';
+  for(let dx=Math.round(-((t*0.012)%12));dx<W;dx+=12)ctx.fillRect(dx,roadTop+16,6,1);
+  if(t-lastCarR>2100+Math.random()*2400){lastCarR=t;
+    cars.push({dir:1,x:-30,y:roadTop+21,w:RI(18,24),h:6,v:RR(0.55,0.85),col:NEONS[(Math.random()*NEONS.length)|0]})}
+  if(t-lastCarL>2500+Math.random()*2900){lastCarL=t;
+    cars.push({dir:-1,x:W+30,y:roadTop+9,w:RI(13,17),h:5,v:-RR(0.45,0.72),col:NEONS[(Math.random()*NEONS.length)|0]})}
+  cars=cars.filter(c=>c.x>-44&&c.x<W+44);
+  cars.forEach(c=>{c.x+=c.v;lights.push({x:c.x,w:c.w,col:c.col})});
   lights.forEach(l=>{
-    const rg=ctx.createLinearGradient(0,bandTop,0,H);
-    rg.addColorStop(0,l.col+'3A');rg.addColorStop(1,l.col+'00');
-    ctx.fillStyle=rg;ctx.fillRect(Math.round(l.x-l.w*.6),bandTop,Math.round(l.w*1.2),24);
+    const rg=ctx.createLinearGradient(0,roadTop+4,0,H);
+    rg.addColorStop(0,l.col+'32');rg.addColorStop(1,l.col+'00');
+    ctx.fillStyle=rg;ctx.fillRect(Math.round(l.x-l.w*.6),roadTop+4,Math.round(l.w*1.2),28);
   });
   ctx.fillStyle='rgba(0,0,0,.3)';
-  for(let ry=bandTop+4;ry<H;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
+  for(let ry=roadTop+6;ry<H;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
+  /* traffic sprites — far lane behind, near lane in front */
+  cars.slice().sort((a2,b2)=>a2.y-b2.y).forEach(c=>{
+    const fx=Math.round(c.x),d=c.dir,hw=Math.round(c.w/2);
+    ctx.globalAlpha=d<0?0.85:1;
+    ctx.fillStyle=c.col+'2A';ctx.fillRect(fx-Math.round(c.w*0.6),c.y+c.h-1,Math.round(c.w*1.2),2);
+    const nose=fx+d*hw;
+    for(let k=0;k<10;k++){
+      ctx.fillStyle='rgba(225,240,255,'+(0.13*(1-k/10)).toFixed(3)+')';
+      ctx.fillRect(nose+d*(k*2),c.y+1,2,c.h-2);
+    }
+    ctx.fillStyle='#0A0F1B';
+    ctx.fillRect(fx-hw,c.y,c.w,c.h);
+    ctx.fillRect(fx-Math.round(c.w*0.24),c.y-3,Math.round(c.w*0.48),3);
+    ctx.fillStyle='rgba(130,190,240,.5)';
+    ctx.fillRect(fx-Math.round(c.w*0.18),c.y-2,Math.round(c.w*0.36),2);
+    ctx.fillStyle=c.col;ctx.fillRect(fx-hw,c.y+c.h-2,c.w,1);
+    ctx.fillStyle='#F2FAFF';ctx.fillRect(nose-(d<0?2:0),c.y+1,2,2);
+    ctx.fillStyle='#FF3B3B';ctx.fillRect(fx-d*hw-(d>0?2:0),c.y+1,2,2);
+    ctx.fillStyle='#04060A';
+    ctx.fillRect(fx-Math.round(c.w*0.3),c.y+c.h-1,3,2);
+    ctx.fillRect(fx+Math.round(c.w*0.3)-3,c.y+c.h-1,3,2);
+    ctx.globalAlpha=1;
+  });
   ctx.fillStyle='rgba(150,200,255,.26)';
   rain.forEach(r=>{
     r.y+=r.s;r.x+=0.6;
@@ -1464,10 +1559,30 @@ let curA=hex2rgb('#FF2E88'),tgtA=curA.slice();
 let lastY=scrollY,velS=0;
 const loadoutSec=$('#implants'),garageSec=$('#garage');
 const iceSec=$('#icewall'),ibIn=$('#ibIn'),iceInt=$('#iceInt'),iceHint=$('#iceHint');
-const dossiers=[...document.querySelectorAll('.dossier')].map(el=>({
-  el,spine:el.querySelector('.dspine i'),redacts:[...el.querySelectorAll('.redact')],
-  integ:el.querySelector('.dinteg .bar i'),pct:el.querySelector('.dinteg .pct')
-}));
+const dossiers=[...document.querySelectorAll('.dossier')].map(el=>{
+  const fx=[...el.querySelectorAll('.dhead,.dtitle,.dsub,.dmeta,.dbody,.dtags,.dinteg,.dopen')];
+  fx.forEach(f=>f.classList.add('dfx'));
+  const stamp=el.querySelector('.dstamp');
+  if(stamp)stamp.classList.add('dfx');
+  return{el,fx,stamp,spine:el.querySelector('.dspine i'),redacts:[...el.querySelectorAll('.redact')],
+    integ:el.querySelector('.dinteg .bar i'),pct:el.querySelector('.dinteg .pct')};
+});
+
+/* warp starfield — sticky viewport canvas behind the classified files */
+const gigsMain=document.querySelector('#gigs main');
+let warpOn=false,wx=null,wstars=[],WW=0,WH=0;
+if(gigsMain&&!reduced){
+  const wcv=document.createElement('canvas');wcv.id='warp';
+  gigsMain.insertBefore(wcv,gigsMain.firstChild);
+  wx=wcv.getContext('2d');
+  const sizeW=()=>{
+    WW=gigsMain.clientWidth;WH=innerHeight;
+    wcv.width=WW;wcv.height=WH;
+    wstars=Array.from({length:120},()=>({x:Math.random()*WW,y:Math.random()*WH,s:.35+Math.random()*.85,a:.2+Math.random()*.45,n:Math.random()<.6}));
+  };
+  sizeW();addEventListener('resize',sizeW);
+  new IntersectionObserver(es=>{warpOn=es[0].isIntersecting},{threshold:0}).observe(gigsMain);
+}
 
 function loop(t){
   requestAnimationFrame(loop);
@@ -1515,12 +1630,12 @@ function loop(t){
     carAPI.setNeon(neonCss);
     carAPI.frame(t,gp,velS);
   }
+  if(bodyAPI){bodyAPI.setNeon(neonCss);bodyAPI.frame(t)}
   {
     const r=loadoutSec.getBoundingClientRect();
     const p=clamp((innerHeight*.88-r.top)/(r.height*.75),0,1);
-    radarP+=(p-radarP)*.1;
-    drawRadar(neonCss);
     const e=1-Math.pow(1-p,3);
+    if(connSvg)connSvg.style.opacity=(e*.92).toFixed(3);
     statRows.forEach(row=>{
       const rp=clamp(e*1.5-(row.idx/statRows.length)*.5,0,1);
       const fill=Math.round(row.lvl*rp);
@@ -1533,8 +1648,33 @@ function loop(t){
     d.spine.style.transform=`scaleY(${p})`;
     d.integ.style.width=(p*100)+'%';
     d.pct.textContent=Math.round(p*100)+'%';
-    d.redacts.forEach((rd,i)=>rd.style.setProperty('--r',(1-clamp(p*1.8-i*.22-.15,0,1)).toFixed(3)));
+    d.redacts.forEach((rd,i)=>{
+      const rp=clamp(p*1.8-i*.22-.15,0,1);
+      rd.style.setProperty('--r',(1-rp).toFixed(3));
+      if(rp>0.97&&!rd._z){rd._z=1;rd.classList.add('zap');setTimeout(()=>rd.classList.remove('zap'),620)}
+      else if(rp<0.5)rd._z=0;
+    });
+    if(!reduced){
+      d.fx.forEach((f,i)=>f.style.setProperty('--dp',clamp(p*1.7-i*.09,0,1).toFixed(3)));
+      if(d.stamp)d.stamp.style.setProperty('--dp',clamp(p*2.2-.35,0,1).toFixed(3));
+    }
   });
+  /* warp field: stars stretch into streaks with scroll velocity */
+  if(wx&&warpOn&&!document.hidden){
+    wx.clearRect(0,0,WW,WH);
+    const v=clamp(velS,-46,46);
+    const stretch=Math.min(Math.abs(v)*2.3,96),dir=v>=0?1:-1;
+    const dimc='rgba(140,170,225,';
+    for(const st of wstars){
+      st.y+=(0.22+Math.abs(v)*0.24)*st.s*dir;
+      if(st.y>WH+60)st.y=-40;else if(st.y<-60)st.y=WH+40;
+      wx.globalAlpha=st.a;
+      wx.strokeStyle=st.n?neonCss:dimc+'1)';
+      wx.lineWidth=st.s;
+      wx.beginPath();wx.moveTo(st.x,st.y);wx.lineTo(st.x,st.y-(2.5+stretch)*st.s*dir);wx.stroke();
+    }
+    wx.globalAlpha=1;
+  }
   const pctS=Math.round(y/(document.body.scrollHeight-innerHeight)*100);
   $('#buildseg').innerHTML=pctS>=100?'breach <b>✓ COMPLETE — DATA IS YOURS</b>':`breaching mainframe… <b>${pctS}%</b>`;
   $('#heatseg').innerHTML=`HEAT <b>${(36+Math.abs(velS)*1.4).toFixed(0)}°C</b>`;
@@ -1563,7 +1703,7 @@ const NEOFETCH=
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
  help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span>`,
- whoami:()=>`Fatih Erdoğan — Industrial Engineer turned full-stack netrunner, working where MES meets OT.<br>I write software that survives contact with a refinery. İzmir grid, remote-friendly.`,
+ whoami:()=>`Fatih Erdoğan — Industrial Engineer and full-stack software engineer, working where MES meets OT.<br>I build software for real industrial environments like refineries. Based in İzmir, open to remote.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith · powerplant: .NET/C# · drive-by-wire: TypeScript/React/Next<br>ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
  gigs:()=>`[1] decision-tool.exe — ★ Brandon Hall Silver, tech lead, real-time risk scoring<br>[2] logistics-platform.ts — full shipment lifecycle, OCR+ClamAV doc room, WebGL freight<br>[3] mes-integrations.sql — refinery-wide real-time monitoring<br>[4] procurement-oracle.exe — target reference prices + workflow engine, live in prod<br>[5] bi-pipelines.dax — Power BI, ETL, AI forecasting`,
@@ -1642,6 +1782,210 @@ addEventListener('keydown',e=>{
     tprint('🌈 <span class="warn">konami accepted. chromatic overdrive toggled. medical bills not covered.</span>');
   }
 });
+
+/* ============ X-RAY SCAN LENS (hover reveals the layer beneath) ============ */
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  const SKULL=`<svg viewBox="0 0 200 200">
+    <path d="M100 22c-33 0-54 23-54 52 0 17 7 29 14 38 5 7 7 12 7 20v12h66v-12c0-8 2-13 7-20 7-9 14-21 14-38 0-29-21-52-54-52z"/>
+    <path d="M66 92a15 12 0 1 0 30 0 15 12 0 1 0-30 0zM104 92a15 12 0 1 0 30 0 15 12 0 1 0-30 0z"/>
+    <path d="M100 100l-8 20h16z"/>
+    <path d="M73 146h54M80 146v12M90 146v14M100 146v14M110 146v14M120 146v12"/>
+    <circle cx="150" cy="64" r="6"/><path d="M150 58V40h24M150 70v16l16 12"/>
+    <rect x="26" y="96" width="12" height="20"/><path d="M26 106H10M38 100h10M38 112h10"/>
+    <path d="M60 52c10-10 26-14 40-14"/>
+    <text x="14" y="34" font-size="8">CRANIAL SHELL v3</text>
+    <text x="126" y="152" font-size="8">JAW SERVO</text>
+  </svg>
+  <div class="xread">SUBJECT // <b>F.ERDOĞAN</b> · CORTEX v26.7<br>IMPLANTS <b>7/7 ONLINE</b> · ICE RES <b>92%</b></div>`;
+
+  function lens(host,html,r,hint){
+    if(!host)return;
+    host.classList.add('xhost');
+    const l=document.createElement('div');l.className='xlayer';l.innerHTML=html;host.appendChild(l);
+    const hEl=document.createElement('div');hEl.className='xhint';hEl.textContent=hint;host.appendChild(hEl);
+    host.addEventListener('mousemove',e=>{
+      const b=host.getBoundingClientRect();
+      l.style.setProperty('--xx',(e.clientX-b.left)+'px');
+      l.style.setProperty('--xy',(e.clientY-b.top)+'px');
+      l.style.setProperty('--xr',r+'px');
+    });
+    host.addEventListener('mouseleave',()=>l.style.setProperty('--xr','0px'));
+  }
+  lens(document.querySelector('.charslot'),SKULL,90,'◎ X-RAY');
+})();
+
+/* ============ BODY3D — loadout unit + true 3D x-ray ============ */
+let bodyAPI=null;
+(function(){
+  const BODYX=`<svg viewBox="0 0 220 470">
+    <g style="stroke:rgba(150,175,220,.85);filter:none">
+      <circle cx="110" cy="44" r="16"/><path d="M98 57c2 9 22 9 24 0"/>
+      <path d="M110 76v152"/>
+      <path d="M103 88h14M103 102h14M103 116h14M103 130h14M103 144h14M103 158h14M103 172h14M103 186h14M103 200h14M103 214h14"/>
+      <path d="M84 92h52"/>
+      <path d="M110 106c-19 4-25 11-23 19M110 106c19 4 25 11 23 19M110 124c-17 4-22 10-20 17M110 124c17 4 22 10 20 17M110 142c-15 3-19 9-17 15M110 142c15 3 19 9 17 15"/>
+      <path d="M88 232c6 13 38 13 44 0l-5 17H93z"/>
+      <path d="M84 96 66 156M66 156l-8 56"/><circle cx="66" cy="156" r="4.5"/><circle cx="58" cy="212" r="4"/>
+      <path d="M136 96l18 60M154 156l8 56"/><circle cx="154" cy="156" r="4.5"/><circle cx="162" cy="212" r="4"/>
+      <path d="M54 216l10 8M58 220l8 10M166 216l-10 8M162 220l-8 10"/>
+      <path d="M96 250l-9 82M124 250l9 82"/><circle cx="87" cy="334" r="5"/><circle cx="133" cy="334" r="5"/>
+      <path d="M87 340l-7 70M133 340l7 70"/>
+      <path d="M78 412h20M122 412h20"/>
+    </g>
+    <rect x="99" y="28" width="22" height="11" rx="2"/><path d="M103 28v-6M110 28v-6M117 28v-6"/>
+    <circle cx="103" cy="45" r="2.6"/><circle cx="117" cy="45" r="2.6"/>
+    <path d="M110 140l13 8v15l-13 8-13-8v-15z"/><circle cx="110" cy="155" r="4"/>
+    <rect x="52" y="178" width="9" height="16" rx="2"/><rect x="159" y="178" width="9" height="16" rx="2"/>
+    <path d="M120 118v58"/><circle cx="120" cy="132" r="2"/><circle cx="120" cy="150" r="2"/><circle cx="120" cy="168" r="2"/>
+    <path d="M92 258v54M128 258v54"/><rect x="88" y="278" width="8" height="12"/><rect x="124" y="278" width="8" height="12"/>
+    <text x="128" y="36" font-size="8">CORTEX v26</text>
+    <text x="126" y="160" font-size="8">OS CORE</text>
+    <text x="14" y="188" font-size="8">PORT-L</text>
+    <text x="14" y="452" font-size="8">ENDOSKELETON // TI-WEAVE</text>
+  </svg>
+  <div class="xread">ENDOSKELETON // <b>TI-WEAVE LATTICE</b><br>IMPLANT NODES <b>7/7 BONDED</b> · SYNC <b>98.4%</b></div>`;
+  const box=document.getElementById('bodybox');
+  if(!box)return;
+  const fig=box.querySelector('.bodyfig');
+  function fallback(){
+    if(box.dataset.fb||!matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+    box.dataset.fb=1;
+    const l=document.createElement('div');l.className='xlayer';l.innerHTML=BODYX;box.appendChild(l);
+    const h2=document.createElement('div');h2.className='xhint';h2.textContent='◎ SCAN';box.appendChild(h2);
+    box.addEventListener('mousemove',e=>{const b=box.getBoundingClientRect();
+      l.style.setProperty('--xx',(e.clientX-b.left)+'px');
+      l.style.setProperty('--xy',(e.clientY-b.top)+'px');
+      l.style.setProperty('--xr','110px');});
+    box.addEventListener('mouseleave',()=>l.style.setProperty('--xr','0px'));
+  }
+  if(!window.THREE||!THREE.GLTFLoader||reduced){fallback();return}
+  const ROT=0;   /* set to Math.PI if the unit faces away from you */
+  const view=document.createElement('div');view.className='bodyview';
+  fig.parentNode.insertBefore(view,fig);view.appendChild(fig);
+  function mk3(){
+    const cv=document.createElement('canvas');
+    const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    r.setPixelRatio(Math.min(devicePixelRatio||1,1.6));
+    try{r.outputEncoding=THREE.sRGBEncoding}catch(e){}
+    const sc=new THREE.Scene();
+    const cam=new THREE.PerspectiveCamera(30,1,0.1,60);
+    cam.position.set(0,0.86,3.75);cam.lookAt(0,0.86,0);
+    return{cv,r,sc,cam};
+  }
+  const A=mk3(),B=mk3();
+  view.appendChild(A.cv);
+  const xl=document.createElement('div');xl.className='xlayer';
+  xl.appendChild(B.cv);
+  const rd=document.createElement('div');rd.className='xread';
+  rd.innerHTML='SURFACE SCAN // <b>DERMAL LAYER</b> · LIVE 3D';
+  xl.appendChild(rd);
+  view.appendChild(xl);
+  const hint=document.createElement('div');hint.className='xhint';hint.textContent='◎ SCAN';box.appendChild(hint);
+  function lights(sc,inner){
+    sc.add(new THREE.AmbientLight(0x25355a,inner?1.0:0.85));
+    const k=new THREE.PointLight(0xEAF2FF,inner?1.0:1.5,22);k.position.set(2.4,3.1,3.4);sc.add(k);
+    const rim=new THREE.PointLight(0xFF2E88,1.5,16);rim.position.set(-2.6,1.7,-2.3);sc.add(rim);
+    return rim;
+  }
+  const rimA=lights(A.sc,false),rimB=lights(B.sc,true);
+  const g1=new THREE.Group(),g2=new THREE.Group();
+  g1.rotation.y=ROT;g2.rotation.y=ROT;
+  A.sc.add(g1);B.sc.add(g2);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(0.55,0.60,48),
+    new THREE.MeshBasicMaterial({color:0xFF2E88,transparent:true,opacity:.35,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2;ring.position.y=0.01;A.sc.add(ring);
+  function fit(scene,g){
+    const b=new THREE.Box3().setFromObject(scene);
+    const h=Math.max(b.max.y-b.min.y,1e-4);
+    scene.scale.multiplyScalar(1.72/h);
+    scene.updateMatrixWorld(true);
+    const b2=new THREE.Box3().setFromObject(scene);
+    const c=b2.getCenter(new THREE.Vector3());
+    scene.position.x-=c.x;scene.position.z-=c.z;scene.position.y-=b2.min.y;
+    g.add(scene);
+  }
+  let loaded=0,failed=false;
+  const done=()=>{if(++loaded===2){box.classList.add('gl3d');A._dirty=1}};
+  const fail=(w,e)=>{if(failed)return;failed=true;console.warn('[body3d]',w,e);
+    console.info('[body3d] body.glb / xray.glb bulunamadı (veya file:// engelledi) — SVG şemaya düşüldü.');fallback()};
+  const L=new THREE.GLTFLoader();
+  L.load('./xray.glb',g=>{try{g.scene.traverse(o=>{if(o.isMesh&&o.material)o.material.emissiveIntensity=1.3});fit(g.scene,g1);done()}catch(e){fail('xray',e)}},undefined,e=>fail('xray',e));
+  L.load('./body.glb',g=>{try{g.scene.traverse(o=>{if(o.isMesh&&o.material)o.material.emissiveIntensity=1.15});fit(g.scene,g2);done()}catch(e){fail('body',e)}},undefined,e=>fail('body',e));
+  let lensOpen=false;
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    view.addEventListener('mousemove',e=>{
+      const b=view.getBoundingClientRect();
+      xl.style.setProperty('--xx',(e.clientX-b.left)+'px');
+      xl.style.setProperty('--xy',(e.clientY-b.top)+'px');
+      xl.style.setProperty('--xr','105px');lensOpen=true;
+    });
+    view.addEventListener('mouseleave',()=>{xl.style.setProperty('--xr','0px');lensOpen=false});
+  }
+  function rs(){
+    const w=view.clientWidth||280,h=view.clientHeight||440;
+    [A,B].forEach(o=>{o.r.setSize(w,h,false);o.cam.aspect=w/h;o.cam.updateProjectionMatrix()});
+  }
+  rs();addEventListener('resize',rs);
+  let vis=false;
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting},{threshold:0}).observe(box);
+  bodyAPI={
+    setNeon(hex){rimA.color.set(hex);rimB.color.set(hex);ring.material.color.set(hex);A._dirty=1}
+    ,
+    frame(t){
+      if(!vis||document.hidden||failed||loaded<2)return;
+      if(A._dirty){A.r.render(A.sc,A.cam);A._dirty=0}
+      if(lensOpen)B.r.render(B.sc,B.cam);
+    }
+  };
+})();
+
+/* ============ HOVER HOLO-OBJECTS (object reveal on hover) ============ */
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  const OBJ={
+    socar:{cap:'REFINERY OPS // MES-OT',svg:`<svg viewBox="0 0 120 96">
+      <path d="M12 70h34M12 78h34M29 70V44"/><circle cx="29" cy="35" r="9"/>
+      <path d="M29 26v-9M19 17h20"/><path d="M46 74h10M46 66h10"/>
+      <path d="M66 78c0-13 9-15 7-26 8 6 12 13 12 20a13 13 0 0 1-26 0c0-5 3-9 7-12-2 7 0 11 0 18z"/>
+      <circle cx="100" cy="30" r="13"/><path d="M100 30l8-7M100 19v-4M111 30h4M89 30h-4M100 41v4"/>
+      <path d="M94 58h12v10H94zM100 47v11"/></svg>`},
+    norm:{cap:'DATA PIPELINES // BI',svg:`<svg viewBox="0 0 120 96">
+      <path d="M14 82h92"/><path d="M22 82V60h12v22M42 82V50h12v32M62 82V38h12v44M82 82V26h12v56"/>
+      <path d="M20 54 56 34l16 8 26-18"/><path d="M98 24l6-9-11 2"/>
+      <circle cx="20" cy="54" r="2.4"/><circle cx="56" cy="34" r="2.4"/><circle cx="72" cy="42" r="2.4"/></svg>`},
+    yatsan:{cap:'SHOP FLOOR // ERP',svg:`<svg viewBox="0 0 120 96">
+      <circle cx="36" cy="38" r="15"/><circle cx="36" cy="38" r="6"/>
+      <path d="M36 19v-7M36 64v-7M17 38h-7M62 38h-7M23 25l-5-5M54 56l-5-5M49 25l5-5M18 56l5-5"/>
+      <path d="M64 50h40v30H64z"/><path d="M64 50l40 30M104 50 64 80"/><path d="M64 60h40M84 50v30"/></svg>`},
+    uni:{cap:'SYSTEMS MIND // B.SC. IE',svg:`<svg viewBox="0 0 120 96">
+      <path d="M60 18 106 34 60 50 14 34z"/><path d="M38 42v16c0 7 44 7 44 0V42"/>
+      <path d="M106 34v18"/><circle cx="106" cy="56" r="2.6"/>
+      <path d="M46 76h28M42 84h36"/><circle cx="60" cy="34" r="2.2"/></svg>`},
+  };
+  const box=document.createElement('div');
+  box.id='hovobj';
+  box.innerHTML='<div class="hcard"><div class="hsvg"></div><div class="hcap"></div></div>';
+  document.body.appendChild(box);
+  const hsvg=box.querySelector('.hsvg'),hcap=box.querySelector('.hcap');
+  let hx=innerWidth/2,hy=innerHeight/2,tx=hx,ty=hy,on=false;
+  addEventListener('mousemove',e=>{tx=e.clientX+26;ty=e.clientY+20});
+  (function hloop(){
+    const px=hx;hx+=(tx-hx)*.16;hy+=(ty-hy)*.16;
+    const cx2=Math.min(hx,innerWidth-216),cy3=Math.min(hy,innerHeight-190);
+    const tilt=clamp((tx-px)*.5,-10,10);
+    box.style.transform=`translate(${cx2}px,${cy3}px) rotate(${on?tilt:0}deg)`;
+    requestAnimationFrame(hloop);
+  })();
+  document.addEventListener('mouseover',e=>{
+    const row=e.target.closest('[data-obj]');
+    if(row&&OBJ[row.dataset.obj]){
+      const o=OBJ[row.dataset.obj];
+      hsvg.innerHTML=o.svg;hcap.textContent=o.cap;
+      box.classList.add('show');on=true;
+    }else{box.classList.remove('show');on=false}
+  });
+})();
 
 /* ============ TARGETING CURSOR ============ */
 (function(){
