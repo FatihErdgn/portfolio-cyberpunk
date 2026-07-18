@@ -305,7 +305,12 @@ section{padding:96px 0}
 .term .out .ps{color:var(--green)}.term .out .err{color:var(--red)}.term .out .warn{color:var(--yellow)}.term .out .cy{color:var(--cyan)}
 .term .inrow{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--line);align-items:center;background:#04070C}
 .term .inrow .ps{color:var(--green);white-space:nowrap}
-.term input{flex:1;background:none;border:none;outline:none;color:var(--fg);font-family:inherit;font-size:13px;caret-color:var(--green)}
+.term input{flex:1;background:none;border:none;outline:none;color:var(--fg);font-family:inherit;font-size:13px;caret-color:transparent;position:relative}
+.term .inrow{position:relative}
+.term .tcursor{position:absolute;width:8px;height:15px;background:var(--green);box-shadow:0 0 8px var(--green);pointer-events:none;animation:tblink 1.05s steps(1) infinite;transition:opacity .1s}
+@keyframes tblink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+.term .inrow:focus-within{background:#05090F}
+.term .inrow:focus-within .ps{text-shadow:0 0 8px var(--green)}
 
 footer{padding:110px 22px 90px;text-align:center;position:relative;z-index:2}
 .bounty{display:inline-block;padding:34px 40px;text-align:center}
@@ -363,8 +368,20 @@ body.party{animation:hue 3s linear infinite}
 .xlayer::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
 .xread{position:absolute;left:10px;right:10px;bottom:8px;font-size:8.5px;line-height:1.6;color:var(--dim);letter-spacing:.1em;z-index:1}
 .xread b{color:var(--neon);font-weight:400}
-.xhint{position:absolute;top:8px;right:10px;z-index:4;font-size:9px;letter-spacing:.18em;color:var(--dim);pointer-events:none}
-@media(hover:none),(pointer:coarse){.xlayer,.xhint{display:none}}
+.xhint{position:absolute;top:8px;right:10px;z-index:4;font-size:9px;letter-spacing:.18em;color:var(--neon);pointer-events:none;
+  border:1px solid color-mix(in srgb,var(--neon) 45%,transparent);padding:3px 7px;background:rgba(7,10,18,.7);
+  animation:xhintpulse 2s ease-in-out infinite}
+@keyframes xhintpulse{0%,100%{opacity:.5;box-shadow:0 0 0 0 color-mix(in srgb,var(--neon) 40%,transparent)}50%{opacity:1;box-shadow:0 0 12px 0 color-mix(in srgb,var(--neon) 45%,transparent)}}
+.scanprompt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .35s var(--ease)}
+.scanprompt .ring{width:64px;height:64px;border:1.5px dashed var(--neon);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;animation:scanspin 8s linear infinite}
+.scanprompt .ring::before{content:"◎";font-size:22px;color:var(--neon);text-shadow:0 0 10px var(--neon);animation:scanpulse 1.8s ease-in-out infinite}
+.scanprompt .lbl{font-size:9.5px;letter-spacing:.2em;color:var(--neon);text-shadow:0 0 8px var(--neon);white-space:nowrap}
+@keyframes scanspin{to{transform:rotate(360deg)}}
+@keyframes scanpulse{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.1);opacity:1}}
+.bodybox:hover .scanprompt,.bodyview:hover .scanprompt{opacity:0}
+@media(hover:none),(pointer:coarse){.xlayer,.xhint,.scanprompt{display:none}}
 
 /* ===== TARGETING RETICLE CURSOR ===== */
 #cursor{
@@ -668,7 +685,7 @@ body.party{animation:hue 3s linear infinite}
   <div class="term hud-frame">
     <div class="chrome"><i></i><span>runner@night.city: ~ (zsh) — ICE: none detected</span></div>
     <div class="out" id="tout"></div>
-    <div class="inrow"><span class="ps">runner@night.city:~$</span><input id="tin" autocomplete="off" spellcheck="false" aria-label="terminal input" placeholder="type 'help' or 'neofetch'"></div>
+    <div class="inrow"><span class="ps">runner@night.city:~$</span><input id="tin" autocomplete="off" spellcheck="false" aria-label="terminal input" placeholder="type 'help' or 'neofetch'"><span class="tcursor" id="tcur"></span></div>
   </div>
 </section>
 
@@ -1686,6 +1703,31 @@ document.querySelectorAll('.commit').forEach((el,i)=>{el.style.transitionDelay=(
 
 /* ============ TERMINAL ============ */
 const tout=$('#tout'),tin=$('#tin');
+/* blinking block cursor that tracks the caret position */
+(function(){
+  const cur=$('#tcur');if(!cur)return;
+  const meas=document.createElement('span');
+  const cs=getComputedStyle(tin);
+  Object.assign(meas.style,{position:'absolute',visibility:'hidden',whiteSpace:'pre',
+    font:cs.font,letterSpacing:cs.letterSpacing});
+  document.body.appendChild(meas);
+  const ps=tin.previousElementSibling;
+  function place(){
+    const txt=tin.value||'';
+    meas.textContent=txt;
+    const base=ps.getBoundingClientRect();
+    const row=tin.parentElement.getBoundingClientRect();
+    const gap=parseFloat(getComputedStyle(tin.parentElement).gap)||10;
+    cur.style.left=(base.right-row.left+gap+meas.offsetWidth+1)+'px';
+    cur.style.top=(tin.getBoundingClientRect().top-row.top+ (tin.offsetHeight-15)/2)+'px';
+  }
+  tin.addEventListener('input',place);
+  tin.addEventListener('focus',()=>{cur.style.display='block';place()});
+  tin.addEventListener('blur',()=>{cur.style.display='none'});
+  addEventListener('resize',place);
+  cur.style.display='none';
+  requestAnimationFrame(place);
+})();
 function tprint(html){const d=document.createElement('div');d.innerHTML=html;tout.appendChild(d);tout.scrollTop=tout.scrollHeight}
 tprint(`Connection stable. Welcome to the İzmir grid, choom. Type <span class="ps">help</span> or flex with <span class="cy">neofetch</span>.`);
 const NEOFETCH=
@@ -1853,6 +1895,9 @@ let bodyAPI=null;
     box.dataset.fb=1;
     const l=document.createElement('div');l.className='xlayer';l.innerHTML=BODYX;box.appendChild(l);
     const h2=document.createElement('div');h2.className='xhint';h2.textContent='◎ SCAN';box.appendChild(h2);
+    const p2=document.createElement('div');p2.className='scanprompt';
+    p2.innerHTML='<div class="ring"></div><div class="lbl">MOVE CURSOR TO SCAN</div>';
+    box.appendChild(p2);
     box.addEventListener('mousemove',e=>{const b=box.getBoundingClientRect();
       l.style.setProperty('--xx',(e.clientX-b.left)+'px');
       l.style.setProperty('--xy',(e.clientY-b.top)+'px');
@@ -1882,6 +1927,9 @@ let bodyAPI=null;
   xl.appendChild(rd);
   view.appendChild(xl);
   const hint=document.createElement('div');hint.className='xhint';hint.textContent='◎ SCAN';box.appendChild(hint);
+  const prompt=document.createElement('div');prompt.className='scanprompt';
+  prompt.innerHTML='<div class="ring"></div><div class="lbl">MOVE CURSOR TO SCAN</div>';
+  view.appendChild(prompt);
   function lights(sc,inner){
     sc.add(new THREE.AmbientLight(0x25355a,inner?1.0:0.85));
     const k=new THREE.PointLight(0xEAF2FF,inner?1.0:1.5,22);k.position.set(2.4,3.1,3.4);sc.add(k);
@@ -2001,12 +2049,13 @@ let bodyAPI=null;
     requestAnimationFrame(cl);
   })();
   document.addEventListener('mouseover',e=>{
-    const t=e.target.closest('a,button,summary,input,label,[data-fopen],[data-fclose],[data-fnext],#palette .item,.cmdk');
+    const t=e.target.closest('a,button,summary,input,label,[data-fopen],[data-fclose],[data-fnext],#palette .item,.cmdk,.bodyview,.bodybox');
     cur.classList.toggle('hov',!!t);
     if(t){
       lab.textContent=t.matches('input')?'▸ TYPE'
         :t.matches('a[href^="mailto:"]')?'▸ UPLINK'
         :t.matches('[data-fopen],[data-fclose],[data-fnext]')?'▸ DECRYPT'
+        :t.matches('.bodyview,.bodybox')?'▸ SCAN'
         :'▸ EXEC';
     }
   });
