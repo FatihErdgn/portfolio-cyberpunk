@@ -1111,12 +1111,26 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
    byte-level progress and retried indefinitely on network failure; a 404 is a
    deploy bug rather than a slow pipe, so that one gives up and lets you in. */
 const ASSETS=['./car.glb','./body.glb','./xray.glb'];
-const assetBuf=Object.create(null);
+const assetBuf=Object.create(null),assetGLTF=Object.create(null);
 const assetProg=ASSETS.map(()=>({loaded:0,total:0,tries:0,dead:false}));
-let assetsLeft=ASSETS.length;
+/* two phases, because bytes on the wire aren't a usable mesh: the transfer is
+   most of the bar, decoding the glTF (textures included) is the last slice.
+   100% therefore means mountable, not merely downloaded. */
+const DL_SHARE=0.86;
+let dlLeft=ASSETS.length,parseLeft=ASSETS.length;
 const assetWaiters=[];
-function onAssets(fn){assetsLeft?assetWaiters.push(fn):fn()}
+const assetsLeft=()=>dlLeft+parseLeft;
+function onAssets(fn){assetsLeft()?assetWaiters.push(fn):fn()}
+function settleAssets(){if(!assetsLeft())assetWaiters.splice(0).forEach(f=>f())}
 function fmtMB(b){return (b/1048576).toFixed(1)}
+function parseAsset(url){
+  const buf=assetBuf[url];
+  const fin=()=>{parseLeft--;paintBoot();settleAssets()};
+  if(!buf||!window.THREE||!THREE.GLTFLoader){fin();return}
+  new THREE.GLTFLoader().parse(buf,'./',
+    g=>{assetGLTF[url]=g;delete assetBuf[url];fin()},
+    e=>{console.error('[assets] '+url+' is corrupt',e);fin()});
+}
 
 const blLoad=$('#bootload'),blLine=$('#blline'),blNote=$('#blnote');
 const SPIN=['|','/','-','\\'];
@@ -1128,7 +1142,9 @@ function paintBoot(){
     paintQ=false;tick++;
     let ld=0,tt=0;
     assetProg.forEach(p=>{ld+=p.loaded;tt+=p.total||0});
-    const f=tt?Math.min(1,ld/tt):0,pct=Math.floor(f*100);
+    const dlF=tt?Math.min(1,ld/tt):0;
+    const psF=(ASSETS.length-parseLeft)/ASSETS.length;
+    const f=Math.min(1,dlF*DL_SHARE+psF*(1-DL_SHARE)),pct=Math.floor(f*100);
     const now=performance.now();
     if(!rT){rT=now;rL=ld}
     else if(now-rT>450){rate=Math.max(0,(ld-rL)/(now-rT)*1000);rT=now;rL=ld}
@@ -1139,20 +1155,25 @@ function paintBoot(){
       +'<span class="em">'+'·'.repeat(n-fill)+'</span>';
     const retry=assetProg.filter(p=>p.tries&&!p.dead).length;
     const dead=assetProg.filter(p=>p.dead).length;
-    const head=assetsLeft?'<span class="spin">'+SPIN[tick%4]+'</span> ':'<span class="ok">✓</span> ';
-    const tail=assetsLeft
+    const left=assetsLeft();
+    const head=left?'<span class="spin">'+SPIN[tick%4]+'</span> ':'<span class="ok">✓</span> ';
+    const tail=!left
+      ? '  <span class="sz">'+fmtMB(tt)+'M</span>  <span class="ok">done in '+clock((now-t0)/1000)+'</span>'
+      : dlLeft
       ? '  <span class="sz">'+fmtMB(ld)+'M</span>/<span class="sz">'+(tt?fmtMB(tt)+'M':'?')+'</span>'
         +'  <span class="rt">'+(rate?Math.round(rate/1024):0)+'K/s</span>'
         +'  <span class="et">eta '+(rate&&tt?clock((tt-ld)/rate):'--:--')+'</span>'
         +(retry?'  <span class="er">retry×'+retry+'</span>':'')
-      : '  <span class="sz">'+fmtMB(tt)+'M</span>  <span class="ok">done in '+clock((now-t0)/1000)+'</span>';
+      /* bytes are in; the bar holds while the glTF actually decodes into meshes */
+      : '  <span class="sz">'+fmtMB(tt)+'M</span>  <span class="rt">decoding geometry</span>'
+        +'  <span class="et">'+(ASSETS.length-parseLeft)+'/'+ASSETS.length+' units</span>';
     blLine.innerHTML=head+'<span class="br">[</span>'+bar+'<span class="br">]</span> '
       +'<span class="pc">'+String(pct).padStart(3,' ')+'%</span>'+tail;
     blNote.innerHTML=dead?'<span class="er">warn: '+dead+' unit(s) unreachable — entering degraded</span>'
-      :assetsLeft?'':'<span class="ok">payload verified — geometry live</span>';
+      :left?'':'<span class="ok">payload verified — geometry live</span>';
   });
 }
-if(!reduced)setInterval(()=>{if(assetsLeft)paintBoot()},110);   /* keep the spinner turning on a stalled pipe */
+if(!reduced)setInterval(()=>{if(assetsLeft())paintBoot()},110);   /* keep the spinner turning on a stalled pipe */
 async function pullAsset(url,i){
   const p=assetProg[i];
   for(;;){
@@ -1185,13 +1206,15 @@ async function pullAsset(url,i){
       await new Promise(r=>setTimeout(r,Math.min(700*Math.pow(1.6,p.tries-1),9000)));
     }
   }
-  assetsLeft--;paintBoot();
-  if(!assetsLeft)assetWaiters.splice(0).forEach(f=>f());
+  if(p.dead){p.total=p.loaded=Math.max(p.total,1);parseLeft--}   /* never arriving: stop weighting it */
+  dlLeft--;paintBoot();
+  if(!p.dead)parseAsset(url);
+  settleAssets();
 }
 if(location.protocol==='file:'){
   /* file:// blocks the fetch outright — don't trap the visitor behind a bar that can't move */
   console.warn('[assets] file:// cannot stream the models. Serve over http (python3 -m http.server).');
-  assetProg.forEach(p=>p.dead=true);assetsLeft=0;
+  assetProg.forEach(p=>{p.dead=true;p.total=p.loaded=1});dlLeft=parseLeft=0;
 }else ASSETS.forEach(pullAsset);
 paintBoot();
 blLoad.classList.add('on');   /* meter is the first thing on screen */
@@ -1787,16 +1810,14 @@ function city(t){
 }
 requestAnimationFrame(city);
 
-/* ============ GLB LOADER — parses what the boot preloader already streamed ============ */
-/* Nothing is fetched here: the bytes are in assetBuf by the time the grid opens,
-   so this only decodes them (and frees the buffer once the scene owns the mesh). */
+/* ============ GLB LOADER — hands over what the boot preloader already decoded ============ */
+/* Nothing is fetched or parsed here. The boot bar doesn't reach 100% until every
+   glTF is decoded, so by the time the grid opens these are just handed out. */
 function loadGLB(url,onLoad,label){
   onAssets(()=>{
-    const buf=assetBuf[url];
-    if(!buf){console.error('['+label+'] '+url+' never arrived — nothing to mount.');return}
-    new THREE.GLTFLoader().parse(buf,'./',
-      g=>{delete assetBuf[url];try{onLoad(g)}catch(e){console.error('['+label+'] mount failed',e)}},
-      e=>console.error('['+label+'] '+url+' is corrupt',e));
+    const g=assetGLTF[url];
+    if(!g){console.error('['+label+'] '+url+' never arrived — nothing to mount.');return}
+    try{onLoad(g)}catch(e){console.error('['+label+'] mount failed',e)}
   });
 }
 
