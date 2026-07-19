@@ -238,6 +238,32 @@ section{padding:96px 0}
 .dspine{position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--line)}
 .dspine i{position:absolute;top:0;left:0;right:0;height:100%;background:var(--neon);box-shadow:0 0 10px var(--neon);transform-origin:top;transform:scaleY(0)}
 .dstamp{position:absolute;top:70px;right:0;border:2px solid var(--red);color:var(--red);font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:13px;letter-spacing:.26em;padding:7px 16px;transform:rotate(7deg);opacity:.65;pointer-events:none}
+/* --- rubber-stamp impact: slams in oversized + blurred, overshoots, settles with an ink bleed --- */
+@keyframes stampslam{
+  0%{opacity:0;transform:rotate(-19deg) scale(3.1);filter:blur(5px)}
+  42%{opacity:.95;filter:blur(0)}
+  55%{opacity:.92;transform:rotate(9.5deg) scale(.9);filter:blur(0)}
+  66%{transform:rotate(5.4deg) scale(1.09)}
+  78%{transform:rotate(8.2deg) scale(.97)}
+  89%{transform:rotate(6.6deg) scale(1.02)}
+  100%{opacity:.65;transform:rotate(7deg) scale(1)}}
+/* red ink flare that blooms on contact and fades out */
+@keyframes stampink{
+  0%,40%{box-shadow:none;background:transparent}
+  56%{box-shadow:0 0 34px 6px color-mix(in srgb,var(--red) 55%,transparent);background:color-mix(in srgb,var(--red) 26%,transparent)}
+  100%{box-shadow:0 0 0 0 transparent;background:transparent}}
+/* in the pinned deck the stamp stays off the page until the decrypt lands (static fallback keeps it static) */
+body:not(.deck-static) .fstage .dossier .dstamp{opacity:0}
+.dstamp.stamped{animation:stampslam .62s cubic-bezier(.2,.9,.3,1) forwards,stampink .62s ease-out forwards}
+/* full-file overlay carries the same stamp, landing once the panel has settled */
+.fstamp{position:absolute;top:88px;right:clamp(18px,4vw,60px);z-index:4;
+  border:2.5px solid var(--red);color:var(--red);font-family:'Chakra Petch',sans-serif;font-weight:700;
+  font-size:clamp(14px,2vw,20px);letter-spacing:.26em;padding:9px 20px;pointer-events:none;
+  transform:rotate(7deg);opacity:0}
+.fview.show .fstamp{animation:stampslam .62s cubic-bezier(.2,.9,.3,1) .78s forwards,stampink .62s ease-out .78s forwards}
+@media(prefers-reduced-motion:reduce){
+  .dstamp.stamped,.fview.show .fstamp{animation:none;opacity:.65;transform:rotate(7deg)}}
+@media(max-width:640px){.fstamp{top:62px;font-size:12px;padding:6px 13px}}
 .dhead{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--dim);margin-bottom:26px}
 .dhead span{border:1px solid var(--line);padding:4px 12px;background:rgba(10,13,22,.7)}
 .dhead b{color:var(--neon);font-weight:400}
@@ -1866,7 +1892,9 @@ function drawIce(p,t,neon){
     const nxtTitle=nxt.querySelector('.dtitle').dataset.text||'NEXT';
     const ov=document.createElement('div');
     ov.className='fview';ov.id='fview-'+i;
+    const stampTxt=(d.querySelector('.dstamp')||{}).textContent||'TOP SECRET';
     ov.innerHTML=`<button class="fclose" data-fclose>ESC / CLOSE FILE ✕</button>
+      <div class="fstamp">${stampTxt}</div>
       <div class="fview-in">
         <div class="fk">FILE ${String(i+1).padStart(2,'0')}/${String(ds.length).padStart(2,'0')} — FULL DECRYPT · CLEARANCE GRANTED · REDACTIONS LIFTED</div>
         <h2 class="fh">${title}</h2>
@@ -2363,7 +2391,11 @@ function loop(t){
       if(!reduced){
         const dp=clamp(rp*1.7,0,1);
         d.fx.forEach((f2,k)=>f2.style.setProperty('--dp',clamp(dp-k*.05,0,1).toFixed(3)));
-        if(d.stamp)d.stamp.style.setProperty('--dp',clamp(rp*2.2-.35,0,1).toFixed(3));
+        /* the stamp doesn't track scroll — it waits for the decrypt to land, then hits once */
+        if(d.stamp){
+          if(rp>=0.78)d.stamp.classList.add('stamped');
+          else if(rp<0.45)d.stamp.classList.remove('stamped');
+        }
       }
       // folder chip appears once this file has been read and STAYS shelved — the left rail is a
       // menu, not a scroll readout, so jumping back to file 02 must not un-shelve 03..N
