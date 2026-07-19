@@ -2897,7 +2897,7 @@ let bodyAPI=null;
     setNeon(hex){rimA.color.set(hex);rimB.color.set(hex);ring.material.color.set(hex);A._dirty=1}
     ,
     frame(t){
-      if(!vis||document.hidden||failed||loaded<2)return;
+      if(!vis||document.hidden||loaded<2)return;
       if(A._dirty){A.r.render(A.sc,A.cam);A._dirty=0}
       if(lensOpen)B.r.render(B.sc,B.cam);
     }
