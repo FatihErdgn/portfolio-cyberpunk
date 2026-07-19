@@ -68,8 +68,9 @@ body.crt::after{content:"";position:fixed;inset:0;z-index:9995;pointer-events:no
 @keyframes bflash{0%{filter:invert(1)}100%{filter:none}}
 /* --- payload meter: a plain wget-style bar, because this is a terminal --- */
 /* pre lives on the rows, not the wrapper — otherwise the markup's own newlines print */
-#bootload{margin-top:16px;opacity:0;transition:opacity .4s}
+#bootload{opacity:0;transition:opacity .4s}
 #bootload.on{opacity:1}
+#bootlines:not(:empty){margin-top:18px}
 #blcmd,#blline,#blnote{white-space:pre}
 #blnote{color:var(--dim)}
 #blnote:empty{display:none}
@@ -793,12 +794,13 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <canvas id="city"></canvas>
 
-<div id="boot"><div id="bootlines"></div>
+<div id="boot">
   <div id="bootload">
     <div id="blcmd"><span class="p">deck@izmir-grid</span>:~$ fetch --payload grid-core.pak</div>
     <div id="blline"></div>
     <div id="blnote"></div>
   </div>
+  <div id="bootlines"></div>
   <button class="skip" id="skipBoot">skip [esc]</button></div>
 <div id="keyhint" aria-label="Keyboard controls">
   <div class="kh-title">KEYBOARD LINK // ACTIVE</div>
@@ -1192,8 +1194,7 @@ if(location.protocol==='file:'){
   assetProg.forEach(p=>p.dead=true);assetsLeft=0;
 }else ASSETS.forEach(pullAsset);
 paintBoot();
-/* meter is up from the first frame — on a thin pipe the download is the wait, not the log */
-if(assetsLeft)blLoad.classList.add('on');
+blLoad.classList.add('on');   /* meter is the first thing on screen */
 
 const bootLines=[
  ['<span class="p">deck@izmir-grid</span>:~$ jack-in --target fatih.exe',34],
@@ -1207,11 +1208,7 @@ const bootLines=[
 const bl=$('#bootlines'),boot=$('#boot');
 let bi=0;
 function typeLine(){
-  if(bi>=bootLines.length){
-    /* the log is done; now the grid waits on the geometry */
-    onAssets(()=>{boot.classList.add('flash');setTimeout(endBoot,520)});
-    return;
-  }
+  if(bi>=bootLines.length){boot.classList.add('flash');setTimeout(endBoot,420);return}
   const [html,speed]=bootLines[bi];
   const div=document.createElement('div');div.className='line';bl.appendChild(div);
   if(reduced){div.innerHTML=html;bi++;typeLine();return}
@@ -1225,7 +1222,8 @@ function typeLine(){
 function endBoot(){boot.classList.add('done');startHeroTyping()}
 $('#skipBoot').addEventListener('click',endBoot);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!boot.classList.contains('done'))endBoot()});
-typeLine();
+/* the payload lands first; only once the bar reads 100% does the deck start talking */
+onAssets(()=>setTimeout(typeLine,reduced?0:450));
 
 /* ============ HERO TYPED CODE ============ */
 const CODE=[
