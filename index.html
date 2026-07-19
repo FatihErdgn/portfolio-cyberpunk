@@ -66,6 +66,32 @@ body.crt::after{content:"";position:fixed;inset:0;z-index:9995;pointer-events:no
 #boot .skip:hover{color:var(--fg);border-color:var(--neon)}
 #boot.flash{animation:bflash .3s steps(2)}
 @keyframes bflash{0%{filter:invert(1)}100%{filter:none}}
+/* --- payload meter: the 3D units stream in before the grid opens --- */
+#bootload{margin-top:26px;max-width:580px;opacity:0;transform:translateY(6px);
+  transition:opacity .45s var(--ease),transform .45s var(--ease)}
+#bootload.on{opacity:1;transform:none}
+#bootload .blhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:9px}
+#bootload .blhead span{font-size:10.5px;letter-spacing:.22em;color:var(--dim)}
+#bootload .blhead b{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:26px;line-height:1;
+  color:var(--neon);text-shadow:0 0 16px color-mix(in srgb,var(--neon) 70%,transparent);letter-spacing:.02em}
+.blbar{position:relative;height:15px;overflow:hidden;background:rgba(4,7,13,.9);
+  border:1px solid color-mix(in srgb,var(--neon) 38%,var(--line));
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))}
+.blbar i{display:block;height:100%;width:0;transition:width .3s linear;
+  background:repeating-linear-gradient(90deg,var(--neon) 0 5px,transparent 5px 8px);
+  box-shadow:0 0 18px color-mix(in srgb,var(--neon) 60%,transparent)}
+.blbar::after{content:"";position:absolute;top:0;bottom:0;width:64px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--neon) 55%,transparent),transparent);
+  animation:blsheen 1.6s linear infinite}
+@keyframes blsheen{0%{transform:translateX(-70px)}100%{transform:translateX(600px)}}
+#blfiles{margin-top:11px;font-size:11px;line-height:1.85;color:var(--dim);white-space:pre}
+#blfiles u{text-decoration:none;color:var(--cyan);text-shadow:0 0 8px color-mix(in srgb,var(--cyan) 45%,transparent)}
+#blfiles b{color:var(--fg);font-weight:400}
+#blfiles i{font-style:normal;color:var(--yellow)}
+#bootload.ok .blhead b{color:var(--green);text-shadow:0 0 16px color-mix(in srgb,var(--green) 70%,transparent)}
+#bootload.ok .blbar i{background:repeating-linear-gradient(90deg,var(--green) 0 5px,transparent 5px 8px)}
+#bootload.ok .blbar::after{display:none}
+@media(max-width:640px){#bootload .blhead b{font-size:20px}#blfiles{font-size:9.5px}}
 
 #city{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;image-rendering:pixelated;image-rendering:crisp-edges}
 
@@ -774,7 +800,13 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <canvas id="city"></canvas>
 
-<div id="boot"><div id="bootlines"></div><button class="skip" id="skipBoot">skip [esc]</button></div>
+<div id="boot"><div id="bootlines"></div>
+  <div id="bootload">
+    <div class="blhead"><span id="blstate">PULLING PAYLOAD // 3 UNITS</span><b id="blpct">00%</b></div>
+    <div class="blbar"><i id="blfill"></i></div>
+    <div id="blfiles"></div>
+  </div>
+  <button class="skip" id="skipBoot">skip [esc]</button></div>
 <div id="keyhint" aria-label="Keyboard controls">
   <div class="kh-title">KEYBOARD LINK // ACTIVE</div>
 
@@ -1078,6 +1110,91 @@ const $=s=>document.querySelector(s);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 /* ============ BOOT ============ */
+/* ============ ASSET PRELOAD ============
+   The 3D units are the site, not a garnish — there is no lo-fi stand-in to fall
+   back to, so the boot screen holds the door until they land. Streamed with
+   byte-level progress and retried indefinitely on network failure; a 404 is a
+   deploy bug rather than a slow pipe, so that one gives up and lets you in. */
+const ASSETS=['./car.glb','./body.glb','./xray.glb'];
+const assetBuf=Object.create(null);
+const assetProg=ASSETS.map(()=>({loaded:0,total:0,tries:0,dead:false}));
+let assetsLeft=ASSETS.length;
+const assetWaiters=[];
+function onAssets(fn){assetsLeft?assetWaiters.push(fn):fn()}
+function fmtMB(b){return (b/1048576).toFixed(1)}
+
+const blLoad=$('#bootload'),blFill=$('#blfill'),blPct=$('#blpct'),blFiles=$('#blfiles'),blState=$('#blstate');
+let paintQ=false,rT=0,rL=0,rate=0;
+function paintBoot(){
+  if(paintQ)return;paintQ=true;
+  requestAnimationFrame(()=>{
+    paintQ=false;
+    let ld=0,tt=0;
+    assetProg.forEach(p=>{ld+=p.loaded;tt+=p.total||0});
+    const pct=tt?Math.min(100,Math.floor(ld/tt*100)):0;
+    blFill.style.width=pct+'%';
+    blPct.textContent=String(pct).padStart(2,'0')+'%';
+    const now=performance.now();
+    if(!rT){rT=now;rL=ld}
+    else if(now-rT>450){rate=Math.max(0,(ld-rL)/(now-rT)*1000);rT=now;rL=ld}
+    blState.textContent=assetsLeft
+      ? 'PULLING PAYLOAD // '+assetsLeft+' UNIT'+(assetsLeft>1?'S':'')+' LEFT'+(rate?'   ↓ '+Math.round(rate/1024)+' KB/s':'')
+      : 'PAYLOAD SECURED // GEOMETRY LIVE';
+    blFiles.innerHTML=ASSETS.map((u,i)=>{
+      const p=assetProg[i],f=p.total?Math.min(1,p.loaded/p.total):0,n=Math.round(f*14);
+      const nm=(u.replace('./','')+'          ').slice(0,10);
+      const tail=p.dead?'<i>UNREACHABLE</i>'
+        :p.tries?'<i>RETRY '+p.tries+'</i>'
+        :'<b>'+fmtMB(p.loaded)+' / '+(p.total?fmtMB(p.total):'?')+' MB</b>';
+      return nm+' <u>'+'█'.repeat(n)+'░'.repeat(14-n)+'</u>  '+tail;
+    }).join('\n');
+    if(!assetsLeft)blLoad.classList.add('ok');
+  });
+}
+async function pullAsset(url,i){
+  const p=assetProg[i];
+  for(;;){
+    try{
+      const res=await fetch(url);
+      if(!res.ok){
+        if(res.status>=400&&res.status<500&&++p.tries>2){p.dead=true;break}
+        throw new Error('HTTP '+res.status);
+      }
+      p.total=+res.headers.get('content-length')||0;
+      if(!res.body||!res.body.getReader){
+        const b=await res.arrayBuffer();assetBuf[url]=b;p.loaded=p.total=b.byteLength;break;
+      }
+      const rd=res.body.getReader(),chunks=[];let got=0;
+      for(;;){
+        const {done,value}=await rd.read();
+        if(done)break;
+        chunks.push(value);got+=value.length;p.loaded=got;
+        if(!p.total)p.total=Math.round(got*1.12);   /* no content-length: keep the bar creeping */
+        paintBoot();
+      }
+      const buf=new Uint8Array(got);let o=0;
+      for(const c of chunks){buf.set(c,o);o+=c.length}
+      assetBuf[url]=buf.buffer;p.loaded=p.total=got;p.tries=0;
+      break;
+    }catch(e){
+      p.tries++;p.loaded=0;
+      console.warn('[assets] '+url+' — attempt '+p.tries+' failed, retrying',e);
+      paintBoot();
+      await new Promise(r=>setTimeout(r,Math.min(700*Math.pow(1.6,p.tries-1),9000)));
+    }
+  }
+  assetsLeft--;paintBoot();
+  if(!assetsLeft)assetWaiters.splice(0).forEach(f=>f());
+}
+if(location.protocol==='file:'){
+  /* file:// blocks the fetch outright — don't trap the visitor behind a bar that can't move */
+  console.warn('[assets] file:// cannot stream the models. Serve over http (python3 -m http.server).');
+  assetProg.forEach(p=>p.dead=true);assetsLeft=0;
+}else ASSETS.forEach(pullAsset);
+paintBoot();
+/* meter is up from the first frame — on a thin pipe the download is the wait, not the log */
+if(assetsLeft)blLoad.classList.add('on');
+
 const bootLines=[
  ['<span class="p">deck@izmir-grid</span>:~$ jack-in --target fatih.exe',34],
  ['handshake .............. <span class="p">SYN/ACK</span>',8],
@@ -1090,7 +1207,11 @@ const bootLines=[
 const bl=$('#bootlines'),boot=$('#boot');
 let bi=0;
 function typeLine(){
-  if(bi>=bootLines.length){boot.classList.add('flash');setTimeout(endBoot,380);return}
+  if(bi>=bootLines.length){
+    /* the log is done; now the grid waits on the geometry */
+    onAssets(()=>{boot.classList.add('flash');setTimeout(endBoot,520)});
+    return;
+  }
   const [html,speed]=bootLines[bi];
   const div=document.createElement('div');div.className='line';bl.appendChild(div);
   if(reduced){div.innerHTML=html;bi++;typeLine();return}
@@ -1668,21 +1789,17 @@ function city(t){
 }
 requestAnimationFrame(city);
 
-/* ============ GLB LOADER — the 3D models are required, not optional ============ */
-/* There is no lo-fi substitute any more: if a fetch drops we retry with backoff
-   (cache-busted, since a half-cached 200 is the usual culprit) until it lands. */
+/* ============ GLB LOADER — parses what the boot preloader already streamed ============ */
+/* Nothing is fetched here: the bytes are in assetBuf by the time the grid opens,
+   so this only decodes them (and frees the buffer once the scene owns the mesh). */
 function loadGLB(url,onLoad,label){
-  const L=new THREE.GLTFLoader();
-  let n=0;
-  const go=()=>{
-    L.load(n?url+'?r='+n:url,onLoad,undefined,e=>{
-      n++;
-      console.warn('['+label+'] '+url+' failed (attempt '+n+')',e);
-      if(n<6)setTimeout(go,Math.min(400*Math.pow(2,n-1),8000));
-      else console.error('['+label+'] giving up on '+url+' — serve over http(s), not file://');
-    });
-  };
-  go();
+  onAssets(()=>{
+    const buf=assetBuf[url];
+    if(!buf){console.error('['+label+'] '+url+' never arrived — nothing to mount.');return}
+    new THREE.GLTFLoader().parse(buf,'./',
+      g=>{delete assetBuf[url];try{onLoad(g)}catch(e){console.error('['+label+'] mount failed',e)}},
+      e=>console.error('['+label+'] '+url+' is corrupt',e));
+  });
 }
 
 /* ============ GARAGE — WebGL car, hand-built ============ */
