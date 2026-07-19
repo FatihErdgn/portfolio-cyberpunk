@@ -1144,9 +1144,12 @@ const NEONS=['#FF2E88','#00F0FF','#F5D90A','#9D4EDD','#00FF9C'];
 const KANJI=['未来','電脳','夢','霓虹','麺','鬼','出口','龍'];
 const RR=(a,b)=>a+Math.random()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
 function buildCity(){
-  W=Math.ceil(innerWidth/PXS);H=Math.ceil(innerHeight/PXS);
+  const nW=Math.ceil(innerWidth/PXS),nH=Math.ceil(innerHeight/PXS);
   /* keep the road clear of the fixed bottom deck bar */
   deckOff=Math.ceil(($('#deck')?.offsetHeight||0)/PXS);
+  /* synthetic resizes (terminal dock toggle) must not reroll the skyline or wipe traffic */
+  if(nW===W&&nH===H&&layers.length)return;
+  W=nW;H=nH;
   [cv,...bakeC].forEach(c=>{c.width=W;c.height=H});
   [ctx,...bakeX].forEach(x=>{x.imageSmoothingEnabled=false});
   layers=[];
