@@ -1245,6 +1245,7 @@ function typeLine(){
 function endBoot(){boot.classList.add('done');startHeroTyping()}
 $('#skipBoot').addEventListener('click',endBoot);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!boot.classList.contains('done'))endBoot()});
+if(/skipboot/.test(location.search))setTimeout(()=>{if(!boot.classList.contains('done'))endBoot()},300);
 /* the payload lands first; only once the bar reads 100% does the deck start talking */
 onAssets(()=>setTimeout(typeLine,reduced?0:450));
 
@@ -1387,8 +1388,13 @@ function buildCity(){
 
 /* ============ INCIDENT — blast on a right-side tower, fire-escape evac, police spotlight ============ */
 /* Scripted one-shot that plays ~1s after the boot clears, then holds its final tableau:
-   the chopper parked off the roofline with its searchlight pinning the last runner. */
+   the last runner — full-borg — leaps off the roof onto the police chopper, sets it burning,
+   rides it down to the street, and the wreck keeps burning where it hit. */
 let inc=null,incT0=0;
+/* dev hook: ?skipboot skips the boot log, ?inct=8600 freezes the incident clock at that ms
+   (5900 beam lock / 6900 mid-leap / 8200 burning hover / 9900 ground blast / 12000 burning
+   wreck tableau) — inert without the params */
+const DBG_INCT=+((location.search.match(/inct=(\d+)/)||[])[1]||0);
 function pickIncident(){
   inc=null;incT0=0;
   if(reduced)return;
@@ -1411,15 +1417,72 @@ function pickIncident(){
     fy:Math.round(top+h*0.3),           // between mid-height and the roof
     top,base,
     hov:{x:x+w+Math.round(W*0.075),y:Math.round(top+h*0.12)},
-    debris:[],people:[],puffs:[],seeded:false
+    debris:[],cdebris:[],people:[],puffs:[],seeded:false
   };
-  /* three runners, none get away: two are stopped at the ladder foot, the last mid-descent */
-  for(let i=0;i<3;i++)inc.people.push({t0:520+i*430,spd:0.026+i*0.003,stop:i===2?0.62:1.25,shirt:['#FF2E88','#00F0FF','#F5D90A'][i]});
+  /* three out of the blast: two take the ladder and freeze high on the rungs when the
+     lights hit them — the third is chromed head to toe and takes the roof instead */
+  for(let i=0;i<2;i++)inc.people.push({t0:520+i*430,spd:0.014+i*0.002,stop:0.35+i*0.22,shirt:['#FF2E88','#00F0FF'][i]});
+}
+/* the borg sprite: a full-conversion heavy — skull plate, red optic strip, pauldrons out past
+   the ribs, hydraulic arms, cyan core. Twice the runners' bulk; feet baseline at py. */
+function drawCyb(px,py,pose,t){
+  const fr=((t/140)|0)%2;
+  if(pose==='run'){
+    ctx.fillStyle='#4A5870';ctx.fillRect(px+2,py-9,3,2);                          // skull plate, leaning in
+    ctx.fillStyle='#FF2E2E';ctx.fillRect(px+4,py-9,1,1);                          // optic
+    ctx.fillStyle='#39465E';ctx.fillRect(px,py-7,7,2);                            // pauldrons
+    ctx.fillStyle='rgba(160,205,255,.3)';ctx.fillRect(px,py-7,7,1);               // chrome rim
+    ctx.fillStyle='#2A3448';ctx.fillRect(px+1,py-5,5,2);                          // chest block
+    ctx.fillStyle='#00F0FF';ctx.fillRect(px+3,py-5,1,1);                          // core
+    ctx.fillStyle='#1C2434';
+    ctx.fillRect(px+(fr?0:2),py-3,2,3);ctx.fillRect(px+(fr?4:2),py-3,2,2);        // heavy stride
+  }else if(pose==='crouch'){
+    ctx.fillStyle='#39465E';ctx.fillRect(px-1,py-5,7,2);                          // shoulders hunched
+    ctx.fillStyle='rgba(160,205,255,.3)';ctx.fillRect(px-1,py-5,7,1);
+    ctx.fillStyle='#4A5870';ctx.fillRect(px+3,py-6,3,1);                          // head low, watching
+    ctx.fillStyle='#FF2E2E';ctx.fillRect(px+5,py-6,1,1);
+    ctx.fillStyle='#2A3448';ctx.fillRect(px,py-3,5,2);
+    ctx.fillStyle='#00F0FF';ctx.fillRect(px+2,py-3,1,1);
+    ctx.fillStyle='#1C2434';ctx.fillRect(px,py-1,2,1);ctx.fillRect(px+3,py-1,2,1);
+  }else if(pose==='stand'){
+    ctx.fillStyle='rgba(255,46,46,.22)';ctx.fillRect(px+2,py-11,4,3);             // optic bloom
+    ctx.fillStyle='#4A5870';ctx.fillRect(px+1,py-10,3,2);                         // skull plate
+    ctx.fillStyle='#FF2E2E';ctx.fillRect(px+2,py-10,2,1);                         // red optic strip
+    ctx.fillStyle='#39465E';ctx.fillRect(px-1,py-8,7,2);                          // pauldrons
+    ctx.fillStyle='rgba(160,205,255,.35)';ctx.fillRect(px-1,py-8,7,1);            // chrome rim light
+    ctx.fillStyle='#2A3448';ctx.fillRect(px,py-6,5,3);                            // chest block
+    ctx.fillStyle='#00F0FF';ctx.fillRect(px+2,py-5,1,1);                          // core
+    ctx.fillStyle='#39465E';ctx.fillRect(px-1,py-6,1,4);ctx.fillRect(px+5,py-6,1,4); // hydraulic arms
+    ctx.fillStyle=fr?'#FF3B3B':'#7B2828';ctx.fillRect(px+5,py-4,1,2);             // right arm runs hot
+    ctx.fillStyle='#1C2434';ctx.fillRect(px+1,py-3,3,1);                          // pelvis
+    ctx.fillRect(px+1,py-2,1,2);ctx.fillRect(px+3,py-2,1,2);                      // legs
+  }else if(pose==='leap'){
+    ctx.fillStyle='#4A5870';ctx.fillRect(px+2,py-9,3,2);                          // head driving forward
+    ctx.fillStyle='#FF2E2E';ctx.fillRect(px+4,py-9,1,1);
+    ctx.fillStyle='#39465E';ctx.fillRect(px,py-7,6,2);                            // shoulders
+    ctx.fillStyle='#2A3448';ctx.fillRect(px+1,py-5,4,2);                          // tucked frame
+    ctx.fillStyle='#00F0FF';ctx.fillRect(px+3,py-5,1,1);
+    ctx.fillStyle='#1C2434';ctx.fillRect(px,py-3,2,2);ctx.fillRect(px+3,py-3,2,1); // knees tucked
+    ctx.fillStyle=fr?'#00F0FF':'#8FF8FF';
+    ctx.fillRect(px+1,py-1,1,2);ctx.fillRect(px+3,py-1,1,2);                      // jump jets
+  }else{                                                                          // ride: planted on the wreck
+    ctx.fillStyle='rgba(255,46,46,.22)';ctx.fillRect(px+2,py-10,4,3);
+    ctx.fillStyle='#4A5870';ctx.fillRect(px+1,py-9,3,2);
+    ctx.fillStyle='#FF2E2E';ctx.fillRect(px+2,py-9,2,1);
+    ctx.fillStyle='#39465E';ctx.fillRect(px-1,py-7,7,2);
+    ctx.fillStyle='rgba(160,205,255,.35)';ctx.fillRect(px-1,py-7,7,1);
+    ctx.fillStyle='#2A3448';ctx.fillRect(px,py-5,5,2);
+    ctx.fillStyle='#00F0FF';ctx.fillRect(px+2,py-5,1,1);
+    ctx.fillStyle=fr?'#FF3B3B':'#7B2828';ctx.fillRect(px+5,py-5,1,3);             // arm buried in the deck
+    ctx.fillStyle='#1C2434';ctx.fillRect(px-1,py-3,2,3);ctx.fillRect(px+4,py-3,2,3); // wide stance
+  }
 }
 function drawIncident(t){
   if(!inc)return;
-  if(!incT0){if(boot.classList.contains('done'))incT0=t+2000;return}
-  const e=t-incT0;if(e<0)return;
+  if(DBG_INCT)incT0=incT0||t;
+  else if(!incT0){if(boot.classList.contains('done'))incT0=t+2000;return}
+  let e=t-incT0;if(e<0)return;
+  if(DBG_INCT)e=DBG_INCT;
   /* same parallax offsets the front layer gets, so the scene sticks to its tower */
   const par=Math.round(mxr*15);
   const yoff=-Math.min(Math.round(scrollY/PXS*0.02*1.35),Math.round(H*0.05));
@@ -1456,6 +1519,9 @@ function drawIncident(t){
   }
   inc.debris=inc.debris.filter(d=>d.y<base+10&&d.x>0&&d.x<W);
   inc.debris.forEach(d=>{d.vy+=0.05;d.x+=d.vx;d.y+=d.vy;ctx.fillStyle=d.col;ctx.fillRect(Math.round(d.x),Math.round(d.y),1,1)});
+  /* crash shrapnel lives at street level, so it gets its own floor */
+  inc.cdebris=inc.cdebris.filter(d=>d.y<H-15&&d.x>0&&d.x<W);
+  inc.cdebris.forEach(d=>{d.vy+=0.05;d.x+=d.vx;d.y+=d.vy;ctx.fillStyle=d.col;ctx.fillRect(Math.round(d.x),Math.round(d.y),1,1)});
   /* smoldering fire, facade glow, smoke */
   const fs=e<900?e/900:(e>9000?Math.max(.55,1-(e-9000)/12000):1);
   /* cast light: wide soft halo that flickers like firelight (flame zone itself unchanged) */
@@ -1488,11 +1554,11 @@ function drawIncident(t){
     cars.push({dir:-1,x:W+38,y:H-32-deckOff+6,w:17,h:5,v:-2.7,col:'#FF3B3B',pol:1,tx:inc.fx-14,polTgt:1});
   }
   /* once parked, each unit swings its roof light onto the tower:
-     one pins the runners at the ladder foot, the other rakes up to the blaze */
+     one pins the runners frozen up on the ladder, the other rakes up to the blaze */
   cars.forEach(c=>{
     if(!c.pol||c.v!==0)return;
     const sx2=Math.round(c.x),sy2=c.y-4;
-    const tx2=c.polTgt===1?fx:lx-7,ty2=c.polTgt===1?fy+6:base-3;
+    const tx2=c.polTgt===1?fx:lx+1,ty2=c.polTgt===1?fy+6:fy+Math.round((base-fy)*0.45);
     const ang=Math.atan2(ty2-sy2,tx2-sx2),sp=.07,dd=Math.hypot(tx2-sx2,ty2-sy2);
     const bg3=ctx.createLinearGradient(sx2,sy2,tx2,ty2);
     bg3.addColorStop(0,'rgba(235,245,255,.25)');bg3.addColorStop(1,'rgba(235,245,255,.03)');
@@ -1503,23 +1569,16 @@ function drawIncident(t){
     ctx.closePath();ctx.fill();
     ctx.fillStyle='rgba(240,250,255,.14)';ctx.fillRect(Math.round(tx2)-3,Math.round(ty2)-3,7,6);
   });
-  /* runners on the ladder: nobody gets away — two freeze at the ladder foot, one mid-descent */
+  /* runners on the ladder: both freeze high on the rungs when the lights swing up — nobody
+     even reaches the street */
   const ladLen=base-4-fy;
   let caught=null;
   inc.people.forEach((p,i)=>{
     const pt=e-p.t0;if(pt<0)return;
     const dist=pt*p.spd,stopAt=p.stop*ladLen;
     let px=lx,py,run=0,pinned=false;
-    if(p.stop<1){
-      if(dist>=stopAt){pinned=true;py=fy+stopAt}else py=fy+dist;
-    }else if(dist<ladLen){py=fy+dist}
-    else{
-      const cap=4+i*5;                        // a few steps from the ladder, then hands up
-      run=Math.min((dist-ladLen)*1.6,cap);
-      px=lx-run;py=base-1;pinned=run>=cap;
-    }
+    if(dist>=stopAt){pinned=true;py=fy+stopAt}else py=fy+dist;
     px=Math.round(px);py=Math.round(py);
-    if(p.stop<1&&pinned)caught={x:px,y:py};   // the chopper beam stays on the mid-ladder one
     const fr=((t/150)|0)%2;
     ctx.fillStyle=pinned?'#F4FAFF':'#E4D2B8';ctx.fillRect(px,py-5,2,1);   // head
     ctx.fillStyle=p.shirt;ctx.fillRect(px,py-4,2,2);                      // shirt
@@ -1529,17 +1588,44 @@ function drawIncident(t){
     else{ctx.fillStyle=p.shirt;ctx.fillRect(px+(fr?-1:2),py-4,1,1);                          // arm on rail
       ctx.fillStyle='#8FA6C8';ctx.fillRect(px+(fr?0:1),py-1,1,1)}                            // stepping leg
   });
-  /* police chopper: slides in from the right, then holds and pins the runner in its beam */
+  /* the borg: out of the blast and across the roof to the right edge — no ladder for this one */
+  const JT=6500,JD=700,hit=e>JT+JD;
+  const rbx=Math.round(inc.bd.x+inc.bd.w-8-par),rby=Math.round(inc.top+yoff);
+  if(e>1100&&e<=JT){
+    const walk=Math.min(1,(e-1100)/1400);     // it lumbers, it doesn't jog
+    const cbx=Math.round(inc.bd.x+1+(inc.bd.w-9)*walk-par);
+    caught={x:cbx+2,y:rby};                  // the chopper beam pins the roof, not the ladder
+    drawCyb(cbx,rby,walk<1?'run':e>5700?'stand':'crouch',t);
+  }
+  /* police chopper: slides in, pins the borg on the roof — who answers by jumping it */
   if(e>2300){
+    const gy=H-30-deckOff;                    // street level under the hover point
     const k=Math.min(1,(e-2300)/3200),ek=1-Math.pow(1-k,3);
     const hx=inc.hov.x-par,hy=inc.hov.y+yoff;
     const cx=Math.round(W+14+(hx-(W+14))*ek);
-    const cy=Math.round(hy-10+10*ek+(k>=1?Math.sin(t*0.0031)*1.3:0));
-    const sx=cx-3,sy=cy+3,lock=k>=1&&caught;
+    const FT=JT+JD+1500;                      // it burns aloft for a beat, then the sky lets go
+    const dropFull=Math.max(10,gy-2-(hy+2)),impT=FT+Math.sqrt(dropFull/0.00019);
+    const crashed=e>=impT,sinceImp=e-impT;
+    let cy;
+    if(e<=FT){
+      cy=Math.round(hy-10+10*ek+(k>=1?Math.sin(t*0.0031)*1.3:0));
+      if(hit)cy+=Math.round(Math.min(5,(e-JT-JD)/800)+Math.sin(t*0.013)*1.6);     // sagging, shaking
+    }else{
+      const tf=e-FT,drop=Math.min(dropFull,0.00019*tf*tf);                        // dead-weight drop
+      cy=Math.round(hy+2+drop+(crashed?0:Math.sin(t*0.02)*1.2));
+    }
+    /* mid-leap position, computed early so the beam tracks the jumper through the arc */
+    let jx=null,jy=null;
+    if(e>JT&&!hit){
+      const u=Math.min(1,(e-JT)/JD);
+      jx=rbx+(cx-2-rbx)*u;jy=rby+(cy+1-rby)*u-Math.sin(u*Math.PI)*11;
+      caught={x:Math.round(jx)+2,y:Math.round(jy)};
+    }
+    const sx=cx-5,sy=cy+7,lock=k>=1&&caught;
     let tx,ty;
-    if(lock){tx=caught.x+1;ty=caught.y-3}
+    if(lock){tx=caught.x+1;ty=caught.y-5}
     else{tx=lx+2+Math.sin(t*0.0035)*7;ty=fy+((e*0.045)%Math.max(20,base-fy))}
-    if(e>3300){
+    if(e>3300&&!hit){                        // the searchlight dies with the avionics
       const ang=Math.atan2(ty-sy,tx-sx),sp=.10,dd=Math.hypot(tx-sx,ty-sy);
       const bg2=ctx.createLinearGradient(sx,sy,tx,ty);
       bg2.addColorStop(0,'rgba(230,244,255,'+(lock?'.34':'.20')+')');bg2.addColorStop(1,'rgba(230,244,255,.04)');
@@ -1549,25 +1635,138 @@ function drawIncident(t){
       ctx.lineTo(sx+Math.cos(ang+sp)*dd,sy+Math.sin(ang+sp)*dd);
       ctx.closePath();ctx.fill();
       ctx.fillStyle='rgba(240,250,255,'+(lock?'.30':'.16')+')';
-      ctx.fillRect(Math.round(tx)-3,Math.round(ty)-2,7,6);
-      if(lock){ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillRect(Math.round(tx)-1,Math.round(ty)-1,3,4)}
+      ctx.fillRect(Math.round(tx)-4,Math.round(ty)-3,9,9);
+      if(lock){ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillRect(Math.round(tx)-1,Math.round(ty)-2,3,6)}
     }
-    ctx.fillStyle='#0B1322';ctx.fillRect(cx-4,cy,9,3);                       // fuselage
-    ctx.fillStyle='rgba(140,200,255,.85)';ctx.fillRect(cx-4,cy,2,2);         // cockpit faces the tower
-    ctx.fillStyle='#0B1322';ctx.fillRect(cx+5,cy+1,5,1);ctx.fillRect(cx+9,cy-1,1,2); // tail boom + fin
-    if(((t/80)|0)%2){ctx.fillStyle='rgba(200,220,255,.5)';ctx.fillRect(cx+9,cy-2,1,4)} // tail rotor
+    if(!crashed){
+    /* burning: soft firelight BEHIND the airframe so the silhouette stays readable */
+    const hb=0.78+0.22*Math.sin(t*0.017);
+    if(hit){
+      ctx.fillStyle='rgba(255,70,20,'+(0.08*hb).toFixed(3)+')';ctx.fillRect(cx-14,cy-8,29,18);
+      ctx.fillStyle='rgba(255,110,40,'+(0.14*hb).toFixed(3)+')';ctx.fillRect(cx-8,cy-3,17,9);
+    }
+    /* airframe — car-length patrol bird: nose, cabin, boom, fin */
+    ctx.fillStyle='#0B1322';
+    ctx.fillRect(cx-8,cy,17,6);                                              // cabin
+    ctx.fillRect(cx-9,cy+1,1,4);                                             // nose
+    ctx.fillRect(cx+9,cy+2,8,2);                                             // tail boom
+    ctx.fillRect(cx+17,cy-2,1,5);                                            // fin
+    ctx.fillStyle='rgba(150,195,255,.18)';ctx.fillRect(cx-8,cy,17,1);        // hull rim light
+    ctx.fillStyle=hit?'rgba(140,200,255,.3)':'rgba(140,200,255,.85)';
+    ctx.fillRect(cx-8,cy+1,4,3);                                             // canopy faces the tower
+    if(!hit&&((t/80)|0)%2){ctx.fillStyle='rgba(200,220,255,.5)';ctx.fillRect(cx+18,cy-3,1,6)} // tail rotor
     ctx.fillStyle='rgba(160,190,225,.5)';
-    ctx.fillRect(cx-3,cy+4,7,1);ctx.fillRect(cx-2,cy+3,1,1);ctx.fillRect(cx+2,cy+3,1,1); // skids
-    const rw=[13,9,3][((t/60)|0)%3];
-    ctx.fillStyle='rgba(205,225,255,.6)';ctx.fillRect(cx-(rw>>1),cy-2,rw,1); // main rotor
-    ctx.fillStyle='#0B1322';ctx.fillRect(cx,cy-1,1,1);
-    const ph=((t/200)|0)%2,scol=ph?'#FF3B3B':'#3B82FF';                      // police strobes
-    const px2=ph?cx-5:cx+5;
-    ctx.fillStyle=scol+'22';ctx.fillRect(px2-4,cy-4,9,9);                    // wide bloom
-    ctx.fillStyle=scol+'55';ctx.fillRect(px2-2,cy-2,5,5);                    // hot halo
-    ctx.fillStyle='#FF3B3B';ctx.fillRect(cx-5,cy,1,1);                       // both lamps always lit
-    ctx.fillStyle='#3B82FF';ctx.fillRect(cx+5,cy,1,1);
-    ctx.fillStyle=scol;ctx.fillRect(px2,cy-1,1,2);                           // active lamp pops
+    ctx.fillRect(cx-7,cy+9,14,1);ctx.fillRect(cx-5,cy+6,1,3);ctx.fillRect(cx+4,cy+6,1,3); // skids
+    if(!hit){
+      const rw=[25,17,7][((t/60)|0)%3];
+      ctx.fillStyle='rgba(205,225,255,.6)';ctx.fillRect(cx-(rw>>1),cy-4,rw,1); // main rotor
+    }else if(((t/90)|0)%3===0){
+      ctx.fillStyle='rgba(205,225,255,.35)';ctx.fillRect(cx-4,cy-4,9,1);     // rotor stutters, mostly dead
+    }
+    ctx.fillStyle='#0B1322';ctx.fillRect(cx,cy-3,1,3);                       // rotor mast
+    if(!hit){
+      const ph=((t/200)|0)%2,scol=ph?'#FF3B3B':'#3B82FF';                    // police strobes
+      const px2=ph?cx-9:cx+16;
+      ctx.fillStyle=scol+'22';ctx.fillRect(px2-4,cy-4,9,9);                  // wide bloom
+      ctx.fillStyle=scol+'55';ctx.fillRect(px2-2,cy-2,5,5);                  // hot halo
+      ctx.fillStyle='#FF3B3B';ctx.fillRect(cx-9,cy,1,1);                     // both lamps always lit
+      ctx.fillStyle='#3B82FF';ctx.fillRect(cx+16,cy+1,1,1);
+      ctx.fillStyle=scol;ctx.fillRect(px2,cy-1,1,2);                         // active lamp pops
+      /* strobe wash: each flash catches the tower face and roof lip across the gap */
+      if(k>0.5){
+        const bx2=inc.bd.x-par;
+        ctx.fillStyle=scol+'12';
+        ctx.fillRect(bx2+Math.round(inc.bd.w*0.55),rby,Math.round(inc.bd.w*0.45),Math.round((base-rby)*0.4));
+        ctx.fillStyle=scol+'26';
+        ctx.fillRect(bx2+Math.round(inc.bd.w*0.4),rby,Math.round(inc.bd.w*0.6),2);
+      }
+    }else{
+      /* flame tongues ride the engine deck and boom root — the hull itself stays dark */
+      for(let k2=0;k2<8;k2++){
+        ctx.fillStyle=['#FFD166','#FF7B00','#FF3B3B','#FFF3C4'][(Math.random()*4)|0];
+        ctx.fillRect(cx+RI(-7,8),cy-RI(1,2),1,Math.random()<.3?2:1);
+      }
+      for(let k2=0;k2<3;k2++){
+        ctx.fillStyle=['#FF7B00','#FF3B3B'][(Math.random()*2)|0];
+        ctx.fillRect(cx+RI(9,13),cy+1,1,1);
+      }
+      if(t-(inc.hpuff||0)>150){inc.hpuff=t;
+        inc.puffs.push({x:cx+RR(-6,7),y:cy-4,dx:RR(-.03,.05),a:.30,r:1});
+      }
+      if(e<JT+JD+340){                                                       // landing sparks
+        const ia=1-(e-JT-JD)/340;
+        for(let k2=0;k2<10;k2++){
+          ctx.fillStyle='rgba(255,'+(Math.random()<.5?'240,190':'150,60')+','+(ia*RR(.4,.9)).toFixed(2)+')';
+          ctx.fillRect(cx+RI(-7,6),cy+RI(-5,1),1,1);
+        }
+      }
+    }
+    }else{
+      /* down. the street blast dwarfs the tower one — then the wreck just burns */
+      if(!inc.cSeeded){inc.cSeeded=true;
+        for(let k2=0;k2<30;k2++)inc.cdebris.push({x:cx+RI(-4,4),y:gy+3,vx:RR(-2.2,2.2),vy:RR(-3,-.6),col:Math.random()<.35?'#FFB25E':'#20283C'});
+      }
+      /* wreck first, fireball over it: gutted cabin, snapped boom, rotor gone */
+      ctx.fillStyle='#111B30';
+      ctx.fillRect(cx-8,gy+3,15,4);                                          // crushed cabin
+      ctx.fillRect(cx-9,gy+5,1,2);                                           // folded nose
+      ctx.fillRect(cx+7,gy+4,3,2);                                           // boom root
+      ctx.fillRect(cx+11,gy+5,6,2);                                          // snapped boom, flat on the street
+      ctx.fillRect(cx+16,gy+2,1,3);                                          // fin tipped over
+      ctx.fillRect(cx-14,gy+5,3,2);                                          // thrown hull chunk
+      ctx.fillStyle='rgba(150,195,255,.22)';ctx.fillRect(cx-8,gy+3,15,1);    // dented rim light
+      const hb2=0.75+0.25*Math.sin(t*0.019);
+      ctx.fillStyle='rgba(255,70,20,'+(0.09*hb2).toFixed(3)+')';ctx.fillRect(cx-17,gy-9,35,19);
+      ctx.fillStyle='rgba(255,110,40,'+(0.16*hb2).toFixed(3)+')';ctx.fillRect(cx-9,gy-2,19,10);
+      ctx.fillStyle='rgba(255,110,40,'+(0.10*hb2).toFixed(3)+')';ctx.fillRect(cx-20,gy+7,41,3); // firelight on the asphalt
+      for(let k2=0;k2<16;k2++){                                              // main blaze on the cabin
+        ctx.fillStyle=['#FFD166','#FF7B00','#FF3B3B','#FFF3C4'][(Math.random()*4)|0];
+        ctx.fillRect(cx+RI(-8,8),gy+RI(0,4),1,Math.random()<.45?2:1);
+      }
+      for(let k2=0;k2<4;k2++){                                               // the debris burns too
+        ctx.fillStyle=['#FF7B00','#FF3B3B','#FFD166'][(Math.random()*3)|0];
+        ctx.fillRect(cx+RI(11,17),gy+RI(3,5),1,1);
+        ctx.fillRect(cx+RI(-15,-11),gy+RI(3,5),1,1);
+      }
+      if(t-(inc.hpuff||0)>130){inc.hpuff=t;
+        inc.puffs.push({x:cx+RR(-6,10),y:gy,dx:RR(-.04,.04),a:.32,r:1});
+      }
+      if(sinceImp<1400){
+        const p2=sinceImp/1400,a2=1-p2;
+        if(sinceImp<320){const cr=6+Math.round((sinceImp/320)*34);
+          ctx.fillStyle='rgba(255,255,255,'+(0.95*(1-sinceImp/320)).toFixed(2)+')';ctx.fillRect(cx-cr,gy+4-cr,cr*2,cr*2)}
+        const r2=6+p2*72;
+        for(let k2=0;k2<48;k2++){
+          const an=RR(0,Math.PI*2),rd=Math.pow(Math.random(),0.55)*r2;
+          const qx=Math.round(cx+Math.cos(an)*rd),qy=Math.round(gy+4+Math.sin(an)*rd*0.6);
+          if(qy>gy+8)continue;                                               // the street flattens the ball
+          const sz=rd<r2*0.4?RI(2,6):RI(1,3);
+          const cc2=rd<r2*0.35?'255,240,190':rd<r2*0.7?'255,150,60':'255,70,30';
+          ctx.fillStyle='rgba('+cc2+','+(a2*RR(.35,.9)).toFixed(2)+')';
+          ctx.fillRect(qx,qy,sz,sz);
+        }
+        ctx.fillStyle='rgba(255,180,80,'+(a2*.7).toFixed(2)+')';
+        for(let k2=0;k2<22;k2++){
+          const an=(k2/22)*Math.PI*2+p2*1.6;
+          const qy=Math.round(gy+4+Math.sin(an)*r2*0.6);
+          if(qy<=gy+8)ctx.fillRect(Math.round(cx+Math.cos(an)*r2),qy,RI(1,3),1);
+        }
+        if(sinceImp<300){ctx.fillStyle='rgba(255,190,120,'+(0.20*(1-sinceImp/300)).toFixed(3)+')';ctx.fillRect(0,0,W,H)}
+      }
+    }
+    /* the leap: roof edge to engine deck in one chrome arc, jet trail behind */
+    if(jx!==null){
+      const u=Math.min(1,(e-JT)/JD);
+      for(let k2=1;k2<=3;k2++){
+        const ub=Math.max(0,u-k2*0.07);
+        const bxp=rbx+(cx-2-rbx)*ub,byp=rby+(cy+1-rby)*ub-Math.sin(ub*Math.PI)*11;
+        ctx.fillStyle='rgba(0,240,255,'+(0.4-k2*0.11).toFixed(2)+')';
+        ctx.fillRect(Math.round(bxp)+1,Math.round(byp)-5,1,3);
+      }
+      drawCyb(Math.round(jx),Math.round(jy),'leap',t);
+    }
+    if(hit&&!crashed)drawCyb(cx-2,cy+1,'ride',t);            // rides the burning bird all the way down
+    if(crashed&&sinceImp>500)drawCyb(cx-2,gy+4,'ride',t);    // walks out of the fireball onto the wreck
   }
 }
 function bakeCity(){
