@@ -444,8 +444,35 @@ body:not(.deck-static) .fstage .dossier[data-dense] .dfull{margin-top:12px;paddi
 .folder.in{opacity:1;transform:none;pointer-events:auto;cursor:pointer}
 .folder::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fc,var(--neon));box-shadow:0 0 10px var(--fc,var(--neon))}
 .folder:hover{box-shadow:0 0 24px color-mix(in srgb,var(--fc,var(--neon)) 30%,transparent);border-color:color-mix(in srgb,var(--fc,var(--neon)) 50%,var(--line))}
-.folder.sel{border-color:var(--fc,var(--neon));box-shadow:0 0 26px color-mix(in srgb,var(--fc,var(--neon)) 34%,transparent);background:color-mix(in srgb,var(--fc,var(--neon)) 8%,var(--panel2))}
-.folder.sel::after{content:"\25B8 ACTIVE";position:absolute;right:13px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fc,var(--neon))}
+.folder.sel{border-color:var(--fc,var(--neon));background:color-mix(in srgb,var(--fc,var(--neon)) 8%,var(--panel2))}
+.folder.sel::after{content:"\25B8 ACTIVE";position:absolute;right:13px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fc,var(--neon));
+  text-shadow:0 0 7px var(--fc,var(--neon));animation:facblink 1.9s steps(1) infinite}
+@keyframes facblink{0%,88%{opacity:1}90%,94%{opacity:.25}96%,100%{opacity:1}}
+/* active file reads like a powered-up node: breathing glow, CRT sweep, sub-pixel jitter */
+/* jitter waits out the .5s shelve-in transition so the chip still slides in from the left */
+.folder.in.sel{animation:foljit 3.1s steps(1) .5s infinite,folglow 2.4s ease-in-out infinite}
+@keyframes folglow{
+  0%,100%{box-shadow:0 0 22px color-mix(in srgb,var(--fc,var(--neon)) 30%,transparent),inset 0 0 18px color-mix(in srgb,var(--fc,var(--neon)) 7%,transparent)}
+  50%{box-shadow:0 0 40px color-mix(in srgb,var(--fc,var(--neon)) 52%,transparent),inset 0 0 22px color-mix(in srgb,var(--fc,var(--neon)) 13%,transparent)}}
+@keyframes foljit{
+  0%,84%{transform:translate(0,0)}
+  86%{transform:translate(.9px,-.5px)}88%{transform:translate(-.7px,.4px)}
+  90%{transform:translate(.5px,.6px)}92%{transform:translate(-.4px,-.3px)}
+  94%,100%{transform:translate(0,0)}}
+.folder.sel .fic svg{filter:drop-shadow(0 0 9px var(--fc,var(--neon)))}
+.folder.sel .fname{color:#fff;text-shadow:0 0 10px color-mix(in srgb,var(--fc,var(--neon)) 65%,transparent)}
+.folder.sel::before{animation:folbar 2.4s ease-in-out infinite}
+@keyframes folbar{0%,100%{box-shadow:0 0 10px var(--fc,var(--neon))}50%{box-shadow:0 0 20px var(--fc,var(--neon)),0 0 34px var(--fc,var(--neon))}}
+/* scanline sweep riding down the active chip */
+.folder .fsweep{position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--fc,var(--neon)) 26%,transparent) 48%,transparent 55%),
+    repeating-linear-gradient(180deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);
+  background-size:100% 220%,100% 3px;background-repeat:no-repeat,repeat}
+.folder.sel .fsweep{opacity:1;animation:folsweep 2.8s linear infinite}
+@keyframes folsweep{0%{background-position:0 -120%,0 0}100%{background-position:0 220%,0 0}}
+@media(prefers-reduced-motion:reduce){
+  .folder.in.sel,.folder.sel::before,.folder.sel::after,.folder.sel .fsweep{animation:none}
+  .folder.in.sel{box-shadow:0 0 26px color-mix(in srgb,var(--fc,var(--neon)) 34%,transparent)}}
 .folder .fic{flex:none;width:32px;height:25px;position:relative}
 .folder .fic svg{width:100%;height:100%;display:block;fill:none;stroke:var(--fc,var(--neon));stroke-width:1.4;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--fc,var(--neon)) 60%,transparent))}
 .folder .fmeta{min-width:0}
@@ -1893,7 +1920,8 @@ const folders=[];
     const f=document.createElement('div');
     f.className='folder';f.style.setProperty('--fc',acc);f.dataset.fgoto=i;
     f.innerHTML=`<div class="fic">${FOLDER_SVG}</div>
-      <div class="fmeta"><div class="fno">FILE ${fileNo}</div><div class="fname">${title}</div></div>`;
+      <div class="fmeta"><div class="fno">FILE ${fileNo}</div><div class="fname">${title}</div></div>
+      <div class="fsweep"></div>`;
     foldersBox.appendChild(f);
     folders.push(f);
     // inject a "SEE FULL DETAILS" button into each dossier (right pane) if not present
@@ -1945,7 +1973,7 @@ function scrollToDeckFile(index) {
     Decryption reaches 100% when the file's local
     progress reaches approximately 0.62.
   */
-  const targetTimeline = safeIndex + 0.62;
+  const targetTimeline = safeIndex + 0.68;
 
   const deckProgress = clamp(
     targetTimeline / Math.max(_deckN - 0.38, 1),
@@ -2281,6 +2309,7 @@ function loop(t){
     const t=prog*(N-0.38);
     const focus=clamp(Math.floor(t),0,N-1); // which file is currently open on the right
     const done = t>=N-1+0.3;            // last file being read -> wanted CTA appears
+    if(t<=0.001) folders.forEach(f=>{f._seen=0});  // fully rewound past the deck -> replay the shelving
     if(foldersBox) foldersBox.classList.toggle('has', t>0.15 || done);
     const _cta=gigCta||document.getElementById('gigcta');
     if(_cta) _cta.classList.toggle('show', done);
@@ -2336,9 +2365,11 @@ function loop(t){
         d.fx.forEach((f2,k)=>f2.style.setProperty('--dp',clamp(dp-k*.05,0,1).toFixed(3)));
         if(d.stamp)d.stamp.style.setProperty('--dp',clamp(rp*2.2-.35,0,1).toFixed(3));
       }
-      // folder chip appears once this file has been read and stays shelved on the left
+      // folder chip appears once this file has been read and STAYS shelved — the left rail is a
+      // menu, not a scroll readout, so jumping back to file 02 must not un-shelve 03..N
       if(f){
-        f.classList.toggle('in', seg>=0.62 || done);
+        if(seg>=0.62||done)f._seen=1;
+        f.classList.toggle('in', !!f._seen);
         f.classList.toggle('sel', i===focus);   // highlight the file currently open on the right
       }
     });
