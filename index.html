@@ -1139,12 +1139,14 @@ const cv=$('#city'),ctx=cv.getContext('2d');
 const mkc=()=>document.createElement('canvas');
 const bakeC=[mkc(),mkc(),mkc()],bakeX=bakeC.map(c=>c.getContext('2d'));
 const PXS=3;
-let W=0,H=0,layers=[],rain=[],streaks=[],beams=[],cars=[],lastCarL=0,lastCarR=0;
+let W=0,H=0,layers=[],rain=[],streaks=[],beams=[],cars=[],lastCarL=0,lastCarR=0,deckOff=0;
 const NEONS=['#FF2E88','#00F0FF','#F5D90A','#9D4EDD','#00FF9C'];
 const KANJI=['未来','電脳','夢','霓虹','麺','鬼','出口','龍'];
 const RR=(a,b)=>a+Math.random()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
 function buildCity(){
   W=Math.ceil(innerWidth/PXS);H=Math.ceil(innerHeight/PXS);
+  /* keep the road clear of the fixed bottom deck bar */
+  deckOff=Math.ceil(($('#deck')?.offsetHeight||0)/PXS);
   [cv,...bakeC].forEach(c=>{c.width=W;c.height=H});
   [ctx,...bakeX].forEach(x=>{x.imageSmoothingEnabled=false});
   layers=[];
@@ -1168,10 +1170,10 @@ function buildCity(){
       for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
         if(Math.random()<(shadowed?.04:.30))win.push({c,r:rr,t:Math.random()*9000,col:Math.random()<.12?NEONS[(Math.random()*NEONS.length)|0]:null,dim:shadowed});
       b.push({x,w,h,base,vt,win,shadowed,tall:h>H*.34,shade:shades[L],L,
-        neon:(!shadowed&&Math.random()<(L===2?.34:.14))?{col:NEONS[(Math.random()*NEONS.length)|0],vert:Math.random()<.5,off:Math.random()*7000,len:RI(6,18)}:null,
-        board:(L===2&&!shadowed&&Math.random()<.18&&w>=18)?{y:RI(6,Math.max(7,Math.round(h*.5))),w:Math.min(w-4,RI(10,18)),h:RI(7,12),c1:NEONS[(Math.random()*NEONS.length)|0],c2:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*9000}:null,
-        kanji:(L>=1&&!shadowed&&Math.random()<.16&&h>H*.26)?{word:KANJI[(Math.random()*KANJI.length)|0],col:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*8000}:null,
-        strip:(!shadowed&&Math.random()<.14)?{col:NEONS[(Math.random()*NEONS.length)|0]}:null,
+        neon:(!shadowed&&Math.random()<(L===2?.42:.19))?{col:NEONS[(Math.random()*NEONS.length)|0],vert:Math.random()<.5,off:Math.random()*7000,len:RI(6,18)}:null,
+        board:(L===2&&!shadowed&&Math.random()<.26&&w>=18)?{y:RI(6,Math.max(7,Math.round(h*.5))),w:Math.min(w-4,RI(10,18)),h:RI(7,12),c1:NEONS[(Math.random()*NEONS.length)|0],c2:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*9000}:null,
+        kanji:(L>=1&&!shadowed&&Math.random()<.23&&h>H*.26)?{word:KANJI[(Math.random()*KANJI.length)|0],col:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*8000}:null,
+        strip:(!shadowed&&Math.random()<.19)?{col:NEONS[(Math.random()*NEONS.length)|0]}:null,
         esc:(L===2&&!shadowed&&Math.random()<.3),
         duct:(L===2&&Math.random()<.4)?RI(1,3):0});
       x+=w+RI(1,7);
@@ -1358,8 +1360,8 @@ function city(t){
     lights.push({x:sx.x,w:14,col:sx.col});
   });
   /* ---- street level: road with two-way traffic ---- */
-  const roadTop=H-32;
-  ctx.fillStyle='#070A12';ctx.fillRect(0,roadTop,W,32);
+  const roadTop=H-32-deckOff,roadBot=roadTop+32;
+  ctx.fillStyle='#070A12';ctx.fillRect(0,roadTop,W,H-roadTop);
   ctx.fillStyle='rgba(130,170,255,.16)';ctx.fillRect(0,roadTop,W,1);
   ctx.fillStyle='#0B101E';ctx.fillRect(0,roadTop+1,W,3);
   ctx.fillStyle='rgba(200,215,240,.13)';
@@ -1371,12 +1373,12 @@ function city(t){
   cars=cars.filter(c=>c.x>-44&&c.x<W+44);
   cars.forEach(c=>{c.x+=c.v;lights.push({x:c.x,w:c.w,col:c.col})});
   lights.forEach(l=>{
-    const rg=ctx.createLinearGradient(0,roadTop+4,0,H);
+    const rg=ctx.createLinearGradient(0,roadTop+4,0,roadBot);
     rg.addColorStop(0,l.col+'32');rg.addColorStop(1,l.col+'00');
     ctx.fillStyle=rg;ctx.fillRect(Math.round(l.x-l.w*.6),roadTop+4,Math.round(l.w*1.2),28);
   });
   ctx.fillStyle='rgba(0,0,0,.3)';
-  for(let ry=roadTop+6;ry<H;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
+  for(let ry=roadTop+6;ry<roadBot;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
   /* traffic sprites — far lane behind, near lane in front */
   cars.slice().sort((a2,b2)=>a2.y-b2.y).forEach(c=>{
     const fx=Math.round(c.x),d=c.dir,hw=Math.round(c.w/2);
