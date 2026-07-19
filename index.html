@@ -66,32 +66,25 @@ body.crt::after{content:"";position:fixed;inset:0;z-index:9995;pointer-events:no
 #boot .skip:hover{color:var(--fg);border-color:var(--neon)}
 #boot.flash{animation:bflash .3s steps(2)}
 @keyframes bflash{0%{filter:invert(1)}100%{filter:none}}
-/* --- payload meter: the 3D units stream in before the grid opens --- */
-#bootload{margin-top:26px;max-width:580px;opacity:0;transform:translateY(6px);
-  transition:opacity .45s var(--ease),transform .45s var(--ease)}
-#bootload.on{opacity:1;transform:none}
-#bootload .blhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:9px}
-#bootload .blhead span{font-size:10.5px;letter-spacing:.22em;color:var(--dim)}
-#bootload .blhead b{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:26px;line-height:1;
-  color:var(--neon);text-shadow:0 0 16px color-mix(in srgb,var(--neon) 70%,transparent);letter-spacing:.02em}
-.blbar{position:relative;height:15px;overflow:hidden;background:rgba(4,7,13,.9);
-  border:1px solid color-mix(in srgb,var(--neon) 38%,var(--line));
-  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))}
-.blbar i{display:block;height:100%;width:0;transition:width .3s linear;
-  background:repeating-linear-gradient(90deg,var(--neon) 0 5px,transparent 5px 8px);
-  box-shadow:0 0 18px color-mix(in srgb,var(--neon) 60%,transparent)}
-.blbar::after{content:"";position:absolute;top:0;bottom:0;width:64px;pointer-events:none;
-  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--neon) 55%,transparent),transparent);
-  animation:blsheen 1.6s linear infinite}
-@keyframes blsheen{0%{transform:translateX(-70px)}100%{transform:translateX(600px)}}
-#blfiles{margin-top:11px;font-size:11px;line-height:1.85;color:var(--dim);white-space:pre}
-#blfiles u{text-decoration:none;color:var(--cyan);text-shadow:0 0 8px color-mix(in srgb,var(--cyan) 45%,transparent)}
-#blfiles b{color:var(--fg);font-weight:400}
-#blfiles i{font-style:normal;color:var(--yellow)}
-#bootload.ok .blhead b{color:var(--green);text-shadow:0 0 16px color-mix(in srgb,var(--green) 70%,transparent)}
-#bootload.ok .blbar i{background:repeating-linear-gradient(90deg,var(--green) 0 5px,transparent 5px 8px)}
-#bootload.ok .blbar::after{display:none}
-@media(max-width:640px){#bootload .blhead b{font-size:20px}#blfiles{font-size:9.5px}}
+/* --- payload meter: a plain wget-style bar, because this is a terminal --- */
+/* pre lives on the rows, not the wrapper — otherwise the markup's own newlines print */
+#bootload{margin-top:16px;opacity:0;transition:opacity .4s}
+#bootload.on{opacity:1}
+#blcmd,#blline,#blnote{white-space:pre}
+#blnote{color:var(--dim)}
+#blnote:empty{display:none}
+#bootload .eq{color:var(--green);text-shadow:0 0 7px color-mix(in srgb,var(--green) 50%,transparent)}
+#bootload .hd{color:var(--yellow);text-shadow:0 0 8px color-mix(in srgb,var(--yellow) 60%,transparent)}
+#bootload .em{color:#1E2740}
+#bootload .br{color:var(--dim)}
+#bootload .pc{color:var(--neon);text-shadow:0 0 9px color-mix(in srgb,var(--neon) 55%,transparent)}
+#bootload .sz{color:var(--fg)}
+#bootload .rt{color:var(--cyan)}
+#bootload .et{color:var(--dim)}
+#bootload .er{color:var(--red)}
+#bootload .spin{color:var(--pink)}
+#bootload .ok{color:var(--green)}
+@media(max-width:700px){#bootload{font-size:11px}}
 
 #city{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;image-rendering:pixelated;image-rendering:crisp-edges}
 
@@ -802,9 +795,9 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <div id="boot"><div id="bootlines"></div>
   <div id="bootload">
-    <div class="blhead"><span id="blstate">PULLING PAYLOAD // 3 UNITS</span><b id="blpct">00%</b></div>
-    <div class="blbar"><i id="blfill"></i></div>
-    <div id="blfiles"></div>
+    <div id="blcmd"><span class="p">deck@izmir-grid</span>:~$ fetch --payload grid-core.pak</div>
+    <div id="blline"></div>
+    <div id="blnote"></div>
   </div>
   <button class="skip" id="skipBoot">skip [esc]</button></div>
 <div id="keyhint" aria-label="Keyboard controls">
@@ -1123,34 +1116,41 @@ const assetWaiters=[];
 function onAssets(fn){assetsLeft?assetWaiters.push(fn):fn()}
 function fmtMB(b){return (b/1048576).toFixed(1)}
 
-const blLoad=$('#bootload'),blFill=$('#blfill'),blPct=$('#blpct'),blFiles=$('#blfiles'),blState=$('#blstate');
-let paintQ=false,rT=0,rL=0,rate=0;
+const blLoad=$('#bootload'),blLine=$('#blline'),blNote=$('#blnote');
+const SPIN=['|','/','-','\\'];
+let paintQ=false,rT=0,rL=0,rate=0,tick=0,t0=performance.now();
+function clock(s){const m=Math.floor(s/60),x=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0')}
 function paintBoot(){
   if(paintQ)return;paintQ=true;
   requestAnimationFrame(()=>{
-    paintQ=false;
+    paintQ=false;tick++;
     let ld=0,tt=0;
     assetProg.forEach(p=>{ld+=p.loaded;tt+=p.total||0});
-    const pct=tt?Math.min(100,Math.floor(ld/tt*100)):0;
-    blFill.style.width=pct+'%';
-    blPct.textContent=String(pct).padStart(2,'0')+'%';
+    const f=tt?Math.min(1,ld/tt):0,pct=Math.floor(f*100);
     const now=performance.now();
     if(!rT){rT=now;rL=ld}
     else if(now-rT>450){rate=Math.max(0,(ld-rL)/(now-rT)*1000);rT=now;rL=ld}
-    blState.textContent=assetsLeft
-      ? 'PULLING PAYLOAD // '+assetsLeft+' UNIT'+(assetsLeft>1?'S':'')+' LEFT'+(rate?'   ↓ '+Math.round(rate/1024)+' KB/s':'')
-      : 'PAYLOAD SECURED // GEOMETRY LIVE';
-    blFiles.innerHTML=ASSETS.map((u,i)=>{
-      const p=assetProg[i],f=p.total?Math.min(1,p.loaded/p.total):0,n=Math.round(f*14);
-      const nm=(u.replace('./','')+'          ').slice(0,10);
-      const tail=p.dead?'<i>UNREACHABLE</i>'
-        :p.tries?'<i>RETRY '+p.tries+'</i>'
-        :'<b>'+fmtMB(p.loaded)+' / '+(p.total?fmtMB(p.total):'?')+' MB</b>';
-      return nm+' <u>'+'█'.repeat(n)+'░'.repeat(14-n)+'</u>  '+tail;
-    }).join('\n');
-    if(!assetsLeft)blLoad.classList.add('ok');
+    /* wget-style: filled run, an arrow head, then the empty track */
+    const n=innerWidth<700?22:40,fill=Math.round(f*n);
+    const bar='<span class="eq">'+'='.repeat(Math.max(0,fill-1))+'</span>'
+      +(fill>0&&fill<n?'<span class="hd">&gt;</span>':fill>=n?'<span class="eq">=</span>':'')
+      +'<span class="em">'+'·'.repeat(n-fill)+'</span>';
+    const retry=assetProg.filter(p=>p.tries&&!p.dead).length;
+    const dead=assetProg.filter(p=>p.dead).length;
+    const head=assetsLeft?'<span class="spin">'+SPIN[tick%4]+'</span> ':'<span class="ok">✓</span> ';
+    const tail=assetsLeft
+      ? '  <span class="sz">'+fmtMB(ld)+'M</span>/<span class="sz">'+(tt?fmtMB(tt)+'M':'?')+'</span>'
+        +'  <span class="rt">'+(rate?Math.round(rate/1024):0)+'K/s</span>'
+        +'  <span class="et">eta '+(rate&&tt?clock((tt-ld)/rate):'--:--')+'</span>'
+        +(retry?'  <span class="er">retry×'+retry+'</span>':'')
+      : '  <span class="sz">'+fmtMB(tt)+'M</span>  <span class="ok">done in '+clock((now-t0)/1000)+'</span>';
+    blLine.innerHTML=head+'<span class="br">[</span>'+bar+'<span class="br">]</span> '
+      +'<span class="pc">'+String(pct).padStart(3,' ')+'%</span>'+tail;
+    blNote.innerHTML=dead?'<span class="er">warn: '+dead+' unit(s) unreachable — entering degraded</span>'
+      :assetsLeft?'':'<span class="ok">payload verified — geometry live</span>';
   });
 }
+if(!reduced)setInterval(()=>{if(assetsLeft)paintBoot()},110);   /* keep the spinner turning on a stalled pipe */
 async function pullAsset(url,i){
   const p=assetProg[i];
   for(;;){
