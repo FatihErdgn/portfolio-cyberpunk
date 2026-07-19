@@ -1928,7 +1928,7 @@ function city(t){
       }
     });
   });
-  drawIncident(t);
+
   if(t-lastStreak>2600+Math.random()*2600){
     lastStreak=t;
     const dir=Math.random()<.5?1:-1;
@@ -1969,6 +1969,7 @@ function city(t){
   });
   ctx.fillStyle='rgba(0,0,0,.3)';
   for(let ry=roadTop+6;ry<roadBot;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
+  drawIncident(t);
   /* traffic sprites — far lane behind, near lane in front */
   cars.slice().sort((a2,b2)=>a2.y-b2.y).forEach(c=>{
     const fx=Math.round(c.x),d=c.dir,hw=Math.round(c.w/2);
