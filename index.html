@@ -1383,6 +1383,7 @@ function buildCity(){
   streaks=[];cars=[];lastCarL=lastCarR=0;
   beams=[{x:W*.22,base:-.5,sp:.00023,amp:.42},{x:W*.7,base:-.62,sp:.00017,amp:.5}];
   pickIncident();
+  pickHack();
   bakeCity();
 }
 
@@ -1779,6 +1780,251 @@ function drawIncident(t){
     if(crashed&&sinceImp>500)drawCyb(cx-3,gy+1,'ride',t);    // stands out of the fireball, up on the carcass
   }
 }
+
+/* ============ SIGNAL-JACK — pirate broadcast on a left-side tower, drone sweep, zipline exit ============ */
+/* The incident's mirror in position and its opposite in temperament: no fire, no police. A netrunner
+   jacks the tower's ad board into a pirate skull loop, corp security drones sweep the roof, the
+   runner rides a zipline out clean — and the drones never do get the board fixed. Holds a broken
+   tableau: skull loop glitching, cable dangling off the jack, one drone stuck on patrol. */
+let hk=null,hkT0=0;
+/* dev hook: ?hkt=NNN freezes the hack clock at that ms (1400 mid-intrusion / 3000 skull loop /
+   7000 drones on station / 9000 beam lock / 10200 on the wire / 12100 failed reset zap /
+   17000 broken tableau) — inert without the param */
+const DBG_HKT=+((location.search.match(/hkt=(\d+)/)||[])[1]||0);
+function pickHack(){
+  hk=null;hkT0=0;
+  if(reduced)return;
+  const front=layers[2];if(!front)return;
+  /* dedicated dark tower hugging the LEFT edge — same guarantee trick as the incident, mirrored */
+  const w=RI(18,24),x=Math.round(W*0.055),base=Math.round(H*0.8),h=Math.round(H*RR(0.40,0.46));
+  const win=[];
+  const cols=Math.max(1,Math.floor((w-2)/4)),rows=Math.max(1,Math.floor((h-6)/5));
+  for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
+    if(Math.random()<.05)win.push({c,r:rr,t:Math.random()*9000,col:null,dim:true});
+  const bd={x,w,h,base,vt:'block',win,shadowed:true,tall:false,shade:'#0D1322',L:2,
+    neon:null,board:null,kanji:null,strip:null,esc:false,duct:RI(1,2)};
+  front.push(bd);
+  const top=base-h;
+  hk={bd,top,base,
+    bx:x+3,by:top+6,bw:w-6,bh:11};      // the ad board hangs just under the parapet, drawn live so it can be stolen
+}
+/* the skull minus its punches — 7 wide, 6 tall; caller sets fillStyle, ghosts skip the punches */
+function drawSkullShape(sx,sy){
+  ctx.fillRect(sx+1,sy,5,1);                                   // crown
+  ctx.fillRect(sx,sy+1,7,2);                                   // cranium
+  ctx.fillRect(sx+1,sy+3,5,1);                                 // cheeks
+  ctx.fillRect(sx+2,sy+4,3,1);                                 // jaw
+  ctx.fillRect(sx+2,sy+5,1,1);ctx.fillRect(sx+4,sy+5,1,1);     // fangs
+}
+function drawDrone(dx,dy,t){
+  const rw=[7,5,3][((t/70)|0)%3];
+  ctx.fillStyle='rgba(215,235,255,.75)';ctx.fillRect(dx+2-(rw>>1),dy-2,rw,1);  // rotor
+  ctx.fillStyle='#1A2438';ctx.fillRect(dx,dy,5,2);ctx.fillRect(dx+2,dy-1,1,1); // hull + mast
+  ctx.fillStyle='rgba(160,205,255,.5)';ctx.fillRect(dx,dy,5,1);                // rim light
+  if(((t/300)|0)%2){ctx.fillStyle='rgba(255,59,59,.25)';ctx.fillRect(dx+1,dy+1,3,3)}
+  ctx.fillStyle='#FF3B3B';ctx.fillRect(dx+2,dy+2,1,1);                         // belly sensor
+}
+/* red scan cone — same species as the searchlights, run through a corp palette */
+function droneBeam(sx,sy,tx,ty,al){
+  const ang=Math.atan2(ty-sy,tx-sx),sp=.07,dd=Math.hypot(tx-sx,ty-sy);
+  const bg=ctx.createLinearGradient(sx,sy,tx,ty);
+  bg.addColorStop(0,'rgba(255,70,70,'+al.toFixed(2)+')');bg.addColorStop(1,'rgba(255,70,70,.02)');
+  ctx.fillStyle=bg;
+  ctx.beginPath();ctx.moveTo(sx,sy);
+  ctx.lineTo(sx+Math.cos(ang-sp)*dd,sy+Math.sin(ang-sp)*dd);
+  ctx.lineTo(sx+Math.cos(ang+sp)*dd,sy+Math.sin(ang+sp)*dd);
+  ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,90,90,'+(al*0.8).toFixed(2)+')';ctx.fillRect(Math.round(tx)-2,Math.round(ty)-2,5,4);
+}
+function drawHack(t){
+  if(!hk)return;
+  if(DBG_HKT)hkT0=hkT0||t;
+  else if(!hkT0){if(boot.classList.contains('done'))hkT0=t+9500;return}   // the incident gets the first act
+  let e=t-hkT0;
+  if(DBG_HKT)e=DBG_HKT;
+  /* same parallax offsets the front layer gets, so the scene sticks to its tower */
+  const par=Math.round(mxr*15);
+  const yoff=-Math.min(Math.round(scrollY/PXS*0.02*1.35),Math.round(H*0.05));
+  const bx=hk.bx-par,by=hk.by+yoff,bw=hk.bw,bh=hk.bh;
+  const top=hk.top+yoff,ex=hk.bd.x+1-par;            // ex: the roof's left corner, where the wire hangs
+  const jx=bx+2,rx=jx;                               // jack seat on the board's shoulder; the runner squats right above it
+  /* beats */
+  const TK=1500,DA=5200,LK=8800,YK=9300,ZP=9800,GN=10700,Z1=12000,Z2=14800,BYE=16400;
+  const zt=e>=Z2?e-Z2:e>=Z1?e-Z1:-1;                 // ms since the latest reset zap, -1 before any
+  /* ---- the board: an honest ad, then the loop, then whatever the drones leave of it ---- */
+  ctx.fillStyle='#05070D';ctx.fillRect(bx-1,by-1,bw+2,bh+2);
+  let mode=e<0?'ad':e<TK?'break':'pirate';
+  if(zt>=300&&zt<900)mode='ad';                      // each zap buys the ad back for half a second
+  if(mode!=='pirate'){
+    const mixw=Math.round(bw*(0.5+0.4*Math.sin(t*0.0012)));
+    if(mode==='ad')for(let r=3;r>=1;r--){ctx.fillStyle='#F5D90A10';ctx.fillRect(bx-r,by-r,bw+r*2,bh+r*2)}
+    ctx.fillStyle='#F5D90A';ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle='#00FF9C';ctx.fillRect(bx,by,mixw,bh);
+    ctx.fillStyle='rgba(0,0,0,.4)';
+    for(let sl=0;sl<bh;sl+=2)ctx.fillRect(bx,by+sl,bw,1);
+    if(mode==='break'){                              // the intrusion chews through: rolling tears, static
+      const p=Math.min(1,e/TK);
+      for(let k=0;k<1+Math.round(p*3);k++){
+        const ty2=by+RI(0,bh-2),off2=RI(-2,2);
+        ctx.fillStyle='#120318';ctx.fillRect(bx,ty2,bw,2);
+        ctx.fillStyle='rgba(255,46,136,.7)';ctx.fillRect(bx+off2,ty2,bw,1);
+        ctx.fillStyle='rgba(0,240,255,.6)';ctx.fillRect(bx-off2,ty2+1,bw,1);
+      }
+      for(let k=0;k<Math.round(p*14);k++){
+        ctx.fillStyle=Math.random()<.5?'rgba(255,46,136,.5)':'rgba(234,246,255,.4)';
+        ctx.fillRect(bx+RI(0,bw-1),by+RI(0,bh-1),1,1);
+      }
+      if(e>TK-140){ctx.fillStyle='rgba(255,255,255,.85)';ctx.fillRect(bx,by,bw,bh)}  // the cut
+    }
+  }else{
+    /* pirate loop: chromatic skull, rolling tear, static — broadcasting to the whole street */
+    ctx.fillStyle='#120318';ctx.fillRect(bx,by,bw,bh);
+    for(let r=3;r>=1;r--){ctx.fillStyle='#FF2E8812';ctx.fillRect(bx-r,by-r,bw+r*2,bh+r*2)}
+    const cxs=bx+((bw-7)>>1),cys=by+2+(((t/900)|0)%2?1:0);       // the loop breathes, badly
+    ctx.fillStyle='rgba(255,46,136,.4)';drawSkullShape(cxs-1,cys);
+    ctx.fillStyle='rgba(0,240,255,.4)';drawSkullShape(cxs+1,cys);
+    ctx.fillStyle='#EAF6FF';drawSkullShape(cxs,cys);
+    ctx.fillStyle='#120318';                                     // punches land over the ghosts too
+    ctx.fillRect(cxs+1,cys+2,2,1);ctx.fillRect(cxs+4,cys+2,2,1); // eye sockets
+    ctx.fillRect(cxs+3,cys+3,1,1);                               // nose
+    const gy2=by+Math.round((t*0.018)%bh);                       // rolling tear
+    ctx.fillStyle='#120318';ctx.fillRect(bx,gy2,bw,1);
+    ctx.fillStyle='rgba(0,240,255,.55)';ctx.fillRect(bx+1,gy2,bw-1,1);
+    ctx.fillStyle='rgba(255,46,136,.55)';ctx.fillRect(bx-1,Math.min(by+bh-1,gy2+1),bw,1);
+    for(let k=0;k<6;k++){
+      ctx.fillStyle=Math.random()<.5?'rgba(234,246,255,.30)':'rgba(255,46,136,.35)';
+      ctx.fillRect(bx+RI(0,bw-1),by+RI(0,bh-1),1,1);
+    }
+    if(zt>=900&&zt<1300)for(let k=0;k<22;k++){                   // retaken after the zap, out of spite
+      ctx.fillStyle='rgba(234,246,255,.5)';ctx.fillRect(bx+RI(0,bw-1),by+RI(0,bh-1),1,1);
+    }
+    if(Math.random()<.03){ctx.fillStyle='rgba(4,3,10,.85)';ctx.fillRect(bx,by,bw,bh)}  // dropout
+    /* cast light: the loop washes its facade magenta the way the blaze washes its tower orange */
+    const gl=0.8+0.2*Math.sin(t*0.009);
+    ctx.fillStyle='rgba(255,46,136,'+(0.05*gl).toFixed(3)+')';ctx.fillRect(bx-8,by-6,bw+16,bh+14);
+  }
+  /* ---- the jack line: runner to board, alive with pulses until it's yanked ---- */
+  if(e<YK){
+    ctx.fillStyle='rgba(0,240,255,.35)';
+    for(let y=top;y<by;y+=2)ctx.fillRect(jx,y,1,1);
+    ctx.fillStyle='#8FF8FF';ctx.fillRect(jx,Math.round(top+(e*0.02)%Math.max(2,by-top)),1,1);  // data crawling down
+  }else{
+    /* yanked: the tail end stays jacked, dangles across the loop, spits the odd spark */
+    const sw=Math.sin(t*0.004);
+    ctx.fillStyle='rgba(0,240,255,.30)';
+    for(let k=0;k<5;k++)ctx.fillRect(jx+Math.round(sw*k*0.5),by+k,1,1);
+    if(Math.random()<.025){
+      ctx.fillStyle='#FFFFFF';ctx.fillRect(jx+Math.round(sw*2),by+4,1,1);
+      ctx.fillStyle='#8FF8FF';ctx.fillRect(jx+Math.round(sw*2)-1,by+5,1,1);
+    }
+  }
+  if(e>=YK&&e<YK+260){                               // the yank itself throws sparks up the parapet
+    const ia=1-(e-YK)/260;
+    for(let k=0;k<6;k++){
+      ctx.fillStyle='rgba(180,250,255,'+(ia*RR(.4,.9)).toFixed(2)+')';
+      ctx.fillRect(jx+RI(-2,2),RI(top,by),1,1);
+    }
+  }
+  /* ---- the runner: squats over the jack, gets pinned, bolts for the wire ---- */
+  let rpos=null;                                     // where the lock beam should pin
+  const fr=((t/150)|0)%2;
+  if(e<LK){                                          // squatting, deck open, mid-scroll
+    const px=Math.round(rx)-1,py=top;
+    ctx.fillStyle='rgba(0,240,255,.10)';ctx.fillRect(px-4,py-6,8,6);          // deck glow
+    ctx.fillStyle='#E4D2B8';ctx.fillRect(px,py-4,2,1);                        // head, bowed
+    ctx.fillStyle='#9D4EDD';ctx.fillRect(px,py-3,2,2);                        // jacket
+    ctx.fillStyle='#8FA6C8';ctx.fillRect(px-1,py-1,4,1);                      // folded legs
+    ctx.fillStyle='#0A0F1B';ctx.fillRect(px-3,py-1,2,1);                      // the deck
+    ctx.fillStyle=fr?'#00F0FF':'#8FF8FF';ctx.fillRect(px-3,py-2,2,1);         // screen, typing
+    rpos={x:px+1,y:py-2};
+  }else if(e<YK){                                    // pinned: bolt upright in the red, one beat of oh-no
+    const px=Math.round(rx)-1,py=top;
+    ctx.fillStyle='#E4D2B8';ctx.fillRect(px,py-6,2,1);
+    ctx.fillStyle='#9D4EDD';ctx.fillRect(px,py-5,2,3);
+    ctx.fillStyle='#8FA6C8';ctx.fillRect(px,py-2,1,2);ctx.fillRect(px+1,py-2,1,2);
+    rpos={x:px+1,y:py-3};
+  }else if(e<ZP){                                    // the sprint: jack to roof corner, deck left behind
+    const u=(e-YK)/(ZP-YK),px=Math.round(rx+(ex-rx)*u),py=top;
+    ctx.fillStyle='#0A0F1B';ctx.fillRect(Math.round(rx)-4,py-1,2,1);          // deck abandoned where it sat
+    ctx.fillStyle='#E4D2B8';ctx.fillRect(px,py-5,2,1);
+    ctx.fillStyle='#9D4EDD';ctx.fillRect(px,py-4,2,2);
+    ctx.fillStyle='#8FA6C8';ctx.fillRect(px+(fr?-1:0),py-2,1,2);ctx.fillRect(px+(fr?2:1),py-2,1,2);
+    rpos={x:px+1,y:py-2};
+  }else{                                             // the deck stays in the tableau; someone paid for that exit
+    ctx.fillStyle='#0A0F1B';ctx.fillRect(Math.round(rx)-4,top-1,2,1);
+  }
+  /* ---- the wire: whips out ahead of the sprint, fades once the runner's gone ---- */
+  const wx2=-20,wy2=top+16;
+  if(e>ZP-350&&e<GN+600){
+    const a=e>GN?(1-(e-GN)/600)*0.22:0.22;
+    ctx.fillStyle='rgba(150,225,255,'+a.toFixed(2)+')';
+    const steps=Math.max(2,Math.round((ex-wx2)/3));
+    for(let k=0;k<=steps;k++){
+      const u=k/steps;
+      ctx.fillRect(Math.round(ex+(wx2-ex)*u),Math.round(top-1+(wy2-top+1)*u),1,1);
+    }
+  }
+  if(e>=ZP&&e<GN){                                   // riding it out, cyan wake behind
+    const u=(e-ZP)/(GN-ZP),uu=u*u*0.85+u*0.15;
+    const px=Math.round(ex+(wx2-ex)*uu),py=Math.round(top-1+(wy2-top+1)*uu);
+    for(let k=1;k<=3;k++){
+      const ub=Math.max(0,uu-k*0.05);
+      ctx.fillStyle='rgba(0,240,255,'+(0.35-k*0.1).toFixed(2)+')';
+      ctx.fillRect(Math.round(ex+(wx2-ex)*ub),Math.round(top-1+(wy2-top+1)*ub)+1,1,1);
+    }
+    ctx.fillStyle='#E4D2B8';ctx.fillRect(px+1,py,1,1);                        // grip hand on the trolley
+    ctx.fillRect(px,py+1,2,1);                                                // head
+    ctx.fillStyle='#9D4EDD';ctx.fillRect(px,py+2,2,2);                        // tucked body
+    ctx.fillStyle='#8FA6C8';ctx.fillRect(px,py+4,2,1);                        // knees up
+    rpos={x:px+1,y:py+2};
+  }
+  /* ---- drone one: the fixer. hovers off the board, zaps it twice, gives up, files a ticket ---- */
+  if(e>DA){
+    const k=Math.min(1,(e-DA)/2400),ek=1-Math.pow(1-k,3);
+    const hx1=bx-12,hy1=by+2;
+    let d1x=Math.round(-14+(hx1+14)*ek),d1y=Math.round(top-28+(hy1-top+28)*ek+(k>=1?Math.sin(t*0.004)*1.2:0));
+    let show1=true;
+    if(e>BYE){
+      const u=Math.min(1,(e-BYE)/1700),uu=u*u;
+      d1x-=Math.round(uu*(d1x+34));d1y-=Math.round(uu*30);
+      if(u>=1)show1=false;
+    }
+    if(show1){
+      if(zt>=0&&zt<300){                             // reset beam: a hard line into the board's heart
+        const tx2=bx+(bw>>1),ty2=by+(bh>>1);
+        const st=Math.max(2,Math.round(Math.hypot(tx2-d1x-2,ty2-d1y-3)/2));
+        for(let k2=0;k2<=st;k2++){
+          const u2=k2/st;
+          ctx.fillStyle=k2%2?'#FF3B3B':'rgba(255,150,150,.8)';
+          ctx.fillRect(Math.round(d1x+2+(tx2-d1x-2)*u2),Math.round(d1y+3+(ty2-d1y-3)*u2),1,1);
+        }
+        ctx.fillStyle='rgba(255,255,255,'+(0.8*(1-zt/300)).toFixed(2)+')';ctx.fillRect(bx,by,bw,bh);
+      }else if(k>=1&&e<BYE){
+        droneBeam(d1x+2,d1y+3,bx+(bw>>1)+Math.round(Math.sin(t*0.0028)*5),by+bh-1,.14);
+      }
+      drawDrone(d1x,d1y,t);
+    }
+  }
+  /* ---- drone two: the hunter. sweeps the roof, pins the runner, loses them, sweeps forever ---- */
+  if(e>DA+700){
+    const k=Math.min(1,(e-DA-700)/2400),ek=1-Math.pow(1-k,3);
+    const hx2=hk.bd.x-par+Math.round(hk.bd.w*0.5),hy2=top-15;
+    const drift=e>GN?Math.sin(t*0.0009)*5:0;
+    const d2x=Math.round(-14+(hx2+14)*ek+drift),d2y=Math.round(top-34+(hy2-top+34)*ek+(k>=1?Math.sin(t*0.0037)*1.4:0));
+    if(k>=1){
+      const lock=e>LK&&e<GN&&rpos;
+      let tx2,ty2,al;
+      if(lock){tx2=rpos.x;ty2=rpos.y;al=.26}
+      else{
+        tx2=hk.bd.x-par+2+((Math.sin(t*(e>GN?0.0011:0.0023))+1)/2)*(hk.bd.w-4);
+        ty2=top;al=e>GN?.11:.16;
+      }
+      droneBeam(d2x+2,d2y+3,tx2,ty2,al);
+      if(lock){ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillRect(Math.round(tx2)-1,Math.round(ty2)-2,3,5)}
+    }
+    drawDrone(d2x,d2y,t);
+  }
+}
 function bakeCity(){
   layers.forEach((b,L)=>{
     const X=bakeX[L];
@@ -1980,6 +2226,7 @@ function city(t){
   ctx.fillStyle='rgba(0,0,0,.3)';
   for(let ry=roadTop+6;ry<roadBot;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
   drawIncident(t);
+  drawHack(t);
   /* traffic sprites — far lane behind, near lane in front */
   cars.slice().sort((a2,b2)=>a2.y-b2.y).forEach(c=>{
     const fx=Math.round(c.x),d=c.dir,hw=Math.round(c.w/2);
