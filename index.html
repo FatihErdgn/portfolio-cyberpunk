@@ -1885,7 +1885,7 @@ function city(t){
         ctx.fillRect(wx,wy,2,3);
       });
       if(bd.vt==='crown'){
-        const cc2=NEONS[(bd.x|0)%NEONS.length];
+        const cc2=NEONS[Math.abs(bd.x|0)%NEONS.length];
         for(let r=4;r>=1;r--){ctx.fillStyle=cc2+Math.round(28*(5-r)/4).toString(16).padStart(2,'0');ctx.fillRect(bx-r,topY+1-r,bd.w+r*2,2+r*2)}
         ctx.fillStyle=cc2;ctx.fillRect(bx+1,topY+1,bd.w-2,2);
         lights.push({x:bx+bd.w/2,w:bd.w,col:cc2});
@@ -2367,12 +2367,25 @@ function sizeIce(){
   iceCv.width=IW*D;iceCv.height=IH*D;ix.setTransform(D,0,0,D,0,0);
 }
 sizeIce();let _iceRT;addEventListener('resize',()=>{clearTimeout(_iceRT);_iceRT=setTimeout(sizeIce,180)});
+/* first 22% of the breach: the iris holds shut while the key cracks */
+const ICE_PD=reduced?0:0.22;
+function icePhase(p){
+  return{pd:ICE_PD?clamp(p/ICE_PD,0,1):1,po:clamp((p-ICE_PD)/(1-ICE_PD),0,1)};
+}
 function drawIce(p,t,neon){
   if(!IW||!IH)sizeIce();
-  const cx=IW/2,cy=IH/2,diag=Math.hypot(IW,IH)/2,TAU2=Math.PI*2;
+  const diag=Math.hypot(IW,IH)/2,TAU2=Math.PI*2;
   const minR=Math.min(IW,IH)*0.075;
-  const R=minR+Math.pow(p,1.8)*(diag*1.55-minR);
-  const rot=-0.35+p*1.05+t*0.00006;
+  const{pd,po}=icePhase(p);
+  const jam=ICE_PD?Math.min(pd,clamp(1-po*7,0,1)):0;
+  let cx=IW/2,cy=IH/2;
+  if(jam>0){
+    const j=jam*jam*Math.min(IW,IH)*0.006;
+    cx+=(Math.sin(t*0.047)+Math.sin(t*0.113+1.7)*.6)*j;
+    cy+=(Math.sin(t*0.059+.8)+Math.sin(t*0.097+2.4)*.6)*j;
+  }
+  const R=minR+Math.pow(po,1.8)*(diag*1.55-minR);
+  const rot=-0.35+po*1.05+t*0.00006+Math.sin(t*0.021)*0.02*jam;
   ix.clearRect(0,0,IW,IH);
   if(R>diag*1.14)return;
   /* opaque field with a hexagonal hole (reverse winding) */
@@ -2433,6 +2446,45 @@ function drawIce(p,t,neon){
   ix.beginPath();ix.arc(cx,cy,R*1.34,rot,rot+Math.PI*1.2);ix.lineWidth=2;ix.stroke();
   ix.beginPath();ix.arc(cx,cy,R*1.46,-rot*1.4,-rot*1.4+Math.PI*0.55);ix.stroke();
   ix.restore();
+  /* decrypt lock — chromatic shiver on the sealed iris + key readout in the hole */
+  if(jam>0.01){
+    const off=1.1+jam*2.1;
+    ix.save();ix.globalAlpha=.35*jam;ix.lineWidth=1.6;
+    [['rgba(0,240,255,1)',off],['rgba(255,46,136,1)',-off]].forEach(([c,o])=>{
+      ix.strokeStyle=c;ix.beginPath();
+      for(let k=0;k<6;k++){const a=rot-k*Math.PI/3,x=cx+o+Math.cos(a)*R,y=cy+Math.sin(a)*R;k?ix.lineTo(x,y):ix.moveTo(x,y)}
+      ix.closePath();ix.stroke();
+    });
+    ix.restore();
+    const KEY='7F:A3:C4:2E';
+    const fs=Math.min(minR*0.24,(R*1.5)/(KEY.length*0.62));
+    if(fs>=9){
+      const solved=Math.floor(pd*KEY.length);
+      let ks='';
+      for(let i=0;i<KEY.length;i++){const c=KEY[i];ks+=(i<solved||c===':')?c:HEXC[(Math.random()*HEXC.length)|0]}
+      ix.save();ix.textAlign='center';ix.textBaseline='middle';
+      ix.globalAlpha=jam;ix.fillStyle=neon;ix.shadowColor=neon;ix.shadowBlur=12;
+      ix.font=Math.round(fs)+'px "Share Tech Mono",monospace';
+      ix.fillText(ks,cx,cy);
+      ix.shadowBlur=0;ix.globalAlpha=jam*.8;
+      ix.font=Math.round(fs*.66)+'px "Share Tech Mono",monospace';
+      ix.fillStyle='rgba(160,200,240,.8)';
+      ix.fillText('DECRYPT',cx,cy-fs*1.5);
+      ix.fillText(Math.round(pd*100)+'%',cx,cy+fs*1.5);
+      ix.restore();
+    }
+  }
+  /* unlock — the key lands, a hex shockwave rips out and the iris lets go */
+  if(ICE_PD&&po>0&&po<0.16){
+    const sp=po/0.16,e=1-Math.pow(1-sp,2);
+    const sr=minR+e*diag*0.75;
+    ix.save();ix.globalAlpha=(1-sp)*.7;ix.strokeStyle=neon;ix.lineWidth=1+(1-sp)*5;
+    ix.beginPath();
+    for(let k=0;k<6;k++){const a=rot-k*Math.PI/3,x=cx+Math.cos(a)*sr,y=cy+Math.sin(a)*sr;k?ix.lineTo(x,y):ix.moveTo(x,y)}
+    ix.closePath();ix.stroke();
+    ix.globalAlpha=Math.pow(1-sp,3)*.16;ix.fillStyle='#fff';ix.fillRect(0,0,IW,IH);
+    ix.restore();
+  }
 }
 
 /* ============ FULL-DECRYPT FILE VIEW ============ */
@@ -2533,6 +2585,14 @@ function czProg(){
   const y=clamp(scrollY-top,0,total);
   const iceLen=Math.max(total*ICE_FRAC,1);
   return{ice:clamp(y/iceLen,0,1),deck:clamp((y-iceLen)/Math.max(total-iceLen,1),0,1)};
+}
+/* dev hook: ?icep=NN freezes the ICE breach at NN% and keeps the view parked on the
+   pinned stage (headless screenshots reset window scroll, so we re-park every 400ms) —
+   inert without the param */
+const DBG_ICEP=(m=>m?clamp(+m[1]/100,0,1):null)(location.search.match(/icep=(\d+)/));
+if(DBG_ICEP!=null&&fdeck){
+  const park=()=>scrollTo({top:fdeck.getBoundingClientRect().top+scrollY+10,behavior:'instant'});
+  setTimeout(park,700);setInterval(park,400);
 }
 
 /* folder click -> scroll to that file's slot so the engine opens it on the right */
@@ -2757,6 +2817,7 @@ let lastY=scrollY,velS=0;
 const loadoutSec=$('#implants'),garageSec=$('#garage');
 const iceSec=$('#icewall'),ibIn=$('#ibIn'),iceInt=$('#iceInt'),iceHint=$('#iceHint');
 const iceHud=iceSec?iceSec.querySelector('.ihud'):null,iceLayer=document.getElementById('icelayer');
+let iceHintPhase=null;
 const dossiers=[...document.querySelectorAll('.dossier')].map(el=>{
   const fx=[...el.querySelectorAll('.dhead,.dtitle,.dsub,.dmeta,.dbody,.dtags,.dinteg,.dopen')];
   fx.forEach(f=>f.classList.add('dfx'));
@@ -2827,18 +2888,27 @@ function loop(t){
   {
     const r=iceSec.getBoundingClientRect();
     if(r.top<innerHeight&&r.bottom>0){
-      const p=deckStatic
+      let p=deckStatic
         ? clamp(-r.top/Math.max(iceSec.offsetHeight-innerHeight,1),0,1)
         : czProg().ice;
+      if(DBG_ICEP!=null)p=DBG_ICEP;
       drawIce(p,t,neonCss);
       /* CLASSIFIED lands late, then the whole ice layer pulls away over the last 18% while
          the file layer fades up in the SAME pinned stage — no scroll between the two */
-      const rev=clamp(p*2.1-0.42,0,1);
-      const out=deckStatic?0:clamp((p-0.82)/0.18,0,1);
+      const{pd:ipd,po:ipo}=icePhase(p);
+      const rev=clamp(ipo*2.1-0.42,0,1);
+      const out=deckStatic?0:clamp((ipo-0.82)/0.18,0,1);
       ibIn.style.transform=`scale(${(0.72+rev*0.28+out*0.30).toFixed(3)})`;
       ibIn.style.opacity=(rev*(1-out)).toFixed(3);
-      iceInt.innerHTML='INTEGRITY <b>'+Math.round(100-p*100)+'%</b>';
-      iceHint.style.opacity=clamp(1-p*2.2,0,1);
+      iceInt.innerHTML=ipd<1
+        ?'KEYMATCH <b>'+Math.round(ipd*100)+'%</b>'
+        :'INTEGRITY <b>'+Math.round(100-ipo*100)+'%</b>';
+      const hintDecrypt=ipd<1;
+      if(iceHintPhase!==hintDecrypt){
+        iceHintPhase=hintDecrypt;
+        iceHint.textContent=hintDecrypt?'DECRYPTING TIER-3 KEY — KEEP SCROLLING ↓':'BREACH IN PROGRESS — KEEP SCROLLING ↓';
+      }
+      iceHint.style.opacity=clamp(1-ipo*2.2,0,1);
       if(iceHud)iceHud.style.opacity=(1-out).toFixed(3);
       if(iceLayer){iceLayer.style.opacity=(1-out).toFixed(3);iceLayer.style.visibility=out>=1?'hidden':'visible'}
       if(fstage&&!deckStatic){
@@ -3182,7 +3252,8 @@ let bodyAPI=null;
     cam.position.set(0,0.86,3.75);cam.lookAt(0,0.86,0);
     return{cv,r,sc,cam};
   }
-  const A=mk3(),B=mk3();
+  let A,B;
+  try{A=mk3();B=mk3()}catch(e){console.warn('body3d: no WebGL',e);return}
   view.appendChild(A.cv);
   const xl=document.createElement('div');xl.className='xlayer';
   xl.appendChild(B.cv);
