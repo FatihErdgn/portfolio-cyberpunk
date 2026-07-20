@@ -1602,20 +1602,16 @@ function drawIncident(t){
     const gy=H-30-deckOff;                    // street level under the hover point
     const k=Math.min(1,(e-2300)/3200),ek=1-Math.pow(1-k,3);
     const hx=inc.hov.x-par,hy=inc.hov.y+yoff;
-    const hoverX=Math.round(W+14+(hx-(W+14))*ek);
+    const cx=Math.round(W+14+(hx-(W+14))*ek);
     const FT=JT+JD+1500;                      // it burns aloft for a beat, then the sky lets go
-    /* it comes down in open street LEFT of the parked units, clear of the frame edge */
-    const crashX=fx-46;
     const dropFull=Math.max(10,gy-2-(hy+2)),impT=FT+Math.sqrt(dropFull/0.00019);
     const crashed=e>=impT,sinceImp=e-impT;
-    let cx=hoverX,cy;
+    let cy;
     if(e<=FT){
       cy=Math.round(hy-10+10*ek+(k>=1?Math.sin(t*0.0031)*1.3:0));
       if(hit)cy+=Math.round(Math.min(5,(e-JT-JD)/800)+Math.sin(t*0.013)*1.6);     // sagging, shaking
     }else{
       const tf=e-FT,drop=Math.min(dropFull,0.00019*tf*tf);                        // dead-weight drop
-      const fall=Math.min(1,drop/dropFull);
-      cx=Math.round(hoverX+(crashX-hoverX)*fall);                                 // tail-rotor gone: it slews left
       cy=Math.round(hy+2+drop+(crashed?0:Math.sin(t*0.02)*1.2));
     }
     /* mid-leap position, computed early so the beam tracks the jumper through the arc */
