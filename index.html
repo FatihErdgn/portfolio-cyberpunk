@@ -1602,16 +1602,20 @@ function drawIncident(t){
     const gy=H-30-deckOff;                    // street level under the hover point
     const k=Math.min(1,(e-2300)/3200),ek=1-Math.pow(1-k,3);
     const hx=inc.hov.x-par,hy=inc.hov.y+yoff;
-    const cx=Math.round(W+14+(hx-(W+14))*ek);
+    const hoverX=Math.round(W+14+(hx-(W+14))*ek);
     const FT=JT+JD+1500;                      // it burns aloft for a beat, then the sky lets go
+    /* it comes down in open street LEFT of the parked units, clear of the frame edge */
+    const crashX=fx-46;
     const dropFull=Math.max(10,gy-2-(hy+2)),impT=FT+Math.sqrt(dropFull/0.00019);
     const crashed=e>=impT,sinceImp=e-impT;
-    let cy;
+    let cx=hoverX,cy;
     if(e<=FT){
       cy=Math.round(hy-10+10*ek+(k>=1?Math.sin(t*0.0031)*1.3:0));
       if(hit)cy+=Math.round(Math.min(5,(e-JT-JD)/800)+Math.sin(t*0.013)*1.6);     // sagging, shaking
     }else{
       const tf=e-FT,drop=Math.min(dropFull,0.00019*tf*tf);                        // dead-weight drop
+      const fall=Math.min(1,drop/dropFull);
+      cx=Math.round(hoverX+(crashX-hoverX)*fall);                                 // tail-rotor gone: it slews left
       cy=Math.round(hy+2+drop+(crashed?0:Math.sin(t*0.02)*1.2));
     }
     /* mid-leap position, computed early so the beam tracks the jumper through the arc */
@@ -1706,27 +1710,33 @@ function drawIncident(t){
       if(!inc.cSeeded){inc.cSeeded=true;
         for(let k2=0;k2<30;k2++)inc.cdebris.push({x:cx+RI(-4,4),y:gy+3,vx:RR(-2.2,2.2),vy:RR(-3,-.6),col:Math.random()<.35?'#FFB25E':'#20283C'});
       }
-      /* wreck first, fireball over it: gutted cabin, snapped boom, rotor gone */
-      ctx.fillStyle='#111B30';
-      ctx.fillRect(cx-8,gy+3,15,4);                                          // crushed cabin
-      ctx.fillRect(cx-9,gy+5,1,2);                                           // folded nose
-      ctx.fillRect(cx+7,gy+4,3,2);                                           // boom root
-      ctx.fillRect(cx+11,gy+5,6,2);                                          // snapped boom, flat on the street
-      ctx.fillRect(cx+16,gy+2,1,3);                                          // fin tipped over
-      ctx.fillRect(cx-14,gy+5,3,2);                                          // thrown hull chunk
-      ctx.fillStyle='rgba(150,195,255,.22)';ctx.fillRect(cx-8,gy+3,15,1);    // dented rim light
+      /* firelight first, so the carcass silhouette always reads on top of it */
       const hb2=0.75+0.25*Math.sin(t*0.019);
-      ctx.fillStyle='rgba(255,70,20,'+(0.09*hb2).toFixed(3)+')';ctx.fillRect(cx-17,gy-9,35,19);
-      ctx.fillStyle='rgba(255,110,40,'+(0.16*hb2).toFixed(3)+')';ctx.fillRect(cx-9,gy-2,19,10);
-      ctx.fillStyle='rgba(255,110,40,'+(0.10*hb2).toFixed(3)+')';ctx.fillRect(cx-20,gy+7,41,3); // firelight on the asphalt
-      for(let k2=0;k2<16;k2++){                                              // main blaze on the cabin
+      ctx.fillStyle='rgba(255,70,20,'+(0.09*hb2).toFixed(3)+')';ctx.fillRect(cx-19,gy-11,39,21);
+      ctx.fillStyle='rgba(255,110,40,'+(0.15*hb2).toFixed(3)+')';ctx.fillRect(cx-11,gy-5,23,11);
+      ctx.fillStyle='rgba(255,110,40,'+(0.10*hb2).toFixed(3)+')';ctx.fillRect(cx-22,gy+7,45,3); // firelight on the asphalt
+      /* wreck: cabin caved in, boom snapped off, rotor blades torn loose across the street */
+      ctx.fillStyle='#16223A';
+      ctx.fillRect(cx-9,gy+1,17,6);                                          // crushed cabin
+      ctx.fillRect(cx-11,gy+4,2,3);                                          // nose folded into the road
+      ctx.fillRect(cx+8,gy+3,4,3);                                           // boom root
+      ctx.fillRect(cx+12,gy+5,7,2);                                          // snapped boom, flat on the street
+      ctx.fillRect(cx+19,gy+1,1,5);                                          // fin tipped over
+      ctx.fillRect(cx-16,gy+5,3,2);                                          // thrown hull chunk
+      ctx.fillStyle='rgba(150,195,255,.34)';                                 // dented rim light
+      ctx.fillRect(cx-9,gy+1,17,1);ctx.fillRect(cx+12,gy+5,7,1);
+      ctx.fillStyle='rgba(90,140,200,.45)';ctx.fillRect(cx-8,gy+3,4,2);      // blown-out canopy frame
+      ctx.fillStyle='rgba(175,205,240,.6)';                                  // main rotor, torn off the mast
+      ctx.fillRect(cx-2,gy-6,1,4);ctx.fillRect(cx-1,gy-2,1,3);               // one blade bent upright
+      ctx.fillRect(cx-21,gy+7,10,1);ctx.fillRect(cx-12,gy+6,4,1);            // the other laid across the asphalt
+      for(let k2=0;k2<16;k2++){                                              // blaze licking out of the hull
         ctx.fillStyle=['#FFD166','#FF7B00','#FF3B3B','#FFF3C4'][(Math.random()*4)|0];
-        ctx.fillRect(cx+RI(-8,8),gy+RI(0,4),1,Math.random()<.45?2:1);
+        ctx.fillRect(cx+RI(-9,8),gy-RI(0,4),1,Math.random()<.45?2:1);
       }
-      for(let k2=0;k2<4;k2++){                                               // the debris burns too
+      for(let k2=0;k2<4;k2++){                                               // the scattered debris burns too
         ctx.fillStyle=['#FF7B00','#FF3B3B','#FFD166'][(Math.random()*3)|0];
-        ctx.fillRect(cx+RI(11,17),gy+RI(3,5),1,1);
-        ctx.fillRect(cx+RI(-15,-11),gy+RI(3,5),1,1);
+        ctx.fillRect(cx+RI(13,19),gy+RI(3,4),1,1);
+        ctx.fillRect(cx+RI(-17,-13),gy+RI(3,4),1,1);
       }
       if(t-(inc.hpuff||0)>130){inc.hpuff=t;
         inc.puffs.push({x:cx+RR(-6,10),y:gy,dx:RR(-.04,.04),a:.32,r:1});
@@ -1766,7 +1776,7 @@ function drawIncident(t){
       drawCyb(Math.round(jx),Math.round(jy),'leap',t);
     }
     if(hit&&!crashed)drawCyb(cx-2,cy+1,'ride',t);            // rides the burning bird all the way down
-    if(crashed&&sinceImp>500)drawCyb(cx-2,gy+4,'ride',t);    // walks out of the fireball onto the wreck
+    if(crashed&&sinceImp>500)drawCyb(cx-3,gy+1,'ride',t);    // stands out of the fireball, up on the carcass
   }
 }
 function bakeCity(){
