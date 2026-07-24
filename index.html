@@ -1353,7 +1353,16 @@ const PXS=3;
 let W=0,H=0,layers=[],rain=[],streaks=[],beams=[],cars=[],lastCarL=0,lastCarR=0,deckOff=0;
 const NEONS=['#FF2E88','#00F0FF','#F5D90A','#9D4EDD','#00FF9C'];
 const KANJI=['未来','電脳','夢','霓虹','麺','鬼','出口','龍'];
-const RR=(a,b)=>a+Math.random()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
+/* ============ SEEDED SKYLINE — every visitor deals their own city; share yours with ?seed= ============ */
+/* mulberry32 is tiny and plenty to deal a skyline; word seeds hash down to ints so ?seed=izmir works */
+const mulberry32=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let q=Math.imul(a^a>>>15,1|a);q=q+Math.imul(q^q>>>7,61|q)^q;return((q^q>>>14)>>>0)/4294967296};
+const hashStr=s=>{let h2=2166136261;for(const ch of s)h2=Math.imul(h2^ch.charCodeAt(0),16777619);return h2>>>0};
+const parseSeed=v=>/^\d+$/.test(v)?+v>>>0:hashStr(v);
+const seedQ=new URLSearchParams(location.search).get('seed');
+let SEED=seedQ!=null?parseSeed(seedQ):(Math.random()*4294967296)>>>0;
+let RNG=Math.random;                       // buildCity swaps the seeded deck in; per-frame chaos stays honest
+let rainMode='on';
+const RR=(a,b)=>a+RNG()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
 function buildCity(){
   const nW=Math.ceil(innerWidth/PXS),nH=Math.ceil(innerHeight/PXS);
   /* keep the road clear of the fixed bottom deck bar */
@@ -1361,6 +1370,7 @@ function buildCity(){
   /* synthetic resizes (terminal dock toggle) must not reroll the skyline or wipe traffic */
   if(nW===W&&nH===H&&layers.length)return;
   W=nW;H=nH;
+  RNG=mulberry32(SEED);                    // same seed, same town — down to the last lit window
   [cv,...bakeC].forEach(c=>{c.width=W;c.height=H});
   [ctx,...bakeX].forEach(x=>{x.imageSmoothingEnabled=false});
   layers=[];
@@ -1370,26 +1380,26 @@ function buildCity(){
     const base=Math.round(H*(0.54+L*0.13));
     while(x<W+16){
       const w=RI(10,L===2?34:24);
-      let h=Math.round((H*0.16+Math.random()*H*0.30)*(0.7+L*0.32));
-      const r=Math.random();
+      let h=Math.round((H*0.16+RNG()*H*0.30)*(0.7+L*0.32));
+      const r=RNG();
       let vt='block';
       if(L===2){if(r<.2)vt='setback';else if(r<.4)vt='spire';else if(r<.5)vt='crown'}
       else if(r<.14)vt='spire';
       if(vt==='setback')h=Math.round(h*1.18);
       if(vt==='spire')h=Math.round(h*1.14);
       h=Math.min(h,Math.round(H*0.8));
-      const shadowed=Math.random()<.22;
+      const shadowed=RNG()<.22;
       const win=[];
       const cols=Math.max(1,Math.floor((w-2)/4)),rows=Math.max(1,Math.floor((h-6)/5));
       for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
-        if(Math.random()<(shadowed?.04:.30))win.push({c,r:rr,t:Math.random()*9000,col:Math.random()<.12?NEONS[(Math.random()*NEONS.length)|0]:null,dim:shadowed});
+        if(RNG()<(shadowed?.04:.30))win.push({c,r:rr,t:RNG()*9000,col:RNG()<.12?NEONS[(RNG()*NEONS.length)|0]:null,dim:shadowed});
       b.push({x,w,h,base,vt,win,shadowed,tall:h>H*.34,shade:shades[L],L,
-        neon:(!shadowed&&Math.random()<(L===2?.42:.19))?{col:NEONS[(Math.random()*NEONS.length)|0],vert:Math.random()<.5,off:Math.random()*7000,len:RI(6,18)}:null,
-        board:(L===2&&!shadowed&&Math.random()<.34&&w>=18)?{y:RI(6,Math.max(7,Math.round(h*.5))),w:Math.min(w-4,RI(10,18)),h:RI(7,12),c1:NEONS[(Math.random()*NEONS.length)|0],c2:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*9000}:null,
-        kanji:(L>=1&&!shadowed&&Math.random()<.30&&h>H*.26)?{word:KANJI[(Math.random()*KANJI.length)|0],col:NEONS[(Math.random()*NEONS.length)|0],off:Math.random()*8000}:null,
-        strip:(!shadowed&&Math.random()<.19)?{col:NEONS[(Math.random()*NEONS.length)|0]}:null,
-        esc:(L===2&&!shadowed&&Math.random()<.3),
-        duct:(L===2&&Math.random()<.4)?RI(1,3):0});
+        neon:(!shadowed&&RNG()<(L===2?.42:.19))?{col:NEONS[(RNG()*NEONS.length)|0],vert:RNG()<.5,off:RNG()*7000,len:RI(6,18)}:null,
+        board:(L===2&&!shadowed&&RNG()<.34&&w>=18)?{y:RI(6,Math.max(7,Math.round(h*.5))),w:Math.min(w-4,RI(10,18)),h:RI(7,12),c1:NEONS[(RNG()*NEONS.length)|0],c2:NEONS[(RNG()*NEONS.length)|0],off:RNG()*9000}:null,
+        kanji:(L>=1&&!shadowed&&RNG()<.30&&h>H*.26)?{word:KANJI[(RNG()*KANJI.length)|0],col:NEONS[(RNG()*NEONS.length)|0],off:RNG()*8000}:null,
+        strip:(!shadowed&&RNG()<.19)?{col:NEONS[(RNG()*NEONS.length)|0]}:null,
+        esc:(L===2&&!shadowed&&RNG()<.3),
+        duct:(L===2&&RNG()<.4)?RI(1,3):0});
       x+=w+RI(1,7);
     }
     layers.push(b);
@@ -1400,7 +1410,27 @@ function buildCity(){
   pickIncident();
   pickHack();
   bakeCity();
+  RNG=Math.random;                         // generation's done; hand the dice back to chaos
 }
+/* ---- soft resets: play a scene again without rebuilding its tower ---- */
+function resetIncident(){
+  if(!inc)return;
+  inc.debris=[];inc.cdebris=[];inc.puffs=[];
+  inc.seeded=false;inc.cSeeded=false;inc.pol=0;inc.lastPuff=0;inc.hpuff=0;
+  cars=cars.filter(c=>!c.pol);
+  incT0=0;
+}
+function resetHack(){hkT0=0}
+/* ---- reseed: deal a whole new skyline; both scenes replay on the fresh towers ---- */
+function reseed(tok){
+  const t2=tok==null||tok==='random'?String((Math.random()*4294967296)>>>0):String(tok);
+  SEED=parseSeed(t2);
+  const u=new URL(location);u.searchParams.set('seed',t2);history.replaceState(null,'',u);
+  W=0;buildCity();                         // zero out the guard so the same viewport still rerolls
+  return SEED;
+}
+/* rain is cosmetic weather, not part of the deal — plain random on purpose */
+function setRain(n,sm){rain=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,l:3+(Math.random()*4|0),s:(2.6+Math.random()*1.6)*sm}))}
 
 /* ============ INCIDENT — blast on a right-side tower, fire-escape evac, police spotlight ============ */
 /* Scripted one-shot that plays ~1s after the boot clears, then holds its final tableau:
@@ -1421,7 +1451,7 @@ function pickIncident(){
   const win=[];
   const cols=Math.max(1,Math.floor((w-2)/4)),rows=Math.max(1,Math.floor((h-6)/5));
   for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
-    if(Math.random()<.05)win.push({c,r:rr,t:Math.random()*9000,col:null,dim:true});
+    if(RNG()<.05)win.push({c,r:rr,t:RNG()*9000,col:null,dim:true});
   const bd={x,w,h,base,vt:'block',win,shadowed:true,tall:false,shade:'#0D1322',L:2,
     neon:null,board:null,kanji:null,strip:null,esc:false,duct:RI(1,2)};
   front.push(bd);                       // appended last -> baked on top of whatever it occludes
@@ -1815,7 +1845,7 @@ function pickHack(){
   const win=[];
   const cols=Math.max(1,Math.floor((w-2)/4)),rows=Math.max(1,Math.floor((h-6)/5));
   for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
-    if(Math.random()<.05)win.push({c,r:rr,t:Math.random()*9000,col:null,dim:true});
+    if(RNG()<.05)win.push({c,r:rr,t:RNG()*9000,col:null,dim:true});
   const bd={x,w,h,base,vt:'block',win,shadowed:true,tall:false,shade:'#0D1322',L:2,
     neon:null,board:null,kanji:null,strip:null,esc:false,duct:RI(1,2)};
   front.push(bd);
@@ -2272,13 +2302,15 @@ function city(t){
     }
     ctx.globalAlpha=1;
   });
-  ctx.fillStyle='rgba(150,200,255,.26)';
-  rain.forEach(r=>{
-    r.y+=r.s;r.x+=0.6;
-    if(r.y>H){r.y=-6;r.x=RR(0,W)}
-    if(r.x>W)r.x=0;
-    for(let k=0;k<r.l;k++)ctx.fillRect(Math.round(r.x-k*0.25),Math.round(r.y-k),1,1);
-  });
+  if(rainMode!=='off'){
+    ctx.fillStyle=rainMode==='storm'?'rgba(150,200,255,.34)':'rgba(150,200,255,.26)';
+    rain.forEach(r=>{
+      r.y+=r.s;r.x+=rainMode==='storm'?1.1:0.6;
+      if(r.y>H){r.y=-6;r.x=RR(0,W)}
+      if(r.x>W)r.x=0;
+      for(let k=0;k<r.l;k++)ctx.fillRect(Math.round(r.x-k*0.25),Math.round(r.y-k),1,1);
+    });
+  }
 }
 requestAnimationFrame(city);
 
@@ -3377,7 +3409,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span>`,
+ help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span>`,
  whoami:()=>`Fatih ErdoGan — Industrial Engineer and full-stack software engineer, working where MES meets OT.<br>I build software for real industrial environments like refineries. Based in İzmir, open to remote.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith · powerplant: .NET/C# · drive-by-wire: TypeScript/React/Next<br>ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -3393,15 +3425,47 @@ const CMDS={
  vim:()=>`entering vim... <span class="err">error: no known exploit can exit vim. aborted for your safety.</span>`,
  exit:()=>`there is no logout in night city. only <span class="ps">contact</span>.`,
 };
+/* protocols that take arguments — the plain lookup below stays fast for everything else */
+const ARGCMDS={
+ seed:a=>{
+   if(!a.length)return `current skyline seed: <span class="cy">${SEED}</span><br>usage: <span class="ps">seed &lt;number|word|random&gt;</span> — deals a new city; the URL updates so you can share yours`;
+   const s2=reseed(a[0].toLowerCase()==='random'?'random':a.join('-'));
+   return `skyline redealt · seed <span class="cy">${s2}</span> — link in the address bar is yours to share`;
+ },
+ rain:a=>{
+   const m=(a[0]||'').toLowerCase();
+   if(m==='off'){rainMode='off';return `rain suppressed. the asphalt misses it already.`}
+   if(m==='storm'){rainMode='storm';setRain(170,1.5);return `<span class="warn">storm cell parked over the grid.</span> wipers won't help.`}
+   if(m==='on'){rainMode='on';setRain(90,1);return `acid drizzle restored to factory settings.`}
+   return `usage: <span class="ps">rain on|off|storm</span> — currently: <span class="cy">${rainMode}</span>`;
+ },
+ replay:a=>{
+   const m=(a[0]||'all').toLowerCase();
+   if(m==='incident'){resetIncident();return `incident rewound. the chopper never learns.`}
+   if(m==='hack'){resetHack();return `signal-jack rewound. the skull always comes back.`}
+   if(m==='all'){resetIncident();resetHack();return `both scenes rewound. the city forgets nothing — twice.`}
+   return `usage: <span class="ps">replay incident|hack|all</span>`;
+ },
+};
 tin.addEventListener('keydown',e=>{
   if(e.key!=='Enter')return;
   const raw=tin.value.trim();tin.value='';
   if(!raw)return;
   tprint(`<span class="ps">runner@night.city:~$</span> ${raw.replace(/</g,'&lt;')}`);
   const fn=CMDS[raw.toLowerCase()];
-  if(fn){const out=fn();if(out)tprint(out)}
+  if(fn){const out=fn();if(out)tprint(out);return}
+  const parts=raw.split(/\s+/),afn=ARGCMDS[parts[0].toLowerCase()];
+  if(afn){const out=afn(parts.slice(1));if(out)tprint(out)}
   else tprint(`<span class="err">zsh: unknown protocol: ${raw.replace(/</g,'&lt;')}</span> — try <span class="ps">help</span>`);
 });
+/* dev hook: ?devx exposes a read/exec seam for automated verification (everything else lives
+   inside this IIFE, out of evaluate's reach) — inert without the param */
+if(/[?&]devx/.test(location.search))window.__dev={
+  city:()=>JSON.stringify(layers),
+  seed:()=>SEED,
+  cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
+  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED}),
+};
 
 /* ============ PALETTE ============ */
 const ACTIONS=[
@@ -3413,6 +3477,7 @@ const ACTIONS=[
  {t:'Copy uplink (email)',k:'⌘C',f:()=>{navigator.clipboard&&navigator.clipboard.writeText('fatiherdogann099@gmail.com');tprint('uplink copied to clipboard 📋')}},
  {t:'Open LinkedIn',k:'↗',f:()=>open('https://linkedin.com/in/fatiherdogan09','_blank')},
  {t:'Toggle CRT scanlines',k:'☢',f:()=>document.body.classList.toggle('crt')},
+ {t:'Reroll the skyline (random seed)',k:'⚂',f:()=>{reseed('random');tprint(`skyline redealt · seed <span class="cy">${SEED}</span>`)}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
 const pal=$('#palette'),palin=$('#palin'),pallist=$('#pallist');
