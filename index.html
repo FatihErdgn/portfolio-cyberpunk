@@ -134,6 +134,36 @@ header.top .cmdk kbd{border:none;background:none;padding:0}
 #director .drow button:hover{border-color:var(--cyan)}
 #director .dnote{margin-top:8px;font-size:9px;opacity:.7}
 @media(max-width:700px){#director{left:8px;right:8px;width:auto;bottom:76px}}
+/* ===== BREACH PROTOCOL — optional minigame; the dossiers are already yours ===== */
+#breach{position:fixed;inset:0;z-index:1200;background:rgba(4,6,10,.84);display:flex;align-items:center;justify-content:center}
+#breach[hidden]{display:none}
+.bpanel{width:min(540px,94vw);background:#070A12;border:1px solid rgba(255,59,59,.4);padding:18px 20px;font-size:12px;color:var(--dim);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+.bhd{display:flex;justify-content:space-between;align-items:center;color:#FF6B6B;letter-spacing:.2em}
+.bhd b{color:var(--dim);font-weight:400}
+.bhd button{color:var(--dim)}.bhd button:hover{color:var(--neon)}
+.bsub{font-size:10px;opacity:.7;margin-top:4px}
+.btimer{height:3px;background:#1A2234;margin:12px 0}
+.btimer i{display:block;height:100%;background:#FF3B3B;width:100%}
+.bbuf{display:flex;gap:6px;margin:10px 0}
+.bbuf span{width:34px;height:26px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--cyan)}
+.bbuf span.f{border-style:solid;border-color:var(--cyan)}
+.bdaemons div{display:flex;gap:10px;margin:3px 0}
+.bdaemons .seq{color:var(--fg);min-width:110px}
+.bdaemons .done,.bdaemons .done .seq{color:var(--cyan)}
+.bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.bgrid button{border:1px solid var(--line);padding:8px 0;color:var(--fg);font-size:12px;text-align:center}
+.bgrid button.sel{border-color:#FF3B3B;color:#FF6B6B;cursor:pointer}
+.bgrid button.sel:hover{background:rgba(255,59,59,.12)}
+.bgrid button.used{opacity:.22}
+.bmsg{min-height:28px}
+#pwned{color:var(--dim)}#pwned b{color:#FF3B3B}
+/* ===== CYBERPSYCHO EPISODE (konami) ===== */
+body.psycho #city{filter:hue-rotate(-45deg) saturate(1.7) contrast(1.18)}
+#maxtac{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:1300;background:rgba(20,4,8,.92);border:1px solid #FF3B3B;color:#FF6B6B;padding:8px 18px;font-size:12px;letter-spacing:.22em;animation:mtBlink .5s steps(2) infinite}
+@keyframes mtBlink{50%{border-color:#FF3B3B33;color:#FFB0B0}}
+/* ===== ?debug HUD ===== */
+#dbghud{position:fixed;right:14px;top:52px;z-index:970;background:rgba(7,10,18,.85);border:1px solid var(--line);padding:8px 10px;font-size:10px;line-height:1.7;color:var(--dim);pointer-events:none}
+#dbghud b{color:var(--cyan);font-weight:400}
 
 main{max-width:1080px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
 section{padding:96px 0}
@@ -1124,6 +1154,17 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 </main>
 
+<div id="breach" hidden>
+  <div class="bpanel">
+    <div class="bhd"><span>BREACH PROTOCOL <b>// OPTIONAL</b></span><button id="brClose" aria-label="close">✕</button></div>
+    <div class="bsub">the dossiers are already yours — this one's strictly for bragging rights. pick from the highlighted row, then the column, then the row again. fill the buffer with daemon sequences.</div>
+    <div class="btimer"><i id="brBar"></i></div>
+    <div class="bbuf" id="brBuf"></div>
+    <div class="bdaemons" id="brDae"></div>
+    <div class="bgrid" id="brGrid"></div>
+    <div class="bmsg" id="brMsg"></div>
+  </div>
+</div>
 <div id="director" hidden>
   <div class="dhd">DIRECTOR'S CUT<button id="dirClose" aria-label="close">✕</button></div>
   <div class="dtabs">
@@ -2270,6 +2311,8 @@ let lastStreak=0;
 function city(t){
   if(!reduced)requestAnimationFrame(city);
   if(document.hidden)return;
+  if(lastFT)fpsE=fpsE*0.9+(1000/Math.max(1,t-lastFT))*0.1;
+  lastFT=t;
   ctx.clearRect(0,0,W,H);
   const lights=[];
   const g=ctx.createLinearGradient(0,H*.34,0,H);
@@ -2441,6 +2484,14 @@ function city(t){
       if(r.x>W)r.x=0;
       for(let k=0;k<r.l;k++)ctx.fillRect(Math.round(r.x-k*0.25),Math.round(r.y-k),1,1);
     });
+  }
+  /* cyberpsycho episode: the feed itself starts tearing */
+  if(psychoT){
+    ctx.fillStyle='rgba(255,40,40,.08)';ctx.fillRect(0,0,W,H);
+    for(let k=0;k<3;k++){
+      const sy3=RI(0,H-8),hh=RI(2,6),off=RI(-6,6);
+      ctx.drawImage(cv,0,sy3,W,hh,off,sy3,W,hh);
+    }
   }
 }
 requestAnimationFrame(city);
@@ -3551,7 +3602,13 @@ const CMDS={
  'jack-in':()=>`already jacked in, choom. you've been in since the boot sequence.`,
  clear:()=>{tout.innerHTML='';return''},
  'sudo hire-me':()=>`<span class="warn">[sudo] password for runner:</span> ********<br>ICE melted. ✅ access granted to HR mainframe.<br>opening uplink... <a href="mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER">manual trigger here</a>`,
- ls:()=>`garage/ &nbsp;loadout/ &nbsp;dossiers/ &nbsp;runlog/ &nbsp;contact.md &nbsp;corpo_secrets/ <span class="err">(ICE detected — access denied)</span>`,
+ ls:()=>{let locked=true;try{locked=!localStorage.getItem('fatih.breach')}catch(_){}
+   return `garage/ &nbsp;loadout/ &nbsp;dossiers/ &nbsp;runlog/ &nbsp;contact.md &nbsp;corpo_secrets/ ${locked?'<span class="err">(ICE detected — access denied. try `breach`)</span>':'<span class="cy">(ICE pwned — run `classified`)</span>'}`},
+ breach:()=>{brOpen();return `ICE located. buffer armed — the grid is live.`},
+ classified:()=>{let locked=true;try{locked=!localStorage.getItem('fatih.breach')}catch(_){}
+   if(locked)return `<span class="err">ICE detected — clearance insufficient.</span> run <span class="ps">breach</span> first.`;
+   return `<span class="cy">■ CLASSIFIED // EYES ONLY</span><br>· the pixel city re-deals every visit — unless you pin it with <span class="ps">?seed</span><br>· the chopper crash is scripted to the frame; the borg sticks the landing every single time<br>· the pirate skull on the left tower? that runner never gets caught. checked the tapes twice<br>· this whole site is one HTML file. no build step. view-source is the real dossier<br>· recruiter tip: <span class="ps">sudo hire-me</span> still works`},
+ debug:()=>debugHud()?`vitals HUD up — top right.`:`vitals HUD down.`,
  pwd:()=>`/grid/izmir/you-should-hire-fatih`,
  vim:()=>`entering vim... <span class="err">error: no known exploit can exit vim. aborted for your safety.</span>`,
  director:()=>{if(dirEl.hidden){dirOpen();return `director on set — dailies panel, bottom left. scrub away.`}dirClose();return `that's a wrap. clocks returned to the city.`},
@@ -3607,7 +3664,7 @@ if(/[?&]devx/.test(location.search))window.__dev={
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
   cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
-  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED,snd:sfx.enabled,inct:DBG_INCT,hkt:DBG_HKT,dirOpen:!dirEl.hidden,tod:todName,peds:peds.length,mono:!!mono}),
+  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED,snd:sfx.enabled,inct:DBG_INCT,hkt:DBG_HKT,dirOpen:!dirEl.hidden,tod:todName,peds:peds.length,mono:!!mono,psycho:!!psychoT,brOpen:!brEl.hidden,brState:br?{buf:br.buf,axis:br.axis,line:br.line,daemons:br.daemons.map(d=>({seq:d.seq,done:d.done})),over:br.over}:null,grid:br?br.g:null}),
 };
 
 /* ============ AMBIENT AUDIO — synthesized on the spot, no files; silent until asked ============ */
@@ -3690,6 +3747,101 @@ try{if(localStorage.getItem('fatih.snd')==='1'){
   addEventListener('keydown',arm,{once:true});
 }}catch(_){}
 
+/* ============ BREACH PROTOCOL — 5×5 byte grid, alternating row/column, 45s on the clock ============ */
+/* Solvability by construction: a legal 6-step path is traced first, the daemon sequences are
+   planted along it, and only then is the rest of the grid filled with noise. */
+const BYTES=['1C','55','BD','E9','7A'];
+const brEl=$('#breach'),brGrid=$('#brGrid'),brBuf=$('#brBuf'),brDae=$('#brDae'),brMsg=$('#brMsg'),brBar=$('#brBar');
+let br=null,brTick=0;
+function brOpen(){
+  const g=Array.from({length:5},()=>Array(5).fill(null));
+  const usedCells=new Set(),path=[];
+  let cr=0,cc=0;
+  for(let i=0;i<6;i++){
+    if(i%2===0){let c2;do{c2=RI(0,4)}while(usedCells.has(cr+','+c2));cc=c2}
+    else{let r2;do{r2=RI(0,4)}while(usedCells.has(r2+','+cc));cr=r2}
+    usedCells.add(cr+','+cc);path.push([cr,cc]);
+  }
+  const d1=Array.from({length:2},()=>BYTES[RI(0,4)]);
+  const d2=Array.from({length:3},()=>BYTES[RI(0,4)]);
+  [...d1,...d2,BYTES[RI(0,4)]].forEach((v,i)=>{g[path[i][0]][path[i][1]]=v});
+  for(let r3=0;r3<5;r3++)for(let c3=0;c3<5;c3++)if(!g[r3][c3])g[r3][c3]=BYTES[RI(0,4)];
+  br={g,buf:[],axis:'row',line:0,used:new Set(),over:false,t0:0,daemons:[
+    {name:'DATAMINE_V1',seq:d1,done:false},
+    {name:'ICEPICK_EX',seq:d2,done:false},
+  ]};
+  brBar.style.width='100%';
+  brEl.hidden=false;brRender();
+  brMsg.textContent='the timer arms on your first byte. good hunting.';
+}
+function brRender(){
+  brGrid.innerHTML=br.g.map((row2,r3)=>row2.map((v,c3)=>{
+    const used=br.used.has(r3+','+c3);
+    const sel=!br.over&&!used&&(br.axis==='row'?r3===br.line:c3===br.line);
+    return `<button data-r="${r3}" data-c="${c3}" class="${used?'used':''}${sel?' sel':''}"${sel?'':' disabled'}>${used?'--':v}</button>`;
+  }).join('')).join('');
+  brBuf.innerHTML=Array.from({length:6},(_,i)=>`<span class="${i<br.buf.length?'f':''}">${br.buf[i]||''}</span>`).join('');
+  brDae.innerHTML=br.daemons.map(d=>`<div class="${d.done?'done':''}"><span class="seq">${d.seq.join(' ')}</span><span>${d.name}${d.done?' ✔':''}</span></div>`).join('');
+}
+function hasRun(buf,seq){
+  for(let i=0;i+seq.length<=buf.length;i++)if(seq.every((v,j)=>buf[i+j]===v))return true;
+  return false;
+}
+function brEnd(){
+  if(!br||br.over)return;
+  br.over=true;clearInterval(brTick);brTick=0;
+  const n=br.daemons.filter(d=>d.done).length;
+  brRender();
+  if(!n){brMsg.innerHTML=`<span style="color:#FF6B6B">ICE holds. buffer burned.</span> run <b>breach</b> again — the grid re-deals.`;return}
+  brMsg.innerHTML=`<span style="color:var(--cyan)">${n===2?'FLATLINED THE ICE — both daemons uploaded.':'ICE BREACHED — daemon uploaded.'}</span> new protocol unlocked: <b>classified</b>`;
+  try{localStorage.setItem('fatih.breach',String(n))}catch(_){}
+  brBadge();
+  tprint(`<span class="cy">■ BREACH CERT</span> — ${n===2?'full flatline':'partial breach'} logged. protocol <span class="ps">classified</span> unlocked.`);
+}
+function brBadge(){
+  if($('#pwned'))return;
+  const s=document.createElement('span');s.id='pwned';s.innerHTML='ICE <b>PWNED</b>';
+  const rhs=document.querySelector('#deck .rhs');rhs&&rhs.prepend(s);
+}
+function brClosed(){brEl.hidden=true;if(brTick){clearInterval(brTick);brTick=0}if(br)br.over=true}
+brGrid.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-r]');if(!b||!br||br.over||b.disabled)return;
+  if(!br.t0){br.t0=performance.now();
+    brTick=setInterval(()=>{
+      const rem=1-(performance.now()-br.t0)/45000;
+      brBar.style.width=Math.max(0,rem*100)+'%';
+      if(rem<=0)brEnd();
+    },200);
+  }
+  const r3=+b.dataset.r,c3=+b.dataset.c;
+  br.used.add(r3+','+c3);br.buf.push(br.g[r3][c3]);
+  if(br.axis==='row'){br.axis='col';br.line=c3}else{br.axis='row';br.line=r3}
+  br.daemons.forEach(d=>{if(!d.done)d.done=hasRun(br.buf,d.seq)});
+  if(br.daemons.every(d=>d.done)||br.buf.length>=6)brEnd();else brRender();
+});
+$('#brClose').addEventListener('click',brClosed);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!brEl.hidden)brClosed()});
+try{if(localStorage.getItem('fatih.breach'))brBadge()}catch(_){}
+
+/* ============ ?debug HUD — the city's vitals, for the curious ============ */
+let dbgEl=null,fpsE=60,lastFT=0;
+function debugHud(){
+  if(dbgEl){dbgEl.remove();dbgEl=null;return false}
+  dbgEl=document.createElement('div');dbgEl.id='dbghud';document.body.appendChild(dbgEl);
+  (function tick(){
+    if(!dbgEl)return;
+    const bld=layers.reduce((a,b)=>a+b.length,0);
+    dbgEl.innerHTML=
+      `fps <b>${fpsE.toFixed(0)}</b> · canvas <b>${W}×${H}</b> @${PXS}px<br>`+
+      `seed <b>${SEED}</b> · tod <b>${todName}</b> · rain <b>${rainMode}/${rain.length}</b><br>`+
+      `bld <b>${bld}</b> · cars <b>${cars.length}</b> · peds <b>${peds.length}</b> · mono <b>${mono?'run':'—'}</b><br>`+
+      `inc <b>${DBG_INCT||(incT0?'live':'wait')}</b> · hack <b>${DBG_HKT||(hkT0?'live':'wait')}</b>`;
+    setTimeout(tick,250);
+  })();
+  return true;
+}
+if(/[?&]debug(&|$)/.test(location.search))addEventListener('load',()=>debugHud());
+
 /* ============ DIRECTOR'S CUT — scrub the scripted scenes like dailies ============ */
 /* The ?inct/?hkt dev hooks, promoted to a panel: pick a scene, drag the clock, read the
    margin notes. LIVE hands the clocks back and both one-shots replay for real. */
@@ -3762,6 +3914,7 @@ const ACTIONS=[
  {t:'Reroll the skyline (random seed)',k:'⚂',f:()=>{reseed('random');tprint(`skyline redealt · seed <span class="cy">${SEED}</span>`)}},
  {t:'Toggle ambient sound',k:'♪',f:()=>sfx.toggle()},
  {t:"Director's cut (scene scrubber)",k:'🎬',f:()=>dirOpen()},
+ {t:'Breach protocol (minigame)',k:'▦',f:()=>brOpen()},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
 const pal=$('#palette'),palin=$('#palin'),pallist=$('#pallist');
@@ -3798,13 +3951,24 @@ function clk(){
 clk();setInterval(clk,1000);
 setInterval(()=>{$('#ram').textContent=(8.4+Math.random()*3.2).toFixed(1)+'/16'},2600);
 const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-let kbuf=[];
+let kbuf=[],psychoT=0;
+function cyberpsycho(){
+  if(psychoT)return;
+  if(reduced){tprint('<span class="warn">cyberware suppressants active (reduced motion). episode averted.</span>');return}
+  psychoT=performance.now();
+  document.body.classList.add('psycho');
+  const b=document.createElement('div');b.id='maxtac';b.textContent='⚠ MAXTAC // CYBERPSYCHO ALERT — STAY INDOORS';
+  document.body.appendChild(b);
+  tprint('<span class="err">⚠ CYBERPSYCHO EPISODE DETECTED — MAXTAC EN ROUTE</span>');
+  if(sfx.enabled)sfx.thunder();
+  setTimeout(()=>{
+    document.body.classList.remove('psycho');b.remove();psychoT=0;
+    tprint('episode contained. cyberware back under limits. drink water, choom.');
+  },8000);
+}
 addEventListener('keydown',e=>{
   kbuf.push(e.key);kbuf=kbuf.slice(-10);
-  if(kbuf.join()===KONAMI.join()){
-    document.body.classList.toggle('party');
-    tprint('🌈 <span class="warn">konami accepted. chromatic overdrive toggled. medical bills not covered.</span>');
-  }
+  if(kbuf.join()===KONAMI.join())cyberpsycho();
 });
 
 /* ============ X-RAY SCAN LENS (hover reveals the layer beneath) ============ */
