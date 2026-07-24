@@ -116,6 +116,13 @@ header.top .cmdk:hover{color:var(--fg);border-color:var(--neon)}
 header.top .cmdk kbd{border:none;background:none;padding:0}
 #sndBtn b{color:var(--cyan);font-weight:400}
 #sndBtn[aria-pressed="true"]{border-color:var(--cyan)}
+/* ===== TOD SWITCH — the hour, one bevel to the right of the clock ===== */
+#todSwitch{display:inline-flex;margin-left:14px;border:1px solid var(--line);vertical-align:middle;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+#todSwitch button{padding:3px 9px;color:var(--dim);font-size:11px;line-height:1;border-right:1px solid var(--line)}
+#todSwitch button:last-child{border-right:none}
+#todSwitch button:hover{color:var(--fg)}
+#todSwitch button.on{color:var(--cyan);background:rgba(0,240,255,.08);text-shadow:0 0 8px var(--cyan)}
+@media(max-width:700px){#todSwitch{margin-left:8px}}
 /* ===== DIRECTOR'S CUT — the dev hooks promoted to a panel ===== */
 #director{position:fixed;left:16px;bottom:60px;z-index:940;width:312px;background:rgba(7,10,18,.94);border:1px solid var(--line);padding:12px 14px;font-size:11px;color:var(--dim);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #director .dhd{display:flex;justify-content:space-between;color:var(--fg);letter-spacing:.18em;margin-bottom:8px}
@@ -888,7 +895,11 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 </div>
 
 <header class="top">
-  <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small></div>
+  <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
+    <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — auto from your clock; override here">
+      <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button data-tod="day" title="day">☀</button><button data-tod="dusk" title="dusk">◖</button>
+    </span>
+  </div>
   <nav>
     <a href="#garage">./garage</a>
     <a href="#implants">./loadout</a>
@@ -1447,31 +1458,37 @@ const TOD_PROFILES={
     shades:['#080B14','#0A0E1A','#0D1322'],
     rim:['rgba(150,205,255,.16)','rgba(160,205,255,.30)','rgba(160,205,255,.16)'],
     skyStops:null,haze:null,
+    road:['#070A12','rgba(130,170,255,.16)','#0B101E'],dark:'#04060C',
     sky:['rgba(157,78,221,.07)','rgba(255,46,136,.14)']},
   dusk:{winMul:1.1,traffMul:0.85,sun:'right',
     shades:['#171021','#1C1326','#22172B'],
     rim:['rgba(255,176,96,.45)','rgba(255,190,110,.55)','rgba(255,176,96,.28)'],
     skyStops:[[0,'#0C0E20'],[0.42,'#2A1838'],[0.60,'#6E2244'],[0.74,'#B44430'],[0.85,'#E8913B'],[1,'#F7BE6A']],
     haze:['rgba(232,145,59,.16)','rgba(232,145,59,.08)'],
+    road:['#150F1C','rgba(255,180,120,.20)','#1B1322'],dark:'#120C18',
     sky:['rgba(255,110,60,.08)','rgba(255,46,136,.16)']},
-  dawn:{winMul:0.45,traffMul:1.6,sun:'left',
-    shades:['#111530','#151A38','#1A2040'],
-    rim:['rgba(255,170,140,.40)','rgba(255,190,150,.50)','rgba(255,170,140,.25)'],
-    skyStops:[[0,'#0A122B'],[0.40,'#16305A'],[0.60,'#2E5E80'],[0.74,'#7E7C90'],[0.84,'#D8836E'],[1,'#F2B36B']],
-    haze:['rgba(120,150,190,.18)','rgba(140,150,180,.09)'],
-    sky:['rgba(0,240,255,.05)','rgba(255,120,150,.10)']},
+  dawn:{winMul:0.45,traffMul:1.6,sun:'left',   // sunrise proper: gold pouring up from the east
+    shades:['#141631','#191B38','#1F2140'],
+    rim:['rgba(255,186,100,.48)','rgba(255,205,120,.55)','rgba(255,186,100,.28)'],
+    skyStops:[[0,'#1E3060'],[0.22,'#3E4E7E'],[0.42,'#8A6070'],[0.60,'#D8845A'],[0.78,'#F2A94E'],[1,'#FBD37A']],
+    haze:['rgba(240,160,90,.19)','rgba(235,165,105,.10)'],
+    road:['#1A1830','rgba(255,190,130,.22)','#221E38'],dark:'#10132A',
+    sky:['rgba(255,170,80,.06)','rgba(255,140,110,.10)']},
   day:{winMul:0,traffMul:1.25,sun:'left',    // nobody leaves a lamp on at noon — the ads never sleep
-    shades:['#1F2A44','#26334E','#2F3D5A'],
-    rim:['rgba(200,220,250,.32)','rgba(215,232,255,.42)','rgba(200,220,250,.20)'],
-    skyStops:[[0,'#1B2A52'],[0.45,'#2C4574'],[0.75,'#49648F'],[1,'#6A87AC']],
-    haze:['rgba(110,140,185,.22)','rgba(110,140,185,.10)'],
-    sky:['rgba(140,170,225,.06)','rgba(140,155,205,.08)']},
+    shades:['#1C2848','#233254','#2C3D62'],
+    rim:['rgba(195,218,255,.34)','rgba(210,230,255,.44)','rgba(195,218,255,.22)'],
+    skyStops:[[0,'#16265A'],[0.45,'#264180'],[0.75,'#3E5E9E'],[1,'#5F82BC']],
+    haze:['rgba(100,140,200,.22)','rgba(100,140,200,.10)'],
+    road:['#232E48','rgba(200,220,255,.22)','#2A3752'],dark:'#182238',
+    sky:['rgba(130,170,235,.07)','rgba(130,155,215,.08)']},
 };
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
   if(m&&TOD_PROFILES[m])return m;
+  /* the glittering night IS the storefront — daylight hours default to it. dawn and dusk
+     only show in their true golden windows; the day theme stays a manual curiosity. */
   const h3=new Date().getHours();
-  return h3>=22||h3<5?'night':h3<8?'dawn':h3<18?'day':'dusk';
+  return h3>=5&&h3<8?'dawn':h3>=16&&h3<20?'dusk':'night';
 })();
 let TOD=TOD_PROFILES[todName];
 function buildCity(){
@@ -2195,7 +2212,7 @@ function bakeCity(){
       const bx=bd.x,topY=bd.base-bd.h;
       /* ambient occlusion gap */
       X.fillStyle='rgba(0,0,0,.4)';X.fillRect(bx-2,topY+2,2,bd.h+H);
-      X.fillStyle=bd.shadowed?'#04060C':bd.shade;
+      X.fillStyle=bd.shadowed?TOD.dark:bd.shade;
       X.fillRect(bx,topY,bd.w,bd.h+H);
       /* floor bands */
       X.fillStyle='rgba(0,0,0,.30)';
@@ -2204,7 +2221,7 @@ function bakeCity(){
       if(bd.vt==='setback'){
         const t2w=Math.max(3,Math.round(bd.w*.62)),t2h=Math.max(2,Math.round(bd.h*.14));
         const t3w=Math.max(2,Math.round(bd.w*.36)),t3h=Math.max(2,Math.round(bd.h*.08));
-        X.fillStyle=bd.shadowed?'#04060C':bd.shade;
+        X.fillStyle=bd.shadowed?TOD.dark:bd.shade;
         X.fillRect(bx+Math.round((bd.w-t2w)/2),topY-t2h,t2w,t2h);
         X.fillRect(bx+Math.round((bd.w-t3w)/2),topY-t2h-t3h,t3w,t3h);
         X.fillStyle='rgba(150,195,255,.20)';
@@ -2455,9 +2472,9 @@ function city(t){
   });
   /* ---- street level: road with two-way traffic ---- */
   const roadTop=H-32-deckOff,roadBot=roadTop+32;
-  ctx.fillStyle='#070A12';ctx.fillRect(0,roadTop,W,H-roadTop);
-  ctx.fillStyle='rgba(130,170,255,.16)';ctx.fillRect(0,roadTop,W,1);
-  ctx.fillStyle='#0B101E';ctx.fillRect(0,roadTop+1,W,3);
+  ctx.fillStyle=TOD.road[0];ctx.fillRect(0,roadTop,W,H-roadTop);   // asphalt takes the hour too
+  ctx.fillStyle=TOD.road[1];ctx.fillRect(0,roadTop,W,1);
+  ctx.fillStyle=TOD.road[2];ctx.fillRect(0,roadTop+1,W,3);
   ctx.fillStyle='rgba(200,215,240,.13)';
   for(let dx=Math.round(-((t*0.012)%12));dx<W;dx+=12)ctx.fillRect(dx,roadTop+16,6,1);
   if(t-lastCarR>(2100+Math.random()*2400)*TOD.traffMul){lastCarR=t;
@@ -3678,8 +3695,8 @@ const ARGCMDS={
  },
  tod:a=>{
    const m=(a[0]||'').toLowerCase();
-   if(TOD_PROFILES[m]){todName=m;TOD=TOD_PROFILES[m];W=0;buildCity();return `grid clock overridden — <span class="cy">${m}</span>. same town, different light.`}
-   return `usage: <span class="ps">tod night|dusk|dawn|day</span> — currently: <span class="cy">${todName}</span> (read from your clock)`;
+   if(TOD_PROFILES[m])return setTod(m)?`grid clock overridden — <span class="cy">${m}</span>. same town, different light.`:`already ${m}. the hour holds.`;
+   return `usage: <span class="ps">tod night|dusk|dawn|day</span> — currently: <span class="cy">${todName}</span> (or flip the switch up top-left)`;
  },
 };
 tin.addEventListener('keydown',e=>{
@@ -3775,6 +3792,17 @@ const sfx=(()=>{
   return api;
 })();
 $('#sndBtn').addEventListener('click',()=>sfx.toggle());
+/* ---- the tod switch: same lever the terminal pulls ---- */
+function setTod(m){
+  if(!TOD_PROFILES[m]||m===todName)return false;
+  todName=m;TOD=TOD_PROFILES[m];W=0;buildCity();
+  document.querySelectorAll('#todSwitch button').forEach(b=>b.classList.toggle('on',b.dataset.tod===m));
+  return true;
+}
+document.querySelectorAll('#todSwitch button').forEach(b=>{
+  b.classList.toggle('on',b.dataset.tod===todName);
+  b.addEventListener('click',()=>setTod(b.dataset.tod));
+});
 /* a stored preference can't start audio on its own — browsers demand a fresh gesture first */
 try{if(localStorage.getItem('fatih.snd')==='1'){
   const arm=()=>sfx.on();
