@@ -1438,14 +1438,34 @@ let RNG=Math.random;                       // buildCity swaps the seeded deck in
 let rainMode='on';
 const RR=(a,b)=>a+RNG()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
 /* ============ TIME OF DAY — the city reads your clock and decides how awake it is ============ */
-/* Night City never does daylight; "day" here is just a paler species of dusk. winMul scales lit
-   windows, traffMul stretches car spawn gaps, sky recolors the base wash, band paints a proper
-   horizon glow behind the skyline, lift is atmospheric haze over everything. */
+/* A tod switch is a full theme change: skyStops paints a REAL sky behind everything (night keeps
+   its void), shades recolor the tower silhouettes, rim is the sun catching building edges from
+   the `sun` side, haze sinks the far layers into the hour's air. winMul scales lit windows,
+   traffMul stretches car spawn gaps, sky is the neon street wash every hour keeps. */
 const TOD_PROFILES={
-  night:{winMul:1,   traffMul:1,   sky:['rgba(157,78,221,.07)','rgba(255,46,136,.14)'],  band:null, lift:0},
-  dusk: {winMul:1.1, traffMul:0.85,sky:['rgba(255,110,60,.10)','rgba(255,46,136,.20)'],  band:['rgba(255,120,50,.02)','rgba(255,90,40,.18)'],   lift:0.012},
-  dawn: {winMul:0.45,traffMul:1.6, sky:['rgba(0,240,255,.08)','rgba(255,120,150,.16)'],  band:['rgba(90,200,255,.03)','rgba(255,140,160,.22)'], lift:0.03},
-  day:  {winMul:0.55,traffMul:1.25,sky:['rgba(140,170,215,.14)','rgba(150,150,195,.15)'],band:['rgba(150,180,220,.05)','rgba(160,175,215,.16)'],lift:0.085},
+  night:{winMul:1,traffMul:1,sun:'left',
+    shades:['#080B14','#0A0E1A','#0D1322'],
+    rim:['rgba(150,205,255,.16)','rgba(160,205,255,.30)','rgba(160,205,255,.16)'],
+    skyStops:null,haze:null,
+    sky:['rgba(157,78,221,.07)','rgba(255,46,136,.14)']},
+  dusk:{winMul:1.1,traffMul:0.85,sun:'right',
+    shades:['#171021','#1C1326','#22172B'],
+    rim:['rgba(255,176,96,.45)','rgba(255,190,110,.55)','rgba(255,176,96,.28)'],
+    skyStops:[[0,'#0C0E20'],[0.42,'#2A1838'],[0.60,'#6E2244'],[0.74,'#B44430'],[0.85,'#E8913B'],[1,'#F7BE6A']],
+    haze:['rgba(232,145,59,.16)','rgba(232,145,59,.08)'],
+    sky:['rgba(255,110,60,.08)','rgba(255,46,136,.16)']},
+  dawn:{winMul:0.45,traffMul:1.6,sun:'left',
+    shades:['#111530','#151A38','#1A2040'],
+    rim:['rgba(255,170,140,.40)','rgba(255,190,150,.50)','rgba(255,170,140,.25)'],
+    skyStops:[[0,'#0A122B'],[0.40,'#16305A'],[0.60,'#2E5E80'],[0.74,'#7E7C90'],[0.84,'#D8836E'],[1,'#F2B36B']],
+    haze:['rgba(120,150,190,.18)','rgba(140,150,180,.09)'],
+    sky:['rgba(0,240,255,.05)','rgba(255,120,150,.10)']},
+  day:{winMul:0.55,traffMul:1.25,sun:'left',
+    shades:['#232C3E','#2A3448','#323E54'],
+    rim:['rgba(210,225,245,.30)','rgba(220,235,250,.40)','rgba(210,225,245,.20)'],
+    skyStops:[[0,'#26304A'],[0.5,'#3A4A66'],[0.8,'#57687F'],[1,'#6C7B90']],
+    haze:['rgba(108,123,144,.22)','rgba(108,123,144,.10)'],
+    sky:['rgba(140,170,215,.06)','rgba(150,150,195,.08)']},
 };
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
@@ -1465,7 +1485,7 @@ function buildCity(){
   [cv,...bakeC].forEach(c=>{c.width=W;c.height=H});
   [ctx,...bakeX].forEach(x=>{x.imageSmoothingEnabled=false});
   layers=[];
-  const shades=['#080B14','#0A0E1A','#0D1322'];
+  const shades=TOD.shades;                 // the hour picks the silhouette palette
   for(let L=0;L<3;L++){
     const b=[];let x=-14;
     const base=Math.round(H*(0.54+L*0.13));
@@ -2202,12 +2222,18 @@ function bakeCity(){
         X.fillRect(sx-2,topY-Math.round(ah*.5),5,1);
         bd.beaconY=topY-ah;
       }else if(bd.beaconY===undefined)bd.beaconY=topY-1;
-      /* facade shading: left rim → right shadow */
-      X.fillStyle='rgba(150,205,255,.16)';X.fillRect(bx,topY,1,bd.h+H);
-      X.fillStyle='rgba(0,0,0,.30)';X.fillRect(bx+bd.w-3,topY,3,bd.h+H);
-      X.fillStyle='rgba(0,0,0,.22)';X.fillRect(bx+bd.w-5,topY,2,bd.h+H);
-      /* parapet */
-      X.fillStyle=L===2?'rgba(160,205,255,.30)':'rgba(160,205,255,.16)';
+      /* facade shading: sun-side rim → far-side shadow (the sun moves with the hour) */
+      if(TOD.sun==='left'){
+        X.fillStyle=TOD.rim[0];X.fillRect(bx,topY,1,bd.h+H);
+        X.fillStyle='rgba(0,0,0,.30)';X.fillRect(bx+bd.w-3,topY,3,bd.h+H);
+        X.fillStyle='rgba(0,0,0,.22)';X.fillRect(bx+bd.w-5,topY,2,bd.h+H);
+      }else{
+        X.fillStyle=TOD.rim[0];X.fillRect(bx+bd.w-1,topY,1,bd.h+H);
+        X.fillStyle='rgba(0,0,0,.30)';X.fillRect(bx,topY,3,bd.h+H);
+        X.fillStyle='rgba(0,0,0,.22)';X.fillRect(bx+3,topY,2,bd.h+H);
+      }
+      /* parapet catches the sky */
+      X.fillStyle=L===2?TOD.rim[1]:TOD.rim[2];
       X.fillRect(bx,topY,bd.w,1);
       /* roof clutter */
       for(let k=0;k<bd.duct;k++){
@@ -2319,14 +2345,14 @@ function city(t){
   lastFT=t;
   ctx.clearRect(0,0,W,H);
   const lights=[];
+  if(TOD.skyStops){                         // a real sky, painted edge to edge — night keeps its void
+    const sg=ctx.createLinearGradient(0,0,0,H*0.86);
+    TOD.skyStops.forEach(s=>sg.addColorStop(s[0],s[1]));
+    ctx.fillStyle=sg;ctx.fillRect(0,0,W,H);
+  }
   const g=ctx.createLinearGradient(0,H*.34,0,H);
   g.addColorStop(0,'rgba(5,6,10,0)');g.addColorStop(.72,TOD.sky[0]);g.addColorStop(1,TOD.sky[1]);
   ctx.fillStyle=g;ctx.fillRect(0,Math.round(H*.3),W,H);
-  if(TOD.band){                             // horizon glow: the hour, painted behind the towers
-    const hb2=ctx.createLinearGradient(0,H*0.42,0,H*0.85);
-    hb2.addColorStop(0,TOD.band[0]);hb2.addColorStop(1,TOD.band[1]);
-    ctx.fillStyle=hb2;ctx.fillRect(0,Math.round(H*0.42),W,Math.round(H*0.43));
-  }
   drawBolt(t);                              // lightning flashes behind the skyline
   beams.forEach(bm=>{
     const a=bm.base+Math.sin(t*bm.sp)*bm.amp,ox=bm.x/PXS*PXS/PXS*0+bm.x/1,oy=H*.92,len=H*1.3;
@@ -2344,6 +2370,7 @@ function city(t){
     const par=Math.round(mxr*(L+1)*5);
     const yoff=-Math.min(Math.round(scrollY/PXS*0.02*(L*0.5+0.35)),Math.round(H*0.05));
     ctx.drawImage(bakeC[L],-par,yoff);
+    if(TOD.haze&&L<2){ctx.fillStyle=TOD.haze[L];ctx.fillRect(0,0,W,H)}   // far towers sink into the hour's air
     b.forEach(bd=>{
       const bx=bd.x-par,topY=bd.topY+yoff;
       bd.win.forEach(wn=>{
@@ -2484,7 +2511,6 @@ function city(t){
     ctx.globalAlpha=1;
   });
   drawPeds(t);                              // sidewalk life walks in front of the traffic
-  if(TOD.lift){ctx.fillStyle='rgba(150,170,210,'+TOD.lift+')';ctx.fillRect(0,0,W,H)}   // pre-dawn haze
   if(rainMode!=='off'){
     ctx.fillStyle=rainMode==='storm'?'rgba(150,200,255,.34)':'rgba(150,200,255,.26)';
     rain.forEach(r=>{
