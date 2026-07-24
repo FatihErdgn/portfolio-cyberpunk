@@ -1439,13 +1439,13 @@ let rainMode='on';
 const RR=(a,b)=>a+RNG()*(b-a), RI=(a,b)=>Math.floor(RR(a,b+1));
 /* ============ TIME OF DAY — the city reads your clock and decides how awake it is ============ */
 /* Night City never does daylight; "day" here is just a paler species of dusk. winMul scales lit
-   windows (same RNG draws either way, so a shared seed still deals the same skyline), traffMul
-   stretches car spawn gaps, sky recolors the horizon wash, lift is a faint pre-dawn haze. */
+   windows, traffMul stretches car spawn gaps, sky recolors the base wash, band paints a proper
+   horizon glow behind the skyline, lift is atmospheric haze over everything. */
 const TOD_PROFILES={
-  night:{winMul:1,   traffMul:1,   sky:['rgba(157,78,221,.07)','rgba(255,46,136,.14)'], lift:0},
-  dusk: {winMul:1.1, traffMul:0.85,sky:['rgba(255,110,60,.08)','rgba(255,46,136,.16)'], lift:0.015},
-  dawn: {winMul:0.5, traffMul:1.6, sky:['rgba(0,240,255,.06)','rgba(255,120,150,.12)'], lift:0.03},
-  day:  {winMul:0.6, traffMul:1.25,sky:['rgba(120,150,200,.08)','rgba(157,78,221,.10)'],lift:0.05},
+  night:{winMul:1,   traffMul:1,   sky:['rgba(157,78,221,.07)','rgba(255,46,136,.14)'],  band:null, lift:0},
+  dusk: {winMul:1.1, traffMul:0.85,sky:['rgba(255,110,60,.10)','rgba(255,46,136,.20)'],  band:['rgba(255,120,50,.02)','rgba(255,90,40,.18)'],   lift:0.012},
+  dawn: {winMul:0.45,traffMul:1.6, sky:['rgba(0,240,255,.08)','rgba(255,120,150,.16)'],  band:['rgba(90,200,255,.03)','rgba(255,140,160,.22)'], lift:0.03},
+  day:  {winMul:0.55,traffMul:1.25,sky:['rgba(140,170,215,.14)','rgba(150,150,195,.15)'],band:['rgba(150,180,220,.05)','rgba(160,175,215,.16)'],lift:0.085},
 };
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
@@ -1482,8 +1482,12 @@ function buildCity(){
       const shadowed=RNG()<.22;
       const win=[];
       const cols=Math.max(1,Math.floor((w-2)/4)),rows=Math.max(1,Math.floor((h-6)/5));
-      for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++)
-        if(RNG()<(shadowed?.04:.30)*TOD.winMul)win.push({c,r:rr,t:RNG()*9000,col:RNG()<.12?NEONS[(RNG()*NEONS.length)|0]:null,dim:shadowed});
+      for(let c=0;c<cols;c++)for(let rr=0;rr<rows;rr++){
+        /* fixed draw count per cell, pass or fail — so a tod switch re-lights the SAME town
+           instead of rerolling it (dawn wakes a subset of night's windows, never new ones) */
+        const roll=RNG(),wt=RNG()*9000,cRoll=RNG(),cIdx=(RNG()*NEONS.length)|0;
+        if(roll<(shadowed?.04:.30)*TOD.winMul)win.push({c,r:rr,t:wt,col:cRoll<.12?NEONS[cIdx]:null,dim:shadowed});
+      }
       b.push({x,w,h,base,vt,win,shadowed,tall:h>H*.34,shade:shades[L],L,
         neon:(!shadowed&&RNG()<(L===2?.42:.19))?{col:NEONS[(RNG()*NEONS.length)|0],vert:RNG()<.5,off:RNG()*7000,len:RI(6,18)}:null,
         board:(L===2&&!shadowed&&RNG()<.34&&w>=18)?{y:RI(6,Math.max(7,Math.round(h*.5))),w:Math.min(w-4,RI(10,18)),h:RI(7,12),c1:NEONS[(RNG()*NEONS.length)|0],c2:NEONS[(RNG()*NEONS.length)|0],off:RNG()*9000}:null,
@@ -2318,6 +2322,11 @@ function city(t){
   const g=ctx.createLinearGradient(0,H*.34,0,H);
   g.addColorStop(0,'rgba(5,6,10,0)');g.addColorStop(.72,TOD.sky[0]);g.addColorStop(1,TOD.sky[1]);
   ctx.fillStyle=g;ctx.fillRect(0,Math.round(H*.3),W,H);
+  if(TOD.band){                             // horizon glow: the hour, painted behind the towers
+    const hb2=ctx.createLinearGradient(0,H*0.42,0,H*0.85);
+    hb2.addColorStop(0,TOD.band[0]);hb2.addColorStop(1,TOD.band[1]);
+    ctx.fillStyle=hb2;ctx.fillRect(0,Math.round(H*0.42),W,Math.round(H*0.43));
+  }
   drawBolt(t);                              // lightning flashes behind the skyline
   beams.forEach(bm=>{
     const a=bm.base+Math.sin(t*bm.sp)*bm.amp,ox=bm.x/PXS*PXS/PXS*0+bm.x/1,oy=H*.92,len=H*1.3;
@@ -3643,7 +3652,7 @@ const ARGCMDS={
  },
  tod:a=>{
    const m=(a[0]||'').toLowerCase();
-   if(TOD_PROFILES[m]){todName=m;TOD=TOD_PROFILES[m];W=0;buildCity();return `grid clock overridden — <span class="cy">${m}</span>. same seed, different insomnia.`}
+   if(TOD_PROFILES[m]){todName=m;TOD=TOD_PROFILES[m];W=0;buildCity();return `grid clock overridden — <span class="cy">${m}</span>. same town, different light.`}
    return `usage: <span class="ps">tod night|dusk|dawn|day</span> — currently: <span class="cy">${todName}</span> (read from your clock)`;
  },
 };
