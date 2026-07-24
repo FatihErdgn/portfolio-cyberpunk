@@ -114,6 +114,8 @@ header.top nav a:hover{color:var(--neon);text-shadow:0 0 10px var(--neon)}
 header.top .cmdk{border:1px solid var(--line);padding:5px 12px;color:var(--dim);background:var(--panel);font-size:11px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 header.top .cmdk:hover{color:var(--fg);border-color:var(--neon)}
 header.top .cmdk kbd{border:none;background:none;padding:0}
+#sndBtn b{color:var(--cyan);font-weight:400}
+#sndBtn[aria-pressed="true"]{border-color:var(--cyan)}
 
 main{max-width:1080px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
 section{padding:96px 0}
@@ -846,6 +848,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <a href="#icewall">./breach</a>
     <a href="#term" data-dock>./jack-in</a>
   </nav>
+  <button class="cmdk" id="sndBtn" aria-pressed="false" title="ambient sound — rain, hum, distant sirens">snd <b>off</b></button>
   <button class="cmdk" id="cmdkBtn">command palette <kbd>⌘K</kbd></button>
 </header>
 
@@ -3409,7 +3412,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span>`,
+ help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span>`,
  whoami:()=>`Fatih ErdoGan — Industrial Engineer and full-stack software engineer, working where MES meets OT.<br>I build software for real industrial environments like refineries. Based in İzmir, open to remote.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith · powerplant: .NET/C# · drive-by-wire: TypeScript/React/Next<br>ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -3446,6 +3449,12 @@ const ARGCMDS={
    if(m==='all'){resetIncident();resetHack();return `both scenes rewound. the city forgets nothing — twice.`}
    return `usage: <span class="ps">replay incident|hack|all</span>`;
  },
+ snd:a=>{
+   const m=(a[0]||'').toLowerCase();
+   if(m==='on'){sfx.on();return `ambient feed live — rain on the mic, substation hum, sirens far off.`}
+   if(m==='off'){sfx.off();return `ambient feed cut. the city goes back to miming.`}
+   return `usage: <span class="ps">snd on|off</span> — currently: <span class="cy">${sfx.enabled?'on':'off'}</span>`;
+ },
 };
 tin.addEventListener('keydown',e=>{
   if(e.key!=='Enter')return;
@@ -3464,8 +3473,88 @@ if(/[?&]devx/.test(location.search))window.__dev={
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
   cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
-  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED}),
+  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED,snd:sfx.enabled}),
 };
+
+/* ============ AMBIENT AUDIO — synthesized on the spot, no files; silent until asked ============ */
+/* One noise buffer and a couple of oscillators carry the whole soundscape: rain hiss with a
+   wandering low-pass, substation hum, the odd far-off siren that is never coming for you. */
+const sfx=(()=>{
+  let ac=null,master,rainG,on=false;
+  const api={on:()=>set(true),off:()=>set(false),toggle:()=>set(!on),get enabled(){return on},thunder:()=>{}};
+  function build(){
+    ac=new (window.AudioContext||window.webkitAudioContext)();
+    master=ac.createGain();master.gain.value=0;master.connect(ac.destination);
+    const nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);
+    const ch=nb.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;
+    /* rain: band-limited hiss, the low-pass wanders so it never reads as flat static */
+    const rn=ac.createBufferSource();rn.buffer=nb;rn.loop=true;
+    const hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=400;
+    const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=6000;
+    const lfo=ac.createOscillator();lfo.frequency.value=0.07;
+    const lfoG=ac.createGain();lfoG.gain.value=1600;
+    lfo.connect(lfoG);lfoG.connect(lp.frequency);lfo.start();
+    rainG=ac.createGain();rainG.gain.value=0.05;
+    rn.connect(hp);hp.connect(lp);lp.connect(rainG);rainG.connect(master);rn.start();
+    /* hum: two detuned saws through a heavy low-pass — the substation heartbeat */
+    const h1=ac.createOscillator();h1.type='sawtooth';h1.frequency.value=55;
+    const h2=ac.createOscillator();h2.type='sawtooth';h2.frequency.value=110.4;
+    const hlp=ac.createBiquadFilter();hlp.type='lowpass';hlp.frequency.value=160;
+    const hg=ac.createGain();hg.gain.value=0.012;
+    h1.connect(hlp);h2.connect(hlp);hlp.connect(hg);hg.connect(master);h1.start();h2.start();
+    /* thunder: the same noise slowed to a rumble; the weather fires it */
+    api.thunder=()=>{if(!on)return;
+      const s=ac.createBufferSource();s.buffer=nb;s.playbackRate.value=0.32;
+      const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=130;
+      const g=ac.createGain();g.gain.setValueAtTime(0.001,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.5,ac.currentTime+0.06);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+2.4);
+      s.connect(f);f.connect(g);g.connect(master);s.start();s.stop(ac.currentTime+2.6);
+    };
+    /* siren: a distant two-tone wail, panned somewhere else in the city — never yours */
+    const siren=()=>{
+      setTimeout(siren,25000+Math.random()*35000);
+      if(!on)return;
+      const o=ac.createOscillator();o.type='triangle';
+      const g=ac.createGain(),pan=ac.createStereoPanner?ac.createStereoPanner():null;
+      if(pan)pan.pan.value=Math.random()<.5?-0.7:0.7;
+      const t0=ac.currentTime;
+      o.frequency.setValueAtTime(620,t0);
+      for(let k=0;k<3;k++){
+        o.frequency.linearRampToValueAtTime(930,t0+k*1.8+0.9);
+        o.frequency.linearRampToValueAtTime(620,t0+k*1.8+1.8);
+      }
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(0.018,t0+1.2);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+5.4);
+      o.connect(g);if(pan){g.connect(pan);pan.connect(master)}else g.connect(master);
+      o.start(t0);o.stop(t0+5.6);
+    };
+    setTimeout(siren,8000+Math.random()*10000);
+    /* rain gain follows the weather commands */
+    setInterval(()=>{
+      const tgt=rainMode==='off'?0:rainMode==='storm'?0.10:0.05;
+      rainG.gain.setTargetAtTime(tgt,ac.currentTime,0.8);
+    },1200);
+  }
+  function set(v){
+    on=v;
+    if(v&&!ac)build();
+    if(!ac)return;
+    if(v&&ac.state==='suspended')ac.resume();
+    master.gain.setTargetAtTime(v?1:0,ac.currentTime,0.3);
+    const b=$('#sndBtn');if(b){b.innerHTML='snd <b>'+(v?'on':'off')+'</b>';b.setAttribute('aria-pressed',String(v))}
+    try{localStorage.setItem('fatih.snd',v?'1':'0')}catch(_){}
+  }
+  return api;
+})();
+$('#sndBtn').addEventListener('click',()=>sfx.toggle());
+/* a stored preference can't start audio on its own — browsers demand a fresh gesture first */
+try{if(localStorage.getItem('fatih.snd')==='1'){
+  const arm=()=>sfx.on();
+  addEventListener('pointerdown',arm,{once:true});
+  addEventListener('keydown',arm,{once:true});
+}}catch(_){}
 
 /* ============ PALETTE ============ */
 const ACTIONS=[
@@ -3478,6 +3567,7 @@ const ACTIONS=[
  {t:'Open LinkedIn',k:'↗',f:()=>open('https://linkedin.com/in/fatiherdogan09','_blank')},
  {t:'Toggle CRT scanlines',k:'☢',f:()=>document.body.classList.toggle('crt')},
  {t:'Reroll the skyline (random seed)',k:'⚂',f:()=>{reseed('random');tprint(`skyline redealt · seed <span class="cy">${SEED}</span>`)}},
+ {t:'Toggle ambient sound',k:'♪',f:()=>sfx.toggle()},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
 const pal=$('#palette'),palin=$('#palin'),pallist=$('#pallist');
