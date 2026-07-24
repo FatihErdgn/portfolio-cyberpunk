@@ -116,6 +116,24 @@ header.top .cmdk:hover{color:var(--fg);border-color:var(--neon)}
 header.top .cmdk kbd{border:none;background:none;padding:0}
 #sndBtn b{color:var(--cyan);font-weight:400}
 #sndBtn[aria-pressed="true"]{border-color:var(--cyan)}
+/* ===== DIRECTOR'S CUT — the dev hooks promoted to a panel ===== */
+#director{position:fixed;left:16px;bottom:60px;z-index:940;width:312px;background:rgba(7,10,18,.94);border:1px solid var(--line);padding:12px 14px;font-size:11px;color:var(--dim);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#director .dhd{display:flex;justify-content:space-between;color:var(--fg);letter-spacing:.18em;margin-bottom:8px}
+#director .dhd button{color:var(--dim)}
+#director .dhd button:hover{color:var(--neon)}
+#director .dtabs{display:flex;gap:6px;margin-bottom:8px}
+#director .dtabs button,#director .dbeats button{border:1px solid var(--line);padding:3px 8px;color:var(--dim);font-size:10px}
+#director .dtabs button.on,#director .dbeats button.on{color:var(--cyan);border-color:var(--cyan)}
+#director .dbeats button:hover,#director .dtabs button:hover{color:var(--fg)}
+#director input[type=range]{width:100%;accent-color:var(--neon);margin:4px 0 8px}
+#director .dbeats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+#director .dcomm{min-height:26px;color:var(--fg);margin-bottom:8px}
+#director .dcomm b{color:var(--neon);font-weight:400}
+#director .drow{display:flex;justify-content:space-between;align-items:center}
+#director .drow button{border:1px solid var(--line);padding:3px 10px;color:var(--cyan)}
+#director .drow button:hover{border-color:var(--cyan)}
+#director .dnote{margin-top:8px;font-size:9px;opacity:.7}
+@media(max-width:700px){#director{left:8px;right:8px;width:auto;bottom:76px}}
 
 main{max-width:1080px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
 section{padding:96px 0}
@@ -1106,6 +1124,18 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 </main>
 
+<div id="director" hidden>
+  <div class="dhd">DIRECTOR'S CUT<button id="dirClose" aria-label="close">✕</button></div>
+  <div class="dtabs">
+    <button data-scene="incident" class="on">INCIDENT</button>
+    <button data-scene="hack">SIGNAL-JACK</button>
+  </div>
+  <input id="dirSlider" type="range" min="0" max="14000" step="50" value="0" aria-label="scene timeline">
+  <div class="dbeats" id="dirBeats"></div>
+  <div class="dcomm" id="dirComm">scrub the timeline, or jump straight to a beat</div>
+  <div class="drow"><button id="dirLive">▶ LIVE</button><span class="dms" id="dirMs">LIVE</span></div>
+  <div class="dnote">the ICE-wall breach has always scrubbed with your scroll — that one's on you</div>
+</div>
 <div id="deck">
   <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span></span>
   <span class="rhs"><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
@@ -1443,7 +1473,7 @@ let inc=null,incT0=0;
 /* dev hook: ?skipboot skips the boot log, ?inct=8600 freezes the incident clock at that ms
    (5900 beam lock / 6900 mid-leap / 8200 burning hover / 9900 ground blast / 12000 burning
    wreck tableau) — inert without the params */
-const DBG_INCT=+((location.search.match(/inct=(\d+)/)||[])[1]||0);
+let DBG_INCT=+((location.search.match(/inct=(\d+)/)||[])[1]||0);   // let: the director scrubs this live
 function pickIncident(){
   inc=null;incT0=0;
   if(reduced)return;
@@ -1838,7 +1868,7 @@ let hk=null,hkT0=0;
 /* dev hook: ?hkt=NNN freezes the hack clock at that ms (1400 mid-intrusion / 3000 skull loop /
    7000 drones on station / 9000 beam lock / 10200 on the wire / 12100 failed reset zap /
    17000 broken tableau) — inert without the param */
-const DBG_HKT=+((location.search.match(/hkt=(\d+)/)||[])[1]||0);
+let DBG_HKT=+((location.search.match(/hkt=(\d+)/)||[])[1]||0);     // let: the director scrubs this live
 function pickHack(){
   hk=null;hkT0=0;
   if(reduced)return;
@@ -3426,6 +3456,7 @@ const CMDS={
  ls:()=>`garage/ &nbsp;loadout/ &nbsp;dossiers/ &nbsp;runlog/ &nbsp;contact.md &nbsp;corpo_secrets/ <span class="err">(ICE detected — access denied)</span>`,
  pwd:()=>`/grid/izmir/you-should-hire-fatih`,
  vim:()=>`entering vim... <span class="err">error: no known exploit can exit vim. aborted for your safety.</span>`,
+ director:()=>{if(dirEl.hidden){dirOpen();return `director on set — dailies panel, bottom left. scrub away.`}dirClose();return `that's a wrap. clocks returned to the city.`},
  exit:()=>`there is no logout in night city. only <span class="ps">contact</span>.`,
 };
 /* protocols that take arguments — the plain lookup below stays fast for everything else */
@@ -3473,7 +3504,7 @@ if(/[?&]devx/.test(location.search))window.__dev={
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
   cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
-  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED,snd:sfx.enabled}),
+  state:()=>({rainMode,rainN:rain.length,incT0,hkT0,W,H,seed:SEED,snd:sfx.enabled,inct:DBG_INCT,hkt:DBG_HKT,dirOpen:!dirEl.hidden}),
 };
 
 /* ============ AMBIENT AUDIO — synthesized on the spot, no files; silent until asked ============ */
@@ -3556,6 +3587,65 @@ try{if(localStorage.getItem('fatih.snd')==='1'){
   addEventListener('keydown',arm,{once:true});
 }}catch(_){}
 
+/* ============ DIRECTOR'S CUT — scrub the scripted scenes like dailies ============ */
+/* The ?inct/?hkt dev hooks, promoted to a panel: pick a scene, drag the clock, read the
+   margin notes. LIVE hands the clocks back and both one-shots replay for real. */
+const DIR_SCENES={
+  incident:{max:14000,beats:[
+    [0,'detonation','a dark tower takes the blast mid-face'],
+    [700,'response','two units pull over; traffic never even slows'],
+    [2300,'air support','the patrol bird slides in over the street'],
+    [5900,'beam lock','the light pins the borg square on the roof'],
+    [6900,'the leap','roof lip to engine deck in one chrome arc'],
+    [8200,'burning hover','it sags, it shakes, it argues with the sky'],
+    [10000,'the fall','the street flattens the fireball'],
+    [12500,'tableau','it burns where it fell. nobody looks twice'],
+  ]},
+  hack:{max:17500,beats:[
+    [0,'intrusion','the ad board starts chewing itself'],
+    [1400,'the cut','one white frame, then the skull owns the wall'],
+    [3000,'broadcast','chromatic skull on loop, cast in magenta'],
+    [8000,'drones','corp security sweeps the roof in red'],
+    [9000,'lock','the beam lands a beat too late'],
+    [10200,'the wire','zipline out, cyan wake, clean exit'],
+    [12100,'reset zap','the fixer buys the ad back half a second'],
+    [17000,'tableau','the board stays broken. the drone stays paid'],
+  ]},
+};
+let dirScene='incident';
+const dirEl=$('#director'),dirSlider=$('#dirSlider'),dirBeats=$('#dirBeats'),dirComm=$('#dirComm'),dirMs=$('#dirMs');
+function dirApply(ms){
+  ms=Math.max(1,Math.round(ms));                 // 0 means "live" to the hooks; the floor keeps us frozen
+  if(dirScene==='incident'){resetIncident();DBG_INCT=ms;DBG_HKT=0}
+  else{resetHack();DBG_HKT=ms;DBG_INCT=0}
+  dirMs.textContent=String(ms).padStart(5,'0')+' ms';
+  const bs=DIR_SCENES[dirScene].beats;
+  let cur=bs[0];bs.forEach(b=>{if(ms>=b[0])cur=b});
+  dirComm.innerHTML='<b>'+cur[1]+'</b> — '+cur[2];
+  dirBeats.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.ms===cur[0]));
+}
+function dirRender(){
+  const sc=DIR_SCENES[dirScene];
+  dirSlider.max=sc.max;
+  dirBeats.innerHTML=sc.beats.map(b=>`<button data-ms="${b[0]}">${b[1]}</button>`).join('');
+  dirEl.querySelectorAll('.dtabs button').forEach(b=>b.classList.toggle('on',b.dataset.scene===dirScene));
+}
+function dirLiveFn(){
+  DBG_INCT=0;DBG_HKT=0;resetIncident();resetHack();
+  dirSlider.value=0;dirMs.textContent='LIVE';
+  dirComm.innerHTML='clocks returned — both scenes replay for real. watch the edges.';
+  dirBeats.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+}
+function dirOpen(){dirEl.hidden=false;dirRender()}
+function dirClose(){dirEl.hidden=true;dirLiveFn()}
+dirSlider.addEventListener('input',()=>dirApply(+dirSlider.value));
+dirBeats.addEventListener('click',e=>{const b=e.target.closest('[data-ms]');if(!b)return;dirSlider.value=b.dataset.ms;dirApply(+b.dataset.ms)});
+dirEl.querySelector('.dtabs').addEventListener('click',e=>{const b=e.target.closest('[data-scene]');if(!b)return;dirScene=b.dataset.scene;dirRender();dirSlider.value=0;dirApply(1)});
+$('#dirClose').addEventListener('click',dirClose);
+$('#dirLive').addEventListener('click',dirLiveFn);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!dirEl.hidden)dirClose()});
+if(/[?&]director/.test(location.search))dirOpen();
+
 /* ============ PALETTE ============ */
 const ACTIONS=[
  {t:'Go to: Garage (the car)',k:'↵',f:()=>$('#garage').scrollIntoView({behavior:'smooth'})},
@@ -3568,6 +3658,7 @@ const ACTIONS=[
  {t:'Toggle CRT scanlines',k:'☢',f:()=>document.body.classList.toggle('crt')},
  {t:'Reroll the skyline (random seed)',k:'⚂',f:()=>{reseed('random');tprint(`skyline redealt · seed <span class="cy">${SEED}</span>`)}},
  {t:'Toggle ambient sound',k:'♪',f:()=>sfx.toggle()},
+ {t:"Director's cut (scene scrubber)",k:'🎬',f:()=>dirOpen()},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
 const pal=$('#palette'),palin=$('#palin'),pallist=$('#pallist');
