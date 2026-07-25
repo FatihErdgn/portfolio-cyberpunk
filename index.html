@@ -118,10 +118,15 @@ header.top .cmdk kbd{border:none;background:none;padding:0}
 #sndBtn[aria-pressed="true"]{border-color:var(--cyan)}
 /* ===== TOD SWITCH — the hour, one bevel to the right of the clock ===== */
 #todSwitch{display:inline-flex;margin-left:14px;border:1px solid var(--line);vertical-align:middle;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
-#todSwitch button{padding:3px 9px;color:var(--dim);font-size:11px;line-height:1;border-right:1px solid var(--line)}
+#todSwitch button{padding:3px 9px;font-size:12px;line-height:1;border-right:1px solid var(--line);opacity:.72}
 #todSwitch button:last-child{border-right:none}
-#todSwitch button:hover{color:var(--fg)}
-#todSwitch button.on{color:var(--cyan);background:rgba(0,240,255,.08);text-shadow:0 0 8px var(--cyan)}
+/* every hour wears its own light, even at rest — the switch reads as four skies, not four glyphs */
+#todSwitch button[data-tod="night"]{color:var(--purple)}
+#todSwitch button[data-tod="dawn"]{color:#FFB661}
+#todSwitch button[data-tod="day"]{color:var(--yellow)}
+#todSwitch button[data-tod="dusk"]{color:#FF7A45}
+#todSwitch button:hover{opacity:1;text-shadow:0 0 8px currentColor}
+#todSwitch button.on{opacity:1;background:color-mix(in srgb,currentColor 14%,transparent);text-shadow:0 0 10px currentColor;box-shadow:inset 0 0 12px color-mix(in srgb,currentColor 20%,transparent)}
 @media(max-width:700px){#todSwitch{margin-left:8px}}
 /* ===== DIRECTOR'S CUT — the dev hooks promoted to a panel ===== */
 #director{position:fixed;left:16px;bottom:60px;z-index:940;width:312px;background:rgba(7,10,18,.94);border:1px solid var(--line);padding:12px 14px;font-size:11px;color:var(--dim);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
@@ -142,27 +147,74 @@ header.top .cmdk kbd{border:none;background:none;padding:0}
 #director .dnote{margin-top:8px;font-size:9px;opacity:.7}
 @media(max-width:700px){#director{left:8px;right:8px;width:auto;bottom:76px}}
 /* ===== BREACH PROTOCOL — optional minigame; the dossiers are already yours ===== */
-#breach{position:fixed;inset:0;z-index:1200;background:rgba(4,6,10,.84);display:flex;align-items:center;justify-content:center}
+#breach{position:fixed;inset:0;z-index:1200;background:radial-gradient(90% 90% at 50% 45%,rgba(4,6,10,.72),rgba(2,3,6,.92));backdrop-filter:blur(5px) saturate(1.15);display:flex;align-items:center;justify-content:center}
 #breach[hidden]{display:none}
-.bpanel{width:min(540px,94vw);background:#070A12;border:1px solid rgba(255,59,59,.4);padding:18px 20px;font-size:12px;color:var(--dim);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
-.bhd{display:flex;justify-content:space-between;align-items:center;color:#FF6B6B;letter-spacing:.2em}
-.bhd b{color:var(--dim);font-weight:400}
+/* while the protocol runs, the page underneath is frozen — no scrolling past the ICE */
+html.brlock{overflow:hidden}
+.bpanel{width:min(540px,94vw);background:
+  radial-gradient(120% 90% at 50% 0%,rgba(255,59,59,.07),transparent 55%),
+  radial-gradient(100% 70% at 50% 100%,rgba(0,240,255,.04),transparent 60%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2px,transparent 2px 7px),
+  #070A12;
+  border:1px solid rgba(255,59,59,.5);box-shadow:0 0 34px rgba(255,59,59,.15),0 0 90px rgba(0,240,255,.06);
+  padding:18px 20px;font-size:12px;color:var(--dim);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);position:relative;overflow:hidden;animation:bpIn .5s var(--ease)}
+/* corner brackets, targeting-reticle style */
+.bpanel .bc{position:absolute;width:15px;height:15px;z-index:6;pointer-events:none;border:0 solid #FF3B3B;filter:drop-shadow(0 0 5px rgba(255,59,59,.7))}
+.bc.tl{top:5px;left:5px;border-top-width:1px;border-left-width:1px}
+.bc.tr{top:5px;right:5px;border-top-width:1px;border-right-width:1px}
+.bc.bl{bottom:5px;left:5px;border-bottom-width:1px;border-left-width:1px}
+.bc.br{bottom:5px;right:5px;border-bottom-width:1px;border-right-width:1px}
+@keyframes bpIn{0%{opacity:0;transform:translateY(16px) scale(.96)}55%{opacity:1}68%{transform:translate(3px,-1px)}80%{transform:translate(-3px,1px)}90%{transform:translate(1px,0)}100%{transform:none}}
+/* the panel breathes: static scanlines plus a slow red sweep, like ICE probing back */
+.bpanel::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);z-index:5}
+.bpanel::after{content:"";position:absolute;left:0;right:0;top:-40%;height:34%;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(255,59,59,.08),transparent);animation:bScan 3.4s linear infinite;z-index:5}
+@keyframes bScan{to{transform:translateY(430%)}}
+.bhd{display:flex;justify-content:space-between;align-items:center;color:#FF6B6B;letter-spacing:.2em;padding-bottom:8px;border-bottom:1px solid rgba(255,59,59,.22)}
+.bhd>span{text-shadow:0 0 12px rgba(255,59,59,.55);animation:bHdFlk 4.2s steps(1) infinite}
+@keyframes bHdFlk{0%,92%{opacity:1}93%{opacity:.5}94%{opacity:1}96%{opacity:.72}97%{opacity:1}}
+.bhd b{color:var(--yellow);font-weight:400;text-shadow:0 0 8px rgba(245,217,10,.45)}
 .bhd button{color:var(--dim)}.bhd button:hover{color:var(--neon)}
-.bsub{font-size:10px;opacity:.7;margin-top:4px}
-.btimer{height:3px;background:#1A2234;margin:12px 0}
-.btimer i{display:block;height:100%;background:#FF3B3B;width:100%}
+.bsub{font-size:10px;opacity:.7;margin-top:6px}
+.bsub b{color:var(--yellow);font-weight:400}
+.btimer{height:4px;background:#1A2234;margin:12px 0}
+.btimer i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),#FF3B3B);box-shadow:0 0 10px rgba(255,59,59,.5);width:100%;transition:width .2s linear}
+.btimer.low i{background:#FF6B6B;animation:bLow .35s steps(2) infinite}
+@keyframes bLow{50%{opacity:.4}}
 .bbuf{display:flex;gap:6px;margin:10px 0}
-.bbuf span{width:34px;height:26px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--cyan)}
-.bbuf span.f{border-style:solid;border-color:var(--cyan)}
-.bdaemons div{display:flex;gap:10px;margin:3px 0}
+.bbuf span{width:34px;height:26px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--cyan);background:rgba(0,240,255,.03);clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+.bbuf span.f{border-style:solid;border-color:var(--cyan);background:rgba(0,240,255,.10);box-shadow:inset 0 0 10px rgba(0,240,255,.16);text-shadow:0 0 8px var(--cyan)}
+.bbuf span.f.new{animation:bFill .35s var(--ease)}
+@keyframes bFill{0%{transform:scale(1.45);background:rgba(0,240,255,.3);box-shadow:0 0 14px var(--cyan)}100%{transform:none}}
+.bdaemons div{display:flex;gap:10px;margin:3px 0;padding:2px 6px;border-left:2px solid transparent}
 .bdaemons .seq{color:var(--fg);min-width:110px}
 .bdaemons .done,.bdaemons .done .seq{color:var(--cyan)}
+.bdaemons .done{border-left-color:var(--cyan);background:rgba(0,240,255,.05)}
+.bdaemons .done.jd{animation:bDone .6s var(--ease)}
+@keyframes bDone{0%{background:rgba(0,240,255,.22);text-shadow:0 0 10px var(--cyan)}100%{background:transparent}}
 .bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
-.bgrid button{border:1px solid var(--line);padding:8px 0;color:var(--fg);font-size:12px;text-align:center}
-.bgrid button.sel{border-color:#FF3B3B;color:#FF6B6B;cursor:pointer}
-.bgrid button.sel:hover{background:rgba(255,59,59,.12)}
+.bgrid button{border:1px solid var(--line);padding:8px 0;color:var(--fg);font-size:12px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 65%);transition:background .15s,color .15s}
+.bgrid button.sel{border-color:#FF3B3B;color:#FF6B6B;cursor:pointer;animation:bSelGlow 1.1s ease-in-out infinite}
+@keyframes bSelGlow{50%{box-shadow:0 0 10px rgba(255,59,59,.4),inset 0 0 6px rgba(255,59,59,.18);text-shadow:0 0 8px #FF6B6B}}
+.bgrid button.sel:hover{background:rgba(255,59,59,.14);animation:bJit .16s steps(2) infinite}
+@keyframes bJit{50%{transform:translate(1px,-1px)}}
 .bgrid button.used{opacity:.22}
-.bmsg{min-height:28px}
+.bgrid.deal button{animation:bDeal .34s var(--ease) backwards}
+@keyframes bDeal{0%{opacity:0;transform:scale(.6);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
+/* a cell mid-decrypt: plaintext replaced by cycling cipher bytes — the panel itself holds still */
+.bgrid button.dec{color:var(--cyan);text-shadow:0 0 9px var(--cyan);border-color:color-mix(in srgb,var(--cyan) 45%,var(--line))}
+.bgrid button.zapc{animation:bZapC .45s var(--ease)}
+@keyframes bZapC{0%{background:rgba(0,240,255,.35);box-shadow:0 0 16px var(--cyan);opacity:1}100%{background:transparent}}
+.bmsg{min-height:28px;border-left:2px solid rgba(255,59,59,.3);padding-left:9px}
+.bhow{margin-top:6px;font-size:10px}
+.bhow summary{cursor:pointer;color:var(--cyan);letter-spacing:.18em;list-style:none;user-select:none}
+.bhow summary::before{content:"▸ "}
+.bhow[open] summary::before{content:"▾ "}
+.bhow ol{margin:6px 0 2px 16px;display:grid;gap:3px;color:var(--dim);line-height:1.5}
+.bhow b{color:var(--fg);font-weight:400}
+.bfoot{display:flex;justify-content:center;margin-top:8px}
+#brAuto{border:1px solid var(--yellow);color:var(--yellow);background:rgba(245,217,10,.06);padding:6px 16px;font-size:11px;letter-spacing:.16em;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);animation:iaPulse 1.8s ease-in-out infinite}
+#brAuto:hover{background:rgba(245,217,10,.16);text-shadow:0 0 10px var(--yellow)}
+@media(prefers-reduced-motion:reduce){.bpanel,.bpanel::after,.bgrid button,.bbuf span,.bdaemons div,.btimer i,.bhd>span,#brAuto{animation:none!important}}
 #pwned{color:var(--dim)}#pwned b{color:#FF3B3B}
 /* ===== CYBERPSYCHO EPISODE (konami) ===== */
 body.psycho #city{filter:hue-rotate(-45deg) saturate(1.7) contrast(1.18)}
@@ -278,6 +330,11 @@ section{padding:96px 0}
 /* ===== ICE WALL (hex iris breach) ===== */
 .icewall{height:210vh;position:relative;z-index:2}  /* JS overrides: ice scroll + deck scroll + 100vh exit */
 .ipin{position:sticky;top:0;height:100vh;overflow:hidden}
+/* while the ICE is up the file layer is invisible but its children (.dossier.act, .folder.in)
+   re-opt into pointer-events — so clicks meant for the icelayer (AUTO-FIX) die on a ghost.
+   Inside the pin, nothing in fstage may catch a pointer until the crossfade flips it on;
+   the static/mobile deck lives outside .ipin and keeps its pointers. */
+.ipin .fstage:not(.on) *{pointer-events:none!important}
 .icelayer{position:absolute;inset:0;z-index:1;will-change:opacity}
 .ibeyond{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(5,6,10,.94);z-index:0}
 .ib-in{will-change:transform}
@@ -289,7 +346,14 @@ section{padding:96px 0}
 .ihud{position:absolute;top:78px;left:0;right:0;display:flex;justify-content:space-between;padding:0 26px;z-index:2;font-size:11px;letter-spacing:.2em;color:var(--dim);pointer-events:none}
 .ihud b{color:var(--neon)}
 .ihint{position:absolute;left:0;right:0;bottom:9vh;text-align:center;z-index:2;font-size:10px;letter-spacing:.26em;color:var(--dim);pointer-events:none}
-@media(max-width:760px){.icewall{height:180vh}.ihud{font-size:9px;padding:0 14px}}
+/* the escape hatch: the breach is a ride, not a toll — one button hands the wheel to a daemon */
+.iopt{position:absolute;left:0;right:0;bottom:14vh;display:flex;align-items:center;justify-content:center;gap:12px;z-index:3;font-size:10px;letter-spacing:.14em;color:var(--dim);flex-wrap:wrap;padding:0 16px}
+.iopt .tag{border:1px solid var(--green);color:var(--green);padding:3px 8px;letter-spacing:.22em;text-shadow:0 0 8px color-mix(in srgb,var(--green) 60%,transparent)}
+#iceAuto{border:1px solid var(--yellow);color:var(--yellow);background:rgba(245,217,10,.06);padding:6px 16px;font-size:12px;letter-spacing:.2em;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);animation:iaPulse 1.8s ease-in-out infinite}
+#iceAuto:hover{background:rgba(245,217,10,.16);text-shadow:0 0 10px var(--yellow)}
+@keyframes iaPulse{50%{box-shadow:0 0 18px rgba(245,217,10,.35)}}
+@media(prefers-reduced-motion:reduce){#iceAuto{animation:none}}
+@media(max-width:760px){.icewall{height:180vh}.ihud{font-size:9px;padding:0 14px}.iopt{bottom:15vh}}
 
 /* DOSSIERS */
 #warp{position:sticky;top:0;height:100vh;width:100%;display:block;z-index:0;pointer-events:none;margin-bottom:-100vh;opacity:.6}
@@ -896,7 +960,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
-    <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — auto from your clock; override here">
+    <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — dealt at random each visit; override here">
       <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button data-tod="day" title="day">☀</button><button data-tod="dusk" title="dusk">◖</button>
     </span>
   </div>
@@ -1041,6 +1105,11 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
       <span>◢ ICE WALL // HEX-IRIS TIER-3 ◣</span>
       <span id="iceInt">INTEGRITY <b>100%</b></span>
     </div>
+    <div class="iopt" id="iceOpt">
+      <span class="tag">100% OPTIONAL</span>
+      <span class="txt">the dossiers open either way — let a daemon do the scrolling:</span>
+      <button id="iceAuto" type="button">⚡ AUTO-FIX</button>
+    </div>
     <div class="ihint" id="iceHint">BREACH IN PROGRESS — KEEP SCROLLING ↓</div>
    </div>
 
@@ -1167,13 +1236,23 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <div id="breach" hidden>
   <div class="bpanel">
-    <div class="bhd"><span>BREACH PROTOCOL <b>// OPTIONAL</b></span><button id="brClose" aria-label="close">✕</button></div>
-    <div class="bsub">the dossiers are already yours — this one's strictly for bragging rights. pick from the highlighted row, then the column, then the row again. fill the buffer with daemon sequences.</div>
+    <i class="bc tl"></i><i class="bc tr"></i><i class="bc bl"></i><i class="bc br"></i>
+    <div class="bhd"><span>BREACH PROTOCOL <b>// 100% OPTIONAL</b></span><button id="brClose" aria-label="close">✕</button></div>
+    <div class="bsub">the dossiers are already yours — this one's strictly for bragging rights. bail anytime: <b>✕</b>, <b>ESC</b>, or hand it to <b>AUTO-FIX</b> below.</div>
+    <details class="bhow"><summary>how to solve</summary>
+      <ol>
+        <li>pick any byte in the highlighted <b>row</b> — your first pick arms the 45s timer.</li>
+        <li>your pick locks that <b>column</b>: the next byte comes from it. row → column → row…</li>
+        <li>chain picks so each <b>daemon sequence</b> appears, in order, in the 6-slot buffer.</li>
+        <li>land both sequences before the buffer or the clock runs out — sequences may overlap.</li>
+      </ol>
+    </details>
     <div class="btimer"><i id="brBar"></i></div>
     <div class="bbuf" id="brBuf"></div>
     <div class="bdaemons" id="brDae"></div>
     <div class="bgrid" id="brGrid"></div>
     <div class="bmsg" id="brMsg"></div>
+    <div class="bfoot"><button id="brAuto" type="button">⚡ AUTO-FIX — let a daemon run it</button></div>
   </div>
 </div>
 <div id="director" hidden>
@@ -1485,10 +1564,10 @@ const TOD_PROFILES={
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
   if(m&&TOD_PROFILES[m])return m;
-  /* the glittering night IS the storefront — daylight hours default to it. dawn and dusk
-     only show in their true golden windows; the day theme stays a manual curiosity. */
-  const h3=new Date().getHours();
-  return h3>=5&&h3<8?'dawn':h3>=16&&h3<20?'dusk':'night';
+  /* the hour is dealt at the door, not read off your clock — night, dusk or dawn.
+     noon never comes up on its own; day stays a manual curiosity on the switch. */
+  const deal=['night','dusk','dawn'];
+  return deal[Math.floor(Math.random()*deal.length)];
 })();
 let TOD=TOD_PROFILES[todName];
 function buildCity(){
@@ -3187,7 +3266,8 @@ if (!deckStatic && fdeck) {
     return Boolean(
       document.querySelector('.fview.show') ||
       document.querySelector('#wreveal.show') ||
-      document.querySelector('#palette.open')
+      document.querySelector('#palette.open') ||
+      document.querySelector('#breach:not([hidden])')
     );
   }
 
@@ -3346,6 +3426,48 @@ const loadoutSec=$('#implants'),garageSec=$('#garage');
 const iceSec=$('#icewall'),ibIn=$('#ibIn'),iceInt=$('#iceInt'),iceHint=$('#iceHint');
 const iceHud=iceSec?iceSec.querySelector('.ihud'):null,iceLayer=document.getElementById('icelayer');
 let iceHintPhase=null;
+/* ---- AUTO-FIX: a daemon takes the scroll wheel and drives the breach down to file 01,
+   slow enough that CLASSIFIED lands and the first dossier un-redacts on camera. Any human
+   input (wheel, touch, key) yanks the wheel back. ---- */
+const iceOpt=$('#iceOpt'),iceAutoBtn=$('#iceAuto');
+let iceAutoOn=false,iceAutoRaf=0;
+function iceAutoStop(){
+  if(!iceAutoOn)return;
+  iceAutoOn=false;cancelAnimationFrame(iceAutoRaf);iceAutoRaf=0;
+  iceHintPhase=null;                       /* next frame re-writes the hint honestly */
+  if(iceAutoBtn)iceAutoBtn.textContent='⚡ AUTO-FIX';
+  removeEventListener('wheel',iceAutoStop);removeEventListener('touchstart',iceAutoStop);removeEventListener('keydown',iceAutoStop);
+}
+function iceAutoFix(){
+  if(iceAutoOn||!fdeck)return;
+  /* sections above the wall can shift height mid-ride, so the target is re-taken every
+     frame rather than trusted once — the ride steers to the bottom of the file stack:
+     deck progress 1 means every dossier has decrypted on camera and the CTA is up */
+  const calcTarget=()=>{
+    if(deckStatic)return fstage?fstage.getBoundingClientRect().bottom+scrollY-innerHeight:scrollY+innerHeight;
+    const top=fdeck.getBoundingClientRect().top+scrollY;
+    const total=Math.max(fdeck.offsetHeight-innerHeight,1);
+    return top+total;
+  };
+  const startY=scrollY,dist=calcTarget()-startY;
+  if(Math.abs(dist)<48)return;
+  if(reduced){scrollTo({top:calcTarget(),behavior:'instant'});return}
+  iceAutoOn=true;
+  if(iceAutoBtn)iceAutoBtn.textContent='⚡ DAEMON DRIVING…';
+  if(iceHint)iceHint.textContent='AUTO-FIX ENGAGED — DAEMON AT THE WHEEL';
+  const dur=Math.min(14000,Math.max(8000,Math.abs(dist)*2));
+  const t0=performance.now(),easeIO=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  addEventListener('wheel',iceAutoStop,{passive:true});addEventListener('touchstart',iceAutoStop,{passive:true});addEventListener('keydown',iceAutoStop);
+  const step=now=>{
+    if(!iceAutoOn)return;
+    const p=Math.min(1,(now-t0)/dur);
+    /* html has scroll-behavior:smooth — per-frame steps must bypass it or they never land */
+    scrollTo({top:startY+(calcTarget()-startY)*easeIO(p),behavior:'instant'});
+    if(p<1)iceAutoRaf=requestAnimationFrame(step);else iceAutoStop();
+  };
+  iceAutoRaf=requestAnimationFrame(step);
+}
+iceAutoBtn&&iceAutoBtn.addEventListener('click',iceAutoFix);
 const dossiers=[...document.querySelectorAll('.dossier')].map(el=>{
   const fx=[...el.querySelectorAll('.dhead,.dtitle,.dsub,.dmeta,.dbody,.dtags,.dinteg,.dopen')];
   fx.forEach(f=>f.classList.add('dfx'));
@@ -3421,6 +3543,11 @@ function loop(t){
         : czProg().ice;
       if(DBG_ICEP!=null)p=DBG_ICEP;
       drawIce(p,t,neonCss);
+      /* the stage sets its own scene: the first time the wall comes up, the protocol offers
+         itself — once per visit, never over a daemon-driven ride, never in dev freezes */
+      if(!brPrompted&&p>0.04&&p<0.6&&brEl.hidden&&!iceAutoOn&&DBG_ICEP==null){
+        brPrompted=true;brOpen(true);
+      }
       /* CLASSIFIED lands late, then the whole ice layer pulls away over the last 18% while
          the file layer fades up in the SAME pinned stage — no scroll between the two */
       const{pd:ipd,po:ipo}=icePhase(p);
@@ -3432,11 +3559,16 @@ function loop(t){
         ?'KEYMATCH <b>'+Math.round(ipd*100)+'%</b>'
         :'INTEGRITY <b>'+Math.round(100-ipo*100)+'%</b>';
       const hintDecrypt=ipd<1;
-      if(iceHintPhase!==hintDecrypt){
+      if(iceHintPhase!==hintDecrypt&&!iceAutoOn){
         iceHintPhase=hintDecrypt;
-        iceHint.textContent=hintDecrypt?'DECRYPTING TIER-3 KEY — KEEP SCROLLING ↓':'BREACH IN PROGRESS — KEEP SCROLLING ↓';
+        iceHint.textContent=hintDecrypt?'DECRYPTING TIER-3 KEY — KEEP SCROLLING ↓ (OPTIONAL — AUTO-FIX BELOW)':'BREACH IN PROGRESS — KEEP SCROLLING ↓';
       }
       iceHint.style.opacity=clamp(1-ipo*2.2,0,1);
+      if(iceOpt){
+        const io=clamp(1-ipo*1.5,0,1);   /* the escape hatch lingers past the hint */
+        iceOpt.style.opacity=io.toFixed(3);
+        iceOpt.style.pointerEvents=io>0.1&&!iceAutoOn?'auto':'none';
+      }
       if(iceHud)iceHud.style.opacity=(1-out).toFixed(3);
       if(iceLayer){iceLayer.style.opacity=(1-out).toFixed(3);iceLayer.style.visibility=out>=1?'hidden':'visible'}
       if(fstage&&!deckStatic){
@@ -3815,8 +3947,36 @@ try{if(localStorage.getItem('fatih.snd')==='1'){
    planted along it, and only then is the rest of the grid filled with noise. */
 const BYTES=['1C','55','BD','E9','7A'];
 const brEl=$('#breach'),brGrid=$('#brGrid'),brBuf=$('#brBuf'),brDae=$('#brDae'),brMsg=$('#brMsg'),brBar=$('#brBar');
-let br=null,brTick=0;
-function brOpen(){
+const brTimerEl=brEl.querySelector('.btimer');
+let br=null,brTick=0,brFx=0,brPrompted=false;
+const HXD='0123456789ABCDEF';
+/* one cell briefly loses its plaintext to cycling cipher bytes, then settles back —
+   the decrypt happens IN the cells; the panel itself holds still. Survives re-renders
+   because the cell is re-queried every tick. */
+function brScramble(r3,c3,frames,onDone){
+  let n=0;
+  const iv=setInterval(()=>{
+    const cell=brGrid.querySelector(`button[data-r="${r3}"][data-c="${c3}"]`);
+    if(!cell||brEl.hidden||!br){clearInterval(iv);return}
+    if(++n>frames){
+      clearInterval(iv);cell.classList.remove('dec');
+      cell.textContent=br.used.has(r3+','+c3)?'--':br.g[r3][c3];
+      onDone&&onDone();return;
+    }
+    cell.classList.add('dec');
+    cell.textContent=HXD[(Math.random()*16)|0]+HXD[(Math.random()*16)|0];
+  },55);
+}
+/* ambient ICE static: a stray byte keeps re-decrypting somewhere off the play line */
+function brFxTick(){
+  if(brEl.hidden||!br)return;
+  const btns=brGrid.querySelectorAll('button:not(.used):not(.dec):not(.sel)');
+  if(btns.length&&Math.random()<.55){
+    const b2=btns[Math.floor(Math.random()*btns.length)];
+    brScramble(+b2.dataset.r,+b2.dataset.c,3);
+  }
+}
+function brOpen(intro){
   const g=Array.from({length:5},()=>Array(5).fill(null));
   const usedCells=new Set(),path=[];
   let cr=0,cc=0;
@@ -3829,13 +3989,28 @@ function brOpen(){
   const d2=Array.from({length:3},()=>BYTES[RI(0,4)]);
   [...d1,...d2,BYTES[RI(0,4)]].forEach((v,i)=>{g[path[i][0]][path[i][1]]=v});
   for(let r3=0;r3<5;r3++)for(let c3=0;c3<5;c3++)if(!g[r3][c3])g[r3][c3]=BYTES[RI(0,4)];
-  br={g,buf:[],axis:'row',line:0,used:new Set(),over:false,t0:0,daemons:[
+  br={g,path,buf:[],axis:'row',line:0,used:new Set(),over:false,auto:false,t0:0,daemons:[
     {name:'DATAMINE_V1',seq:d1,done:false},
     {name:'ICEPICK_EX',seq:d2,done:false},
   ]};
-  brBar.style.width='100%';
+  brBar.style.width='100%';brTimerEl.classList.remove('low');
   brEl.hidden=false;brRender();
-  brMsg.textContent='the timer arms on your first byte. good hunting.';
+  document.documentElement.classList.add('brlock');   /* the page holds its breath */
+  if(!reduced){
+    /* the grid deals in like a hand of cards, one byte at a time */
+    brGrid.classList.add('deal');
+    brGrid.querySelectorAll('button').forEach((b2,i2)=>b2.style.animationDelay=(i2*22)+'ms');
+    setTimeout(()=>brGrid.classList.remove('deal'),950);
+  }
+  if(brFx)clearInterval(brFx);
+  brFx=reduced?0:setInterval(brFxTick,420);
+  if(intro){
+    /* the wall itself raised this window — set the scene before asking for a single click */
+    let cert=null;try{cert=localStorage.getItem('fatih.breach')}catch(_){}
+    brMsg.innerHTML=cert
+      ?`<span style="color:var(--cyan)">ICE re-armed.</span> you've flatlined this wall before — run it again for sport, or close and keep scrolling; your clearance still holds.`
+      :`<span style="color:#FF6B6B">▲ TIER-3 ICE AHEAD.</span> crack it by hand for the cert, hand it to <b>AUTO-FIX</b>, or just close and keep scrolling — the dossiers open either way.`;
+  }else brMsg.textContent='the timer arms on your first byte. good hunting.';
 }
 function brRender(){
   brGrid.innerHTML=br.g.map((row2,r3)=>row2.map((v,c3)=>{
@@ -3843,8 +4018,9 @@ function brRender(){
     const sel=!br.over&&!used&&(br.axis==='row'?r3===br.line:c3===br.line);
     return `<button data-r="${r3}" data-c="${c3}" class="${used?'used':''}${sel?' sel':''}"${sel?'':' disabled'}>${used?'--':v}</button>`;
   }).join('')).join('');
-  brBuf.innerHTML=Array.from({length:6},(_,i)=>`<span class="${i<br.buf.length?'f':''}">${br.buf[i]||''}</span>`).join('');
-  brDae.innerHTML=br.daemons.map(d=>`<div class="${d.done?'done':''}"><span class="seq">${d.seq.join(' ')}</span><span>${d.name}${d.done?' ✔':''}</span></div>`).join('');
+  brBuf.innerHTML=Array.from({length:6},(_,i)=>`<span class="${i<br.buf.length?'f':''}${i===br.buf.length-1?' new':''}">${br.buf[i]||''}</span>`).join('');
+  brDae.innerHTML=br.daemons.map(d=>`<div class="${d.done?'done':''}${d.justDone?' jd':''}"><span class="seq">${d.seq.join(' ')}</span><span>${d.name}${d.done?' ✔':''}</span></div>`).join('');
+  br.daemons.forEach(d=>d.justDone=false);   /* the flash plays once, on the render that lands it */
 }
 function hasRun(buf,seq){
   for(let i=0;i+seq.length<=buf.length;i++)if(seq.every((v,j)=>buf[i+j]===v))return true;
@@ -3866,21 +4042,58 @@ function brBadge(){
   const s=document.createElement('span');s.id='pwned';s.innerHTML='ICE <b>PWNED</b>';
   const rhs=document.querySelector('#deck .rhs');rhs&&rhs.prepend(s);
 }
-function brClosed(){brEl.hidden=true;if(brTick){clearInterval(brTick);brTick=0}if(br)br.over=true}
+function brClosed(){
+  brEl.hidden=true;document.documentElement.classList.remove('brlock');
+  if(brTick){clearInterval(brTick);brTick=0}
+  if(brFx){clearInterval(brFx);brFx=0}
+  if(br)br.over=true;
+}
+/* one byte enters the machine — shared by the human hand and the auto-fix daemon */
+function brStep(r3,c3){
+  br.used.add(r3+','+c3);br.buf.push(br.g[r3][c3]);
+  if(br.axis==='row'){br.axis='col';br.line=c3}else{br.axis='row';br.line=r3}
+  br.daemons.forEach(d=>{if(!d.done&&hasRun(br.buf,d.seq)){d.done=true;d.justDone=true}});
+  if(br.daemons.every(d=>d.done)||br.buf.length>=6)brEnd();else brRender();
+  const zc=brGrid.querySelector(`button[data-r="${r3}"][data-c="${c3}"]`);
+  zc&&zc.classList.add('zapc');
+}
 brGrid.addEventListener('click',e=>{
-  const b=e.target.closest('button[data-r]');if(!b||!br||br.over||b.disabled)return;
+  const b=e.target.closest('button[data-r]');if(!b||!br||br.over||br.auto||b.disabled)return;
   if(!br.t0){br.t0=performance.now();
     brTick=setInterval(()=>{
       const rem=1-(performance.now()-br.t0)/45000;
       brBar.style.width=Math.max(0,rem*100)+'%';
+      brTimerEl.classList.toggle('low',rem>0&&rem<.28);
       if(rem<=0)brEnd();
     },200);
   }
-  const r3=+b.dataset.r,c3=+b.dataset.c;
-  br.used.add(r3+','+c3);br.buf.push(br.g[r3][c3]);
-  if(br.axis==='row'){br.axis='col';br.line=c3}else{br.axis='row';br.line=r3}
-  br.daemons.forEach(d=>{if(!d.done)d.done=hasRun(br.buf,d.seq)});
-  if(br.daemons.every(d=>d.done)||br.buf.length>=6)brEnd();else brRender();
+  brStep(+b.dataset.r,+b.dataset.c);
+});
+/* AUTO-FIX: the daemon wipes the buffer, replays the planted path on camera, banks the cert,
+   then drives the page down through the ICE so the CLASSIFIED reveal plays out to file 01 */
+$('#brAuto').addEventListener('click',()=>{
+  if(!br||brEl.hidden||br.auto)return;
+  if(br.over){brClosed();iceAutoFix();return}   /* game already settled — just take the ride */
+  br.auto=true;
+  if(brTick){clearInterval(brTick);brTick=0}
+  brBar.style.width='100%';brTimerEl.classList.remove('low');
+  br.buf=[];br.used=new Set();br.axis='row';br.line=0;
+  br.daemons.forEach(d=>{d.done=false;d.justDone=false});
+  brMsg.innerHTML='<span style="color:var(--yellow)">AUTO-FIX DAEMON RUNNING…</span> hands off the deck.';
+  brRender();
+  let i=0;
+  const step=()=>{
+    if(brEl.hidden||br.over)return;
+    const[r4,c4]=br.path[i++];
+    /* the daemon decrypts each byte on camera — cipher cycles in the cell, then commits */
+    brScramble(r4,c4,reduced?1:6,()=>{
+      if(brEl.hidden||br.over)return;
+      brStep(r4,c4);
+      if(br.over)setTimeout(()=>{brClosed();iceAutoFix()},1300);
+      else if(i<br.path.length)setTimeout(step,reduced?60:340);
+    });
+  };
+  setTimeout(step,reduced?60:420);
 });
 $('#brClose').addEventListener('click',brClosed);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!brEl.hidden)brClosed()});
