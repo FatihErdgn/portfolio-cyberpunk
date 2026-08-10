@@ -7,6 +7,9 @@
 <meta name="description" content="Fatih ErdoGan — Industrial Engineer · Full-Stack Engineer · MES/OT. .NET × TypeScript × React. Jack in.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2305060A'/%3E%3Cpath d='M16 12h32v10H27v8h18v10H27v12H16Z' fill='%23FF2E88'/%3E%3Crect x='40' y='44' width='12' height='8' fill='%2300F0FF'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://fatiherdogan.dev/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Fatih Erdogan","jobTitle":"Full-Stack Engineer","description":"Full-Stack Engineer building production-grade enterprise platforms with .NET, React and industrial data systems.","email":"mailto:fatiherdogann099@gmail.com","url":"https://fatiherdogan.dev/","sameAs":["https://linkedin.com/in/fatiherdogan09"],"address":{"@type":"PostalAddress","addressLocality":"Izmir","addressCountry":"TR"},"award":"Brandon Hall Group Silver Medal — Excellence in Technology (Decision Support System)","knowsAbout":[".NET","C#","ASP.NET Core","React","TypeScript","Next.js","Node.js","PostgreSQL","MongoDB","Redis","Entity Framework","Keycloak","OAuth 2.0","Docker","Azure","GitHub Actions","MES/OT integration","Power BI","ETL"]}
+</script>
 <meta name="theme-color" content="#05060A">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://fatiherdogan.dev/">
@@ -226,6 +229,9 @@ body.psycho #city{filter:hue-rotate(-45deg) saturate(1.7) contrast(1.18)}
 
 main{max-width:1080px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
 section{padding:96px 0}
+/* recruiter/ATS layer: offscreen but fully present in the DOM — parsers and screen readers
+   get the plain-language brief; sighted visitors get the city */
+.sr-recruiter{position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden}
 .sec-label{color:var(--dim);font-size:12px;margin-bottom:28px;letter-spacing:.06em}
 .sec-label::before{content:"▸ ";color:var(--neon)}
 .sec-label b{color:var(--neon);font-weight:400}
@@ -368,6 +374,9 @@ section{padding:96px 0}
   transform:translate3d(0,calc((1 - var(--dp,1))*var(--yf,26px)),calc((1 - var(--dp,1))*var(--zf,-150px)));
   opacity:min(1,calc(var(--dp,1)*1.35));}
 .dstamp.dfx{transform:rotate(7deg) scale(calc(1 + (1 - var(--dp,1))*1.3));opacity:calc(var(--dp,1)*.65)}
+/* the card carries the two-sentence brief; .ext paragraphs only surface in the full-file view,
+   which clones .dbody outside the .dossier scope — so this hide never reaches them there */
+.dossier .dbody p.ext{display:none}
 .redact.zap{animation:rzap .55s var(--ease)}
 @keyframes rzap{0%{text-shadow:0 0 26px var(--neon),0 0 8px var(--neon)}100%{text-shadow:none}}
 
@@ -925,6 +934,20 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 </style>
 </head>
 <body class="crt">
+<!-- recruiter/ATS layer: the same story in plain language, for humans in a hurry and the
+     machines they send ahead. Visually hidden — the neon below is the real front door. -->
+<header class="sr-recruiter">
+  <h2>Fatih Erdogan — Full-Stack Engineer</h2>
+  <p>Full-Stack Engineer building production-grade enterprise platforms with .NET, React and industrial data systems. Based in Izmir, Türkiye. Open to full-stack and software engineer roles.</p>
+  <p>Core strengths: .NET / C# backend architecture (modular monolith, RESTful APIs, Entity Framework, PostgreSQL, Redis, MongoDB); React / TypeScript front ends; industrial data and MES/OT integration with 3+ years inside a live refinery. DevOps: Docker, GitHub Actions, Azure (Container Apps, Static Web Apps, Blob Storage, Communication Services). Security: Keycloak — OAuth 2.0 / OIDC / RBAC. Recognition: Brandon Hall Group Silver Medal for a production Decision Support System.</p>
+  <p>Highlight projects: a Logistics Platform covering the full shipment lifecycle (transport request, carrier contracting, live tracking, delivery), designed and built solo end to end; and a Procurement cost-optimization platform estimating target reference prices for tenders and bid evaluation, executive-sponsored and live in production.</p>
+  <p>
+    <a href="#gigs">View projects</a> ·
+    <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Full Stack Developer.pdf">Download CV (PDF)</a> ·
+    <a href="https://linkedin.com/in/fatiherdogan09">LinkedIn</a> ·
+    <a href="mailto:fatiherdogann099@gmail.com">Contact</a>
+  </p>
+</header>
 
 <div id="cursor" aria-hidden="true"><span class="ret"><i></i><i></i><i></i><i></i></span><span class="dot"></span><span class="label">▸ EXEC</span></div>
 
@@ -969,6 +992,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <a href="#implants">./loadout</a>
     <a href="#runlog">./runlog</a>
     <a href="#icewall">./breach</a>
+    <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Full Stack Developer.pdf" title="download CV (PDF)">./cv</a>
     <a href="#term" data-dock>./jack-in</a>
   </nav>
   <button class="cmdk" id="sndBtn" aria-pressed="false" title="ambient sound — rain, hum, distant sirens">snd <b>off</b></button>
@@ -1020,7 +1044,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
       <div class="row"><b>DRIVE-BY-WIRE</b><span>TypeScript · React · Next.js · JavaScript</span></div>
       <div class="row"><b>DATA</b><span>PostgreSQL · Redis · Entity Framework · MongoDB</span></div>
       <div class="row"><b>SECURITY</b><span>Keycloak — OAuth 2.0 / OIDC / IAM / RBAC · ClamAV · Tesseract OCR</span></div>
-      <div class="row"><b>FUEL TANK</b><span>PostgreSQL · MongoDB · Entity Framework · RESTful APIs</span></div>
+      <div class="row"><b>FUEL TANK</b><span>RESTful APIs · ETL pipelines (SSIS/SSAS) · Azure Communication Services</span></div>
       <div class="row"><b>HUD</b><span>WebGL 3D · Power BI · SQL · DAX · Python · Matlab</span></div>
       <div class="row"><b>PIT CREW</b><span>Docker · Azure (Container Apps, SWA, Blob, ACS) · GitHub Actions</span></div>
       <div class="row"><b>ODOMETER</b><span>3+ years live inside an actual refinery</span></div>
@@ -1079,7 +1103,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <main>
 <section id="runlog" data-accent="#9D4EDD">
-  <div class="sec-label"><b>04</b> <span data-decode>git log --graph --street-history</span><span class="jp">ランログ</span></div>
+  <div class="sec-label"><b>03</b> <span data-decode>git log --graph --street-history</span><span class="jp">ランログ</span></div>
   <div class="gitlog">
     <div class="commit" data-obj="socar"><span class="st">*</span> <span class="hash">a7f3c21</span> <span class="ref">(HEAD -&gt; main, origin/main)</span> <span class="msg">feat(socar): OT MOM/MES Specialist</span><span class="meta">Runner: Fatih ErdoGan · May 2023 → now · İzmir grid</span><span class="desc">MES integrations for industrial and process operations; tech lead on the award-winning Decision Support System; leading and building an executive-sponsored procurement pricing platform end to end; executive reporting from process data systems.</span></div>
     <div class="commit" data-obj="norm"><span class="st">*</span> <span class="hash">e91b8d4</span> <span class="msg">feat(norm-digital): Business Intelligence Analyst</span><span class="meta">Oct 2022 → May 2023 · İzmir grid</span><span class="desc">SQL reporting pipelines from ERP systems; Power BI dashboards for finance, operations and sales; ETL workflows; AI-driven forecasting; and supply-chain planning optimization on ICRON and SAP data.</span></div>
@@ -1115,7 +1139,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 
 <!-- DOSSIERS — same stage, no unpin between the breach and the files -->
 <div class="fstage" id="fstage">
-<div class="fslabel"><b>03</b> <span>decrypt ./dossiers --clearance=guest # scroll to un-redact</span><span class="jp">機密ファイル</span></div>
+<div class="fslabel"><b>04</b> <span>decrypt ./dossiers --clearance=guest # scroll to un-redact</span><span class="jp">機密ファイル</span></div>
 <section class="dossier" data-accent="#FF2E88">
     <div class="dspine"><i></i></div><div class="dstamp">TOP SECRET</div>
     <div class="dhead"><span>FILE <b>01/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SOURCE <b>SOCAR MAINFRAME</b></span><span>ROLE <b>TECH LEAD</b></span></div>
@@ -1135,7 +1159,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
   </section>
 
-  <section class="dossier" data-accent="#00F0FF" data-dense>
+  <section class="dossier" data-accent="#00F0FF">
     <div class="dspine"><i></i></div><div class="dstamp">TOP SECRET</div>
     <div class="dhead"><span>FILE <b>02/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SOURCE <b>PRIVATE NODE — NIGHT JOB</b></span><span>ROLE <b>SOLO RUN</b></span></div>
     <h3 class="dtitle glitch" data-text="LOGISTICS PLATFORM"><span data-decode>LOGISTICS PLATFORM</span></h3>
@@ -1147,9 +1171,9 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
       <div><b>DELIVERY</b><span>Docker → GH Actions → Azure</span></div>
     </div>
     <div class="dbody">
-      <p>A platform that handles the <span class="redact">full shipment lifecycle</span>: a user raises a transport request, contracts a carrier through the system, tracks the operation in real time, and closes out the final delivery. Role-aware notifications keep everyone informed at each step, down to the driver, and analytics are available at every stage.</p>
-      <p>It's built as a modular monolith — operational, transactional and analytical modules share one deployable, so each part can evolve independently. Keycloak handles authentication for a React/TypeScript front end over .NET services on PostgreSQL with Entity Framework.</p>
-      <p>A key part is a real-time, document-driven agreement module where two parties review terms on a shared screen; each uploaded document is read with <span class="redact">Tesseract OCR</span> and scanned with ClamAV. There's also a WebGL view that shows vehicles moving along their routes. I owned the DevOps side too: Docker builds, GitHub Actions pipelines, and deployment to Azure (Container Apps, Static Web Apps, Blob Storage, Communication Services).</p>
+      <p>One platform runs the <span class="redact">full shipment lifecycle</span> — transport request → carrier contract → live tracking → closed delivery — with role-aware notifications and analytics at every stage. Built <span class="redact">solo, end to end</span>: architecture, front end, auth and the DevOps pipeline are all one hand's work.</p>
+      <p class="ext">It's built as a modular monolith — operational, transactional and analytical modules share one deployable, so each part can evolve independently. Keycloak handles authentication for a React/TypeScript front end over .NET services on PostgreSQL with Entity Framework.</p>
+      <p class="ext">A key part is a real-time, document-driven agreement module where two parties review terms on a shared screen; each uploaded document is read with <span class="redact">Tesseract OCR</span> and scanned with ClamAV. There's also a WebGL view that shows vehicles moving along their routes. I owned the DevOps side too: Docker builds, GitHub Actions pipelines, and deployment to Azure (Container Apps, Static Web Apps, Blob Storage, Communication Services).</p>
     </div>
     <div class="dtags"><span>.net</span><span>react</span><span>typescript</span><span>postgresql</span><span>redis</span><span>keycloak</span><span>ocr</span><span>clamav</span><span>webgl</span><span>azure</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
@@ -1174,7 +1198,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
   </section>
 
-  <section class="dossier" data-accent="#9D4EDD" data-dense>
+  <section class="dossier" data-accent="#9D4EDD">
     <div class="dspine"><i></i></div><div class="dstamp">ACTIVE OP</div>
     <div class="dhead"><span>FILE <b>04/05</b></span><span>CLEARANCE <b>GRANTED</b></span><span>SPONSOR <b>EXECUTIVE</b></span><span>ROLE <b>LEAD — END TO END</b></span></div>
     <h3 class="dtitle glitch" data-text="PROCUREMENT ORACLE"><span data-decode>PROCUREMENT ORACLE</span></h3>
@@ -1186,8 +1210,8 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
       <div><b>SCOPE</b><span>Built end to end (ML model aside)</span></div>
     </div>
     <div class="dbody">
-      <p>A procurement cost-optimization and decision-support platform that I <span class="redact">led and built end to end</span> (apart from the ML model). It estimates <span class="redact">target reference prices</span> — what a given material or service should cost — to help purchasing teams in tenders, bid evaluation and supplier discount negotiations. It's executive-sponsored and already running in production.</p>
-      <p>Underneath is a workflow engine with an interactive model-execution UI: useful outputs appear at each stage, and when confidence is low at a critical step the system <span class="redact">pauses and asks the operator a specific question</span>. The user can step in at any point. Usability was a core requirement, not an afterthought.</p>
+      <p>An executive-sponsored pricing platform, <span class="redact">led and built end to end</span>, already delivering in production. It tells purchasing teams <span class="redact">what a material or service should cost</span> — target reference prices that back tenders, bid evaluation and supplier discount negotiations.</p>
+      <p class="ext">Underneath is a workflow engine with an interactive model-execution UI: useful outputs appear at each stage, and when confidence is low at a critical step the system <span class="redact">pauses and asks the operator a specific question</span>. The user can step in at any point. Usability was a core requirement, not an afterthought.</p>
     </div>
     <div class="dtags"><span>target pricing</span><span>workflow engine</span><span>human-in-the-loop</span><span>tender support</span><span>ux ownership</span><span>end-to-end lead</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
@@ -3781,7 +3805,7 @@ const CMDS={
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith · powerplant: .NET/C# · drive-by-wire: TypeScript/React/Next<br>ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
  gigs:()=>`[1] decision-tool.exe — ★ Brandon Hall Silver, tech lead, real-time risk scoring<br>[2] logistics-platform.ts — full shipment lifecycle, OCR+ClamAV doc room, WebGL freight<br>[3] mes-integrations.sql — refinery-wide real-time monitoring<br>[4] procurement-oracle.exe — target reference prices + workflow engine, live in prod<br>[5] bi-pipelines.dax — Power BI, ETL, AI forecasting`,
  runlog:()=>`2023→now &nbsp;SOCAR Türkiye — OT MOM/MES Specialist<br>2022→2023 NORM Digital — Business Intelligence Analyst<br>2022 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YATSAN — ERP &amp; Reporting Specialist<br>2022 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.Sc. Industrial Engineering — Dokuz Eylül University`,
- contact:()=>`uplink: <a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a><br>net presence: <a href="https://linkedin.com/in/fatiherdogan09" target="_blank">linkedin/fatiherdogan09</a><br>holo-call: +90 541 790 0481`,
+ contact:()=>`uplink: <a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a><br>net presence: <a href="https://linkedin.com/in/fatiherdogan09" target="_blank">linkedin/fatiherdogan09</a><br>flat dossier: <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Full Stack Developer.pdf">fatih-erdogan-cv.pdf</a>`,
  scan:()=>`scanning node...<br><span class="cy">■■■■■■■■■■</span> 100%<br>threat level: <span class="ps">none</span> · talent level: <span class="warn">dangerously high</span> · availability: <span class="ps">open to contracts</span>`,
  'jack-in':()=>`already jacked in, choom. you've been in since the boot sequence.`,
  clear:()=>{tout.innerHTML='';return''},
@@ -4466,7 +4490,7 @@ let bodyAPI=null;
         <div class="wlinks">
           <a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a>
           <a href="https://linkedin.com/in/fatiherdogan09" target="_blank" rel="noopener">linkedin/fatiherdogan09</a>
-          <a href="tel:+905417900481">+90 541 790 0481</a>
+          <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Full Stack Developer.pdf">▾ download dossier (CV)</a>
         </div>
         <div class="wreward">REWARD: ONE (1) FULL-STACK ENGINEER — <b>ALIVE &amp; CAFFEINATED</b></div>
         <a class="wcta" href="mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER">▸ CONTACT FIXER (EMAIL)</a>
