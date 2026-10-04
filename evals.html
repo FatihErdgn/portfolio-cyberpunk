@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FIXER Eval Report · Fatih Erdogan</title>
+<meta name="description" content="Pass rate, latency and cost of FIXER, the Claude agent on fatiherdogan.dev, measured on a fixed set of recruiter questions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05060A;--panel:#0A0D16;--line:#1B2338;--fg:#D6E4F0;--dim:#7A88A3;--cyan:#00F0FF;--green:#00FF9C;--red:#FF3B3B;--pink:#FF2E88}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.65 'Share Tech Mono',ui-monospace,monospace}
+main{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+a{color:var(--cyan)}
+h1{font-family:'Chakra Petch',sans-serif;font-size:clamp(26px,5vw,40px);margin:6px 0 8px;letter-spacing:.02em}
+.lede{color:var(--dim);max-width:68ch;margin:0 0 28px}
+.top{font-size:12px;color:var(--dim)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:30px}
+.kpi{background:var(--panel);border:1px solid var(--line);padding:14px 16px}
+.kpi .v{font-family:'Chakra Petch',sans-serif;font-size:28px;line-height:1.1}
+.kpi .k{font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.case{border-top:1px solid var(--line);padding:14px 0}
+.case summary{cursor:pointer;display:flex;gap:12px;align-items:baseline;list-style:none}
+.case summary::-webkit-details-marker{display:none}
+.st{font-size:11px;letter-spacing:.14em;min-width:42px}
+.pass .st{color:var(--green)}.fail .st{color:var(--red)}
+.q{flex:1}
+.meta{color:var(--dim);font-size:12px;white-space:nowrap}
+.body{padding:10px 0 0 54px;color:var(--dim);font-size:13px}
+.body blockquote{margin:8px 0;padding:8px 12px;border-left:2px solid var(--line);color:var(--fg);white-space:pre-wrap}
+.ok{color:var(--green)}.no{color:var(--red)}
+.empty{color:var(--dim);border:1px dashed var(--line);padding:24px}
+@media (max-width:640px){.case summary{flex-wrap:wrap}.body{padding-left:0}.meta{white-space:normal}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a href="/">fatiherdogan.dev</a> / evals</div>
+  <h1>FIXER eval report</h1>
+  <p class="lede">FIXER is the Claude agent in the site's terminal. Every change to its prompt or tools is measured against the same recruiter questions: facts it must get right, gaps it must admit, things it must never leak, and tools it should reach for. Grading is plain string and tool checks, so the score is reproducible.</p>
+  <section class="kpis" id="kpis"></section>
+  <section id="cases"><p class="empty">Loading results…</p></section>
+</main>
+<script>
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+fetch('/evals/results.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(({summary:s,results})=>{
+  const kpi=(v,k)=>`<div class="kpi"><div class="v">${v}</div><div class="k">${k}</div></div>`;
+  document.getElementById('kpis').innerHTML=
+    kpi(`${s.passed}/${s.cases}`,'cases passed')+kpi(`${s.latency_ms.p50} ms`,'latency p50')+kpi(`${s.latency_ms.p95} ms`,'latency p95')+
+    kpi(`$${s.usd_per_answer.toFixed(4)}`,'cost per answer')+kpi(esc(s.model),'model')+kpi(new Date(s.ran_at).toISOString().slice(0,10),'last run');
+  document.getElementById('cases').innerHTML=results.map(r=>`<details class="case ${r.pass?'pass':'fail'}">
+    <summary><span class="st">${r.pass?'PASS':'FAIL'}</span><span class="q">${esc(r.q)}</span><span class="meta">${r.ms} ms · $${(r.usd||0).toFixed(4)}${r.tools.length?` · ${esc(r.tools.join(', '))}`:''}</span></summary>
+    <div class="body">${r.checks.map(c=>`<div class="${c.ok?'ok':'no'}">${c.ok?'✓':'✗'} ${esc(c.check)}</div>`).join('')}<blockquote>${esc(r.reply||r.error||'(no text, tools only)')}</blockquote></div>
+  </details>`).join('');
+}).catch(()=>{document.getElementById('cases').innerHTML='<p class="empty">No eval run has been published yet.</p>'});
+</script>
+</body>
+</html>

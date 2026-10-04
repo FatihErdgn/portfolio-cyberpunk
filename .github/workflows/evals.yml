@@ -1,0 +1,28 @@
+# Runs the FIXER eval against the real API and commits evals/results.json, which
+# fatiherdogan.dev/evals renders. Manual only: each run spends ~$0.10 of the
+# portfolio's $3/month budget. Needs the PORTFOLIO_ANTHROPIC_KEY repository secret.
+name: fixer-evals
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci || npm install
+      - name: Run eval
+        env:
+          PORTFOLIO_ANTHROPIC_KEY: ${{ secrets.PORTFOLIO_ANTHROPIC_KEY }}
+          EVAL_PRIVATE_TERMS: ${{ secrets.EVAL_PRIVATE_TERMS }}
+        run: node evals/run.mjs
+        continue-on-error: true
+      - name: Publish results
+        run: |
+          git config user.name "fixer-evals"
+          git config user.email "actions@users.noreply.github.com"
+          git add evals/results.json
+          git diff --cached --quiet || git commit -m "chore(evals): publish FIXER eval run"
+          git push

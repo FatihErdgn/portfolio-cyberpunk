@@ -1,1 +1,5 @@
 .DS_Store
+node_modules/
+.env*
+.vercel
+Fatih_Erdogan_Software_Engineer_EN.*

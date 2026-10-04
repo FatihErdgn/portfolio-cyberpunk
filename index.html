@@ -588,22 +588,22 @@ body.party{animation:hue 3s linear infinite}
   background:rgba(5,7,12,.45);backdrop-filter:blur(7px);opacity:0;pointer-events:none;will-change:opacity}
 .fstage.on{pointer-events:auto}
 
-/* only the text-heavy files (02 LOGISTICS, 04 PROCUREMENT) get denser type so they fit
-   one viewport in the pinned deck — the shorter files keep the full-size treatment */
-body:not(.deck-static) .fstage .dossier[data-dense] .dhead{font-size:10px;gap:7px;margin-bottom:13px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dhead span{padding:3px 9px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dtitle{font-size:clamp(24px,3.2vw,48px);margin-bottom:6px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dsub{font-size:11px;letter-spacing:.16em;margin-bottom:15px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dmeta{margin-bottom:15px;grid-template-columns:repeat(auto-fit,minmax(126px,1fr))}
-body:not(.deck-static) .fstage .dossier[data-dense] .dmeta div{padding:9px 12px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dmeta b{margin-bottom:4px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dmeta span{font-size:11.5px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dbody{font-size:13px;line-height:1.6;max-width:none}
-body:not(.deck-static) .fstage .dossier[data-dense] .dbody p{margin-bottom:9px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dtags{gap:5px;margin-top:4px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dtags span{font-size:9.5px;padding:2px 7px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dinteg{margin-top:14px;font-size:10px}
-body:not(.deck-static) .fstage .dossier[data-dense] .dfull{margin-top:12px;padding:9px 14px;font-size:10px}
+/* every file in the pinned deck gets the compact type so it fits one viewport beside the
+   folder shelf (the files grew with the 2026 rewrite); the full view keeps the large type */
+body:not(.deck-static) .fstage .dossier .dhead{font-size:10px;gap:7px;margin-bottom:13px}
+body:not(.deck-static) .fstage .dossier .dhead span{padding:3px 9px}
+body:not(.deck-static) .fstage .dossier .dtitle{font-size:clamp(22px,2.7vw,40px);margin-bottom:6px}
+body:not(.deck-static) .fstage .dossier .dsub{font-size:11px;letter-spacing:.16em;margin-bottom:15px}
+body:not(.deck-static) .fstage .dossier .dmeta{margin-bottom:15px;grid-template-columns:repeat(auto-fit,minmax(126px,1fr))}
+body:not(.deck-static) .fstage .dossier .dmeta div{padding:9px 12px}
+body:not(.deck-static) .fstage .dossier .dmeta b{margin-bottom:4px}
+body:not(.deck-static) .fstage .dossier .dmeta span{font-size:11px}
+body:not(.deck-static) .fstage .dossier .dbody{font-size:12.5px;line-height:1.6;max-width:none}
+body:not(.deck-static) .fstage .dossier .dbody p{margin-bottom:9px}
+body:not(.deck-static) .fstage .dossier .dtags{gap:5px;margin-top:4px}
+body:not(.deck-static) .fstage .dossier .dtags span{font-size:9.5px;padding:2px 7px}
+body:not(.deck-static) .fstage .dossier .dinteg{margin-top:14px;font-size:10px}
+body:not(.deck-static) .fstage .dossier .dfull{margin-top:12px;padding:9px 14px;font-size:10px}
 /* if a file still overflows, keep the scroll subtle rather than a hard cut */
 .fstage .dossier{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--neon) 45%,transparent) transparent}
 .fstage .dossier::-webkit-scrollbar{width:6px}
@@ -931,6 +931,58 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
   .redact::after{transform:scaleX(0)!important}
 }
+
+/* ============ FIXER (live line) + CONTRACT MATCH ============ */
+.fx{margin:2px 0}
+.fxn{display:inline-block;font-size:10px;letter-spacing:.14em;padding:0 6px;margin-right:6px;color:#05060A;background:var(--cyan);vertical-align:1px}
+.fxn.off{background:var(--dim)}
+.fx.wait .fxdots{color:var(--dim)}
+.fx.wait .fxdots::after{content:'';animation:fxdots 1.2s steps(4) infinite}
+@keyframes fxdots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+.fxact{color:var(--dim);font-size:11px;letter-spacing:.04em}
+.fxact a{color:var(--cyan);cursor:pointer}
+.fxdraft{margin:8px 0 6px;border:1px solid color-mix(in srgb,var(--cyan) 45%,transparent);background:#070B13;padding:10px 12px}
+.fxdraft .k{font-size:10px;letter-spacing:.14em;color:var(--dim);margin-bottom:6px}
+.fxdraft input,.fxdraft textarea{width:100%;box-sizing:border-box;background:#04070C;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:12px;padding:6px 8px;margin-bottom:6px}
+.fxdraft textarea{min-height:110px;resize:vertical}
+.fxdraft input:focus,.fxdraft textarea:focus{outline:1px solid var(--cyan)}
+.fxbtns{display:flex;gap:8px;flex-wrap:wrap}
+.fxbtns button,#mGo,.mact button{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;padding:6px 12px;cursor:pointer;background:transparent;color:var(--cyan);border:1px solid var(--cyan)}
+.fxbtns button:hover,#mGo:hover,.mact button:hover{background:color-mix(in srgb,var(--cyan) 14%,transparent)}
+.fxbtns button[data-fxdrop]{color:var(--dim);border-color:var(--line)}
+#matchbox{position:fixed;inset:0;z-index:1200;background:radial-gradient(90% 90% at 50% 45%,rgba(4,6,10,.74),rgba(2,3,6,.93));backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center}
+#matchbox[hidden]{display:none}
+.mpanel{width:min(720px,94vw);max-height:88vh;overflow-y:auto;background:#070A12;border:1px solid color-mix(in srgb,var(--cyan) 55%,transparent);box-shadow:0 0 34px rgba(0,240,255,.12);padding:20px 22px;font-size:13px;color:var(--fg);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);animation:bpIn .5s var(--ease)}
+.mhd{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.16em;color:var(--cyan);margin-bottom:10px}
+.mhd b{color:var(--dim);font-weight:400}
+.mhd button{background:none;border:1px solid var(--line);color:var(--dim);cursor:pointer;padding:3px 9px;font:inherit}
+.msub{color:var(--dim);line-height:1.6;margin:0 0 12px;max-width:62ch}
+#mForm label{display:block;font-size:10px;letter-spacing:.16em;color:var(--dim);margin-bottom:6px}
+#mJd{width:100%;box-sizing:border-box;min-height:170px;resize:vertical;background:#04070C;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:12px;line-height:1.6;padding:10px}
+#mJd:focus{outline:1px solid var(--cyan)}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.mnote{font-size:11px;color:var(--dim)}
+#mGo[disabled]{opacity:.5;cursor:progress}
+#mOut:not(:empty){margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.mfit{display:inline-block;font-size:11px;letter-spacing:.16em;padding:3px 10px;border:1px solid currentColor;margin-bottom:8px}
+.fit-strong,.st-match .mst{color:var(--green)}
+.fit-good{color:var(--cyan)}
+.fit-partial,.st-partial .mst{color:var(--yellow)}
+.fit-weak,.st-gap .mst{color:var(--red)}
+.mbrief h4{font-family:'Chakra Petch',sans-serif;font-size:18px;margin:4px 0 6px;color:var(--fg)}
+.mbrief>p{line-height:1.65;margin:0 0 14px;max-width:68ch}
+.mreq{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:8px}
+.mreq li{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:start}
+.mst{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding-top:2px}
+.mreq b{display:block;font-weight:600}
+.mreq small{display:block;color:var(--dim);line-height:1.55;font-size:12px}
+.mreq a,.mbrief a{color:var(--cyan);cursor:pointer;font-size:11px}
+.mlist{margin:0 0 12px}
+.mlist .k{font-size:10px;letter-spacing:.16em;color:var(--dim);margin-bottom:4px}
+.mlist ul{margin:0;padding-left:18px;line-height:1.6}
+.mact{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.merr{color:var(--red)}
+@media (max-width:600px){.mreq li{grid-template-columns:1fr;gap:2px}}
 </style>
 </head>
 <body class="crt">
@@ -992,6 +1044,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <a href="#implants">./loadout</a>
     <a href="#runlog">./runlog</a>
     <a href="#icewall">./breach</a>
+    <a href="#match" data-match title="check a job post against this profile">./match</a>
     <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf" title="download CV (PDF)">./cv</a>
     <a href="#term" data-dock>./jack-in</a>
   </nav>
@@ -1022,7 +1075,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
       </div>
     </div>
   </div>
-  <p class="hint">▸ <kbd>⌘K</kbd> / <kbd>Ctrl+K</kbd> opens the command palette. The terminal at the bottom takes commands too: try <b>whoami</b>.</p>
+  <p class="hint">▸ Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER anything in the <a href="#term" data-dock>terminal</a>. <kbd>⌘K</kbd> opens the command palette.</p>
 </section>
 
 <!-- ===== GARAGE ===== -->
@@ -1274,7 +1327,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
   <div class="tbody">
     <div class="term">
       <div class="out" id="tout"></div>
-      <div class="inrow"><span class="ps">runner@night.city:~$</span><input id="tin" autocomplete="off" spellcheck="false" aria-label="terminal input" placeholder="type 'help' or 'neofetch'"><span class="tcursor" id="tcur"></span></div>
+      <div class="inrow"><span class="ps">runner@night.city:~$</span><input id="tin" autocomplete="off" spellcheck="false" aria-label="terminal input: commands or questions for FIXER" placeholder="ask FIXER anything, or type 'help'"><span class="tcursor" id="tcur"></span></div>
     </div>
   </div>
 </section>
@@ -1302,6 +1355,18 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
     <div class="bfoot"><button id="brAuto" type="button">⚡ AUTO-FIX — let a daemon run it</button></div>
   </div>
 </div>
+<div id="matchbox" hidden>
+  <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mhd"><span id="mtitle">CONTRACT MATCH <b>// honest fit check</b></span><button id="mClose" type="button" aria-label="close">✕</button></div>
+    <p class="msub">Paste a job description. FIXER checks it against Fatih's record requirement by requirement, and lists the gaps as plainly as the matches.</p>
+    <form id="mForm">
+      <label for="mJd">JOB DESCRIPTION</label>
+      <textarea id="mJd" placeholder="Paste the full job post here" required></textarea>
+      <div class="mrow"><span class="mnote">Runs on Claude Sonnet 5.5. Not stored by this site.</span><button type="submit" id="mGo">RUN MATCH</button></div>
+    </form>
+    <div id="mOut" aria-live="polite"></div>
+  </div>
+</div>
 <div id="director" hidden>
   <div class="dhd">DIRECTOR'S CUT<button id="dirClose" aria-label="close">✕</button></div>
   <div class="dtabs">
@@ -1316,7 +1381,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 </div>
 <div id="deck">
   <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span></span>
-  <span class="rhs"><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
+  <span class="rhs"><span id="llmseg" hidden title="real token usage and API cost of your FIXER calls this session">LLM <b>0 tok</b></span><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
 </div>
 
 <div id="palette"><div class="box"><input id="palin" placeholder="run a command…" autocomplete="off"><div class="list" id="pallist"></div></div></div>
@@ -3318,6 +3383,7 @@ if (!deckStatic && fdeck) {
       document.querySelector('.fview.show') ||
       document.querySelector('#wreveal.show') ||
       document.querySelector('#palette.open') ||
+      document.querySelector('#matchbox:not([hidden])') ||
       document.querySelector('#breach:not([hidden])')
     );
   }
@@ -3811,7 +3877,7 @@ const tout=$('#tout'),tin=$('#tin');
   document.querySelectorAll('[data-dock]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();window._openDock()}));
 })();
 function tprint(html){const d=document.createElement('div');d.innerHTML=html;tout.appendChild(d);tout.scrollTop=tout.scrollHeight}
-tprint(`Connection stable. Welcome to the İzmir grid, choom. Type <span class="ps">help</span> or flex with <span class="cy">neofetch</span>.`);
+tprint(`Connection stable. Ask <span class="cy">FIXER</span> anything about Fatih in plain words, run <span class="ps">match</span> on a job post, or type <span class="ps">help</span>.`);
 const NEOFETCH=
 `<pre style="line-height:1.5;color:var(--cyan)">   ▄▄▄▄▄▄▄     <span style="color:var(--fg)">runner@night.city</span>
   █ ▄▄▄▄▄ █    <span style="color:var(--dim)">-----------------</span>
@@ -3826,7 +3892,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`available protocols:<br>&nbsp;&nbsp;<span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|day|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|day|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -3848,6 +3914,8 @@ const CMDS={
  vim:()=>`entering vim... <span class="err">error: no known exploit can exit vim. aborted for your safety.</span>`,
  director:()=>{if(dirEl.hidden){dirOpen();return `director on set — dailies panel, bottom left. scrub away.`}dirClose();return `that's a wrap. clocks returned to the city.`},
  exit:()=>`there is no logout in night city. only <span class="ps">contact</span>.`,
+ fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
+ match:()=>{mOpen();return `contract match open. paste the job post.`},
 };
 /* protocols that take arguments — the plain lookup below stays fast for everything else */
 const ARGCMDS={
@@ -3891,8 +3959,145 @@ tin.addEventListener('keydown',e=>{
   if(fn){const out=fn();if(out)tprint(out);return}
   const parts=raw.split(/\s+/),afn=ARGCMDS[parts[0].toLowerCase()];
   if(afn){const out=afn(parts.slice(1));if(out)tprint(out)}
-  else tprint(`<span class="err">zsh: unknown protocol: ${raw.replace(/</g,'&lt;')}</span> — try <span class="ps">help</span>`);
+  else askFixer(raw);
 });
+
+/* ============ FIXER: the live line (Claude via /api/fixer) ============ */
+/* The agent's tools act on this page: it opens case files, moves the camera and changes the
+   weather. Emails are only drafted; the visitor edits and sends them from their own mail app. */
+const FX={hist:[],busy:false,tok:0,usd:0};
+const CASE_IDX={procurement:0,'decision-tool':1,logistics:2,'applied-ai':3,mes:4,bi:5};
+const fxEsc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fxMd=s=>fxEsc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+const FX_OFF={'no-key':"the live line isn't connected yet",'budget-day':"today's line budget is spent, it reopens tomorrow",'budget-month':"this month's line budget is spent",'rate':'too many calls from your node this hour','upstream-busy':'the line is busy','upstream-error':'the line dropped'};
+function fxLocal(q){
+  q=q.toLowerCase();
+  if(/contact|email|mail|reach|hire|call/.test(q))return CMDS.contact();
+  if(/experience|career|history|years|job|worked/.test(q))return CMDS.runlog();
+  if(/stack|tech|skill|\.net|react|ai|llm|agent/.test(q))return CMDS.garage();
+  if(/project|built|case|gig|platform|work/.test(q))return CMDS.gigs();
+  return CMDS.whoami();
+}
+function fxMeter(usage,usd){
+  if(usage)FX.tok+=(usage.input_tokens||0)+(usage.output_tokens||0)+(usage.cache_read_input_tokens||0)+(usage.cache_creation_input_tokens||0);
+  FX.usd+=usd||0;
+  const seg=document.getElementById('llmseg');if(!seg)return;
+  seg.hidden=false;seg.querySelector('b').textContent=`${FX.tok.toLocaleString('en')} tok · $${FX.usd.toFixed(4)}`;
+}
+const caseTitle=i=>{const d=document.querySelectorAll('.dossier')[i];return d?d.querySelector('.dtitle').dataset.text:''};
+function fxSection(sec){
+  if(sec==='contact'){const w=document.getElementById('wreveal');if(w)w.classList.add('show');return 'opened the contact card'}
+  if(sec==='case_files'){if(!deckStatic&&typeof scrollToDeckFile==='function')scrollToDeckFile(0);else $('#fstage').scrollIntoView({behavior:'smooth'});return 'moved to the case files'}
+  const el=$({garage:'#garage',loadout:'#implants',runlog:'#runlog'}[sec]||'#garage');
+  el.scrollIntoView({behavior:'smooth'});return `moved to ${sec}`;
+}
+function fxEffect(e){
+  if(TOD_PROFILES[e])return ARGCMDS.tod([e]);
+  if(e==='rain')return ARGCMDS.rain(['on']);
+  if(e==='storm')return ARGCMDS.rain(['storm']);
+  if(e==='clear')return ARGCMDS.rain(['off']);
+  if(e==='replay_incident')return ARGCMDS.replay(['incident']);
+  if(e==='replay_hack')return ARGCMDS.replay(['hack']);
+  return null;
+}
+function fxDraft(a){
+  const d=document.createElement('div');d.className='fxdraft';
+  d.innerHTML=`<div class="k">DRAFT TO fatiherdogann099@gmail.com · NOT SENT · EDIT FREELY</div>
+    <input class="fxs" aria-label="subject" value="${fxEsc(a.subject)}"><textarea class="fxb" aria-label="message">${fxEsc(a.body)}</textarea>
+    <div class="fxbtns"><button type="button" data-fxsend>OPEN IN MY MAIL APP</button><button type="button" data-fxdrop>DISCARD</button></div>`;
+  d.addEventListener('click',e=>{
+    if(e.target.closest('[data-fxsend]')){
+      const sub=d.querySelector('.fxs').value,body=d.querySelector('.fxb').value;
+      location.href=`mailto:fatiherdogann099@gmail.com?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+      d.innerHTML='<span class="fxact">▸ handed to your mail app. nothing is sent until you press send there.</span>';
+    }else if(e.target.closest('[data-fxdrop]'))d.innerHTML='<span class="fxact">▸ draft discarded.</span>';
+  });
+  tout.appendChild(d);tout.scrollTop=tout.scrollHeight;
+}
+function fxAct(a){
+  if(a.tool==='open_case_file'&&a.id in CASE_IDX){
+    const i=CASE_IDX[a.id],el=document.querySelector(`[data-fopen="${i}"]`);
+    if(el)el.click();
+    return `opened case file <a data-fopen="${i}">${fxEsc(caseTitle(i))} ↗</a>`;
+  }
+  if(a.tool==='show_section')return fxSection(a.section);
+  if(a.tool==='city_effect'){const r=fxEffect(a.effect);return r?`city: ${a.effect.replace('_',' ')}`:null}
+  if(a.tool==='draft_message'){fxDraft(a);return null}
+  return null;
+}
+async function askFixer(q){
+  if(FX.busy){tprint('<span class="err">FIXER is still answering, one moment.</span>');return}
+  FX.busy=true;FX.hist.push({role:'user',content:q.slice(0,1200)});
+  const line=document.createElement('div');line.className='fx wait';
+  line.innerHTML='<span class="fxn">FIXER</span><span class="fxdots">on the line</span>';
+  tout.appendChild(line);tout.scrollTop=tout.scrollHeight;
+  let data;
+  try{
+    const r=await fetch('/api/fixer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:FX.hist.slice(-12)})});
+    data=await r.json().catch(()=>({}));
+    if(!r.ok&&!data.offline)data={offline:'upstream-error'};
+  }catch(_){data={offline:'upstream-error'}}
+  line.classList.remove('wait');
+  const acts=data.actions||[];
+  if(data.offline||(!data.reply&&!acts.length)){
+    FX.hist.pop();
+    line.innerHTML=`<span class="fxn off">FIXER</span><span style="color:var(--dim)">offline: ${FX_OFF[data.offline]||'no answer came back'}. From the files:</span><br>${fxLocal(q)}`;
+    FX.busy=false;tout.scrollTop=tout.scrollHeight;return;
+  }
+  FX.hist.push({role:'assistant',content:data.reply||'(shown on screen)'});
+  fxMeter(data.usage,data.usd);
+  line.innerHTML=`<span class="fxn">FIXER</span>${fxMd(data.reply)}`;
+  tout.scrollTop=tout.scrollHeight;
+  for(const a of acts){
+    await new Promise(r=>setTimeout(r,650));
+    const note=fxAct(a);if(note)tprint(`<span class="fxact">▸ ${note}</span>`);
+  }
+  FX.busy=false;
+}
+
+/* ============ CONTRACT MATCH (Claude via /api/match) ============ */
+const mBox=$('#matchbox'),mForm=$('#mForm'),mJd=$('#mJd'),mGo=$('#mGo'),mOut=$('#mOut');
+let mLast=null;
+function mOpen(){mBox.hidden=false;document.documentElement.classList.add('brlock');setTimeout(()=>mJd.focus(),60)}
+function mClose(){mBox.hidden=true;document.documentElement.classList.remove('brlock')}
+$('#mClose').addEventListener('click',mClose);
+mBox.addEventListener('click',e=>{if(e.target===mBox)mClose()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!mBox.hidden)mClose()});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-match]');if(t){e.preventDefault();mOpen()}});
+function mText(b){
+  return [`${b.role} at ${b.company}: fit ${b.fit}`,b.verdict,'',...b.requirements.map(r=>`[${r.status}] ${r.requirement}: ${r.evidence}`),
+    ...(b.hard_gates.length?['','Hard gates:',...b.hard_gates.map(g=>`- ${g}`)]:[]),
+    ...(b.questions_for_fatih.length?['','Questions for Fatih:',...b.questions_for_fatih.map(g=>`- ${g}`)]:[]),
+    '','Generated by FIXER on fatiherdogan.dev'].join('\n');
+}
+function mRender(b){
+  const li=r=>`<li class="st-${r.status}"><span class="mst">${r.status}</span><div><b>${fxEsc(r.requirement)}</b><small>${fxEsc(r.evidence)}</small>${r.case_file in CASE_IDX?`<a data-fopen="${CASE_IDX[r.case_file]}">case file: ${fxEsc(caseTitle(CASE_IDX[r.case_file]))} ↗</a>`:''}</div></li>`;
+  const list=(k,a)=>a.length?`<div class="mlist"><div class="k">${k}</div><ul>${a.map(x=>`<li>${fxEsc(x)}</li>`).join('')}</ul></div>`:'';
+  mOut.innerHTML=`<div class="mbrief"><span class="mfit fit-${b.fit}">FIT: ${b.fit.toUpperCase()}</span>
+    <h4>${fxEsc(b.role)}${b.company?` · ${fxEsc(b.company)}`:''}</h4><p>${fxEsc(b.verdict)}</p>
+    <ul class="mreq">${b.requirements.map(li).join('')}</ul>
+    ${list('HARD GATES',b.hard_gates)}${list('WORTH ASKING FATIH',b.questions_for_fatih)}
+    <div class="mact"><button type="button" data-mcopy>COPY BRIEF</button><button type="button" data-mmail>EMAIL FATIH ABOUT THIS ROLE</button></div></div>`;
+}
+mOut.addEventListener('click',e=>{
+  if(e.target.closest('[data-fopen]')){mClose();return}
+  if(!mLast)return;
+  if(e.target.closest('[data-mcopy]')){navigator.clipboard&&navigator.clipboard.writeText(mText(mLast));e.target.textContent='COPIED'}
+  if(e.target.closest('[data-mmail]'))location.href=`mailto:fatiherdogann099@gmail.com?subject=${encodeURIComponent(`Role: ${mLast.role}${mLast.company?` at ${mLast.company}`:''}`)}&body=${encodeURIComponent(`Hi Fatih,\n\nI'd like to talk about this role.\n\n---\n${mText(mLast)}`)}`;
+});
+mForm.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const jd=mJd.value.trim();
+  if(jd.length<80){mOut.innerHTML='<p class="merr">That looks short. Paste the full job post, including requirements.</p>';return}
+  mGo.disabled=true;mGo.textContent='MATCHING…';mOut.innerHTML='<p class="mnote">Reading the post and checking each requirement against the record. About 10-20 seconds.</p>';
+  let data;
+  try{const r=await fetch('/api/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jd})});data=await r.json().catch(()=>({}));if(!r.ok&&!data.offline&&!data.error)data={offline:'upstream-error'}}
+  catch(_){data={offline:'upstream-error'}}
+  mGo.disabled=false;mGo.textContent='RUN MATCH';
+  if(data.brief){mLast=data.brief;fxMeter(data.usage,data.usd);mRender(data.brief);return}
+  mOut.innerHTML=`<p class="merr">${data.offline?`The match line is offline (${FX_OFF[data.offline]||data.offline}).`:fxEsc(data.error||'No brief came back.')} The <a href="fatih-erdogan-cv.pdf">CV</a> has the full record, or email <a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a>.</p>`;
+});
+
 /* dev hook: ?devx exposes a read/exec seam for automated verification (everything else lives
    inside this IIFE, out of evaluate's reach) — inert without the param */
 if(/[?&]devx/.test(location.search))window.__dev={
@@ -4242,6 +4447,8 @@ const ACTIONS=[
  {t:'Toggle ambient sound',k:'♪',f:()=>sfx.toggle()},
  {t:"Director's cut (scene scrubber)",k:'🎬',f:()=>dirOpen()},
  {t:'Breach protocol (minigame)',k:'▦',f:()=>brOpen()},
+ {t:'Contract match: check a job post',k:'⚖',f:()=>mOpen()},
+ {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
 const pal=$('#palette'),palin=$('#palin'),pallist=$('#pallist');

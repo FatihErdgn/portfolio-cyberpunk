@@ -1,0 +1,24 @@
+{
+  "rewrites": [
+    {
+      "source": "/mcp",
+      "destination": "/api/mcp"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "/api/llms"
+    },
+    {
+      "source": "/evals",
+      "destination": "/evals.html"
+    }
+  ],
+  "functions": {
+    "api/fixer.js": {
+      "maxDuration": 30
+    },
+    "api/match.js": {
+      "maxDuration": 60
+    }
+  }
+}
