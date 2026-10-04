@@ -1283,6 +1283,28 @@ html.plainlock #matchbox{z-index:9700}
 .rf-scrub button{font:10px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:3px 8px;background:transparent;color:var(--dim);border:1px solid var(--line);cursor:pointer}
 .rf-scrub button.on{color:#00FF9C;border-color:#00FF9C}
 .rf-tr .curl{stroke:#9D4EDD;stroke-width:1;vector-effect:non-scaling-stroke}
+
+/* ---- x-ray: scan-in, tilt, request journey ---- */
+.xr-tower{position:relative;transition:transform .25s ease-out;will-change:transform}
+.xr-scanline{position:absolute;left:-3%;right:-3%;top:0;height:2px;background:linear-gradient(90deg,transparent,#00F0FF 20%,#E6FDFF 50%,#00F0FF 80%,transparent);box-shadow:0 0 16px #00F0FF,0 0 40px rgba(0,240,255,.4);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+  #xray.xr-scan #xrSvg{animation:xrScanIn 1.15s cubic-bezier(.65,0,.35,1) both}
+  #xray.xr-scan .xr-scanline{animation:xrScanLine 1.15s cubic-bezier(.65,0,.35,1) both}
+}
+@keyframes xrScanIn{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes xrScanLine{0%{top:0;opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+.xr-jbtns{display:flex;gap:8px;flex-wrap:wrap;margin:-4px 0 4px}
+.xr-jbtns button{font:11px 'Share Tech Mono',monospace;letter-spacing:.1em;padding:6px 10px;background:transparent;color:#00FF9C;border:1px solid rgba(0,255,156,.55);cursor:pointer}
+.xr-jbtns button:hover,.xr-jbtns button.on{background:rgba(0,255,156,.12)}
+#xrSvg .jtrail{fill:none;stroke:rgba(0,255,156,.35);stroke-width:1.2;stroke-dasharray:3 4}
+#xrSvg .jdot{fill:#00FF9C;filter:drop-shadow(0 0 6px #00FF9C)}
+.xr-card ol{margin:6px 0 0;padding-left:18px;font-size:12px;line-height:1.55;color:var(--dim);max-height:38vh;overflow-y:auto;scrollbar-width:thin}
+#xray{overflow-y:auto}
+.xr-card li{margin-bottom:3px;transition:color .2s}
+.xr-card li.on{color:var(--fg)}
+.xr-card li.on::marker{color:#00FF9C}
+.xr-card li.done{color:#9FB3D1}
+.xr-card .hint{display:block;margin-top:6px;font-size:11px;color:var(--dim)}
 </style>
 </head>
 <body class="crt">
@@ -1734,7 +1756,8 @@ html.plainlock #matchbox{z-index:9700}
         <button type="button" data-xray><span>Architecture X-ray of the logistics platform</span><small>interactive</small></button>
         <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
         <a href="/evals"><span>Eval report for this site's AI agents</span><small>pass rate, latency, cost</small></a>
-        <button type="button" data-postmortem><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
+        <button type="button" data-postmortem data-pm="fixer"><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
+        <button type="button" data-postmortem data-pm="rls"><span>Postmortem: the notification nobody received</span><small>tenant isolation</small></button>
         <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
         <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
       </div>
@@ -1751,12 +1774,13 @@ html.plainlock #matchbox{z-index:9700}
   <div class="xr-info">
     <div class="k">ARCHITECTURE X-RAY // LOGISTICS PLATFORM</div>
     <h3 id="xrTitle">One tower, thirteen floors.</h3>
-    <p>The platform is a .NET 10 modular monolith: one deployable, 13 domain modules. Modules never reach through the floor slabs; they talk through the shaft, and architecture tests turn anything that tries back.</p>
-    <p>Hover or tab through the floors.</p>
+    <p>The logistics platform is a .NET 10 modular monolith: one deployable, thirteen modules, each with its own schema and four layers. Modules never reach through the floor slabs; they talk through the shaft, and architecture tests turn anything that tries back.</p>
+    <p>Hover a floor for what it owns, or send a real request through the building:</p>
+    <div class="xr-jbtns"><button type="button" data-journey="accept">▶ ACCEPT A BID</button><button type="button" data-journey="arrive">▶ A BID ARRIVES</button></div>
     <div class="xr-card" id="xrCard" aria-live="polite"><b>SHIPMENT LIFECYCLE</b><span>Pulses climb the shaft as a shipment moves from request to bids, deal, tracking and documents. The red flash is a cross-module shortcut being stopped by an architecture test.</span></div>
     <div class="xr-legend"><span><i style="background:#00FF9C"></i>edge</span><span><i style="background:#00F0FF"></i>domain modules</span><span><i style="background:#FF8A3D"></i>AI layer</span><span><i style="background:#9D4EDD"></i>data</span><span><i style="background:#FF2E88"></i>boundaries</span></div>
   </div>
-  <svg id="xrSvg" viewBox="0 0 460 640" role="img" aria-label="Cutaway of the platform as a tower"></svg>
+  <div class="xr-tower" id="xrTower"><svg id="xrSvg" viewBox="0 0 460 640" role="img" aria-label="Cutaway of the platform as a tower"></svg><div class="xr-scanline"></div></div>
 </div>
 <div id="refinery" hidden role="dialog" aria-modal="true" aria-labelledby="rfTitle">
   <div class="rf-wrap">
@@ -1798,8 +1822,8 @@ html.plainlock #matchbox{z-index:9700}
   </div>
 </div>
 <div id="pmbox" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle">
-  <article class="pm">
-    <div class="top"><div class="k">POSTMORTEM · FIXER-001 · 4 OCT 2026</div><button type="button" id="pmClose">✕ CLOSE [ESC]</button></div>
+  <article class="pm" data-pm="fixer">
+    <div class="top"><div class="k">POSTMORTEM · FIXER-001 · 4 OCT 2026</div><button type="button" class="pmx">✕ CLOSE [ESC]</button></div>
     <h3 id="pmTitle">The agent that invented an email address</h3>
     <p>Before FIXER went live, an eval run passed 17 of 18 cases. Reading the replies showed the score was wrong about what mattered: one answer gave a recruiter an email address that does not exist.</p>
     <div class="meta"><div><b>IMPACT</b>None on visitors. Caught before release.</div><div><b>DETECTED BY</b>Reading eval transcripts</div><div><b>TIME TO FIX</b>Same session</div><div><b>STATUS</b>Resolved, guarded by evals</div></div>
@@ -1824,6 +1848,27 @@ html.plainlock #matchbox{z-index:9700}
       <li>Put invariants in the grader. Anything that must never be wrong gets checked on every case.</li>
       <li>Check the cache minimum before picking a smaller model for cost.</li></ul>
   </article>
+  <article class="pm" data-pm="rls" hidden>
+    <div class="top"><div class="k">POSTMORTEM · TENANT-001 · LOGISTICS PLATFORM</div><button type="button" class="pmx">✕ CLOSE [ESC]</button></div>
+    <h3>The notification nobody received</h3>
+    <p>Tenant isolation worked exactly as designed, and that is what broke the feature. A shipper invited a carrier to bid, and the carrier was never told.</p>
+    <div class="meta"><div><b>IMPACT</b>Invitation notifications silently dropped</div><div><b>DETECTED BY</b>A user, not the test suite</div><div><b>ROOT CAUSE</b>Cross-tenant audience resolved inside the request</div><div><b>STATUS</b>Fixed, enforced by an architecture test</div></div>
+    <h4>CONTEXT</h4>
+    <p>Every tenant table on the platform carries a PostgreSQL row-level security policy, forced even for the owner role. Each request stamps the caller's company on the database session, and every query only sees that company's rows. An empty stamp means no rows at all: the system fails closed.</p>
+    <h4>WHAT HAPPENED</h4>
+    <p>When a shipper invites a carrier, the notification belongs on the carrier's desk. But the request runs as the shipper. The handler asked for the carrier's team inside that request, row-level security did its job and returned nothing, and the notification went to nobody. No error, no log line worth noticing.</p>
+    <h4>DETECTION</h4>
+    <p>A user noticed. About 2,900 automated tests had not, because none of them crossed tenants in this particular way.</p>
+    <h4>FIX</h4>
+    <ul><li>A request handler may not resolve another company's audience. That work happens from the outbox, which already runs in system scope, or inside an explicit, visible system scope.</li>
+      <li>An architecture test now fails the build if a handler breaks that rule, so it cannot come back quietly.</li></ul>
+    <h4>A RELATED LESSON FROM THE SAME PLATFORM</h4>
+    <p>Asynchronous events arrive late and out of order. A document event that came out of the outbox after an approval once undid that approval. Events now carry the time they happened, and a newer decision is never overwritten by an older event.</p>
+    <h4>LESSONS</h4>
+    <ul><li>Isolation that works can still break a feature. Test the seams between tenants, not only the walls.</li>
+      <li>When a rule matters, make it a fitness function that fails the build, not a line in a review checklist.</li>
+      <li>Handlers of asynchronous events should ask whether the event is still true, not just whether it arrived.</li></ul>
+  </article>
 </div>
 <div id="matchbox" hidden>
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
@@ -1842,7 +1887,8 @@ html.plainlock #matchbox{z-index:9700}
   <div class="dtabs">
     <button data-scene="incident" class="on">INCIDENT</button>
     <button data-scene="hack">SIGNAL-JACK</button>
-    <button data-scene="postmortem">POSTMORTEM</button>
+    <button data-scene="postmortem" title="postmortem: the agent that invented an email">PM · AI</button>
+    <button data-scene="postmortem2" title="postmortem: the notification nobody received">PM · RLS</button>
   </div>
   <input id="dirSlider" type="range" min="0" max="14000" step="50" value="0" aria-label="scene timeline">
   <div class="dbeats" id="dirBeats"></div>
@@ -4460,7 +4506,8 @@ const CMDS={
  fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
  match:()=>{mOpen();return `contract match open. paste the job post.`},
  xray:()=>{xrOpen();return `architecture x-ray on. press X or ESC to put the walls back.`},
- postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage.`},
+ postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage. there is a second one: <span class="ps">postmortem rls</span>`},
+ 'postmortem rls':()=>{pmReel('rls');pmOpen('rls');return `postmortem TENANT-001 open, replayed over the signal-jack footage.`},
  skyline:()=>{skOpen();return `commit skyline up. one tower per week, two commits per window.`},
  refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
  plain:()=>{plainOpen();return `plain version open. the neon waits.`},
@@ -4670,23 +4717,30 @@ if(/[?&]plain/.test(location.search)){endBoot();plainOpen()}
    shown as a block rather than invented. */
 const xrEl=$('#xray'),xrSvg=$('#xrSvg'),xrCard=$('#xrCard');
 const XR_FLOORS=[
-  {id:'ai',kind:'ai',h:30,label:'AI LAYER',sub:'ANTHROPIC API · TOOL USE',info:'Agentic assistant on the Anthropic Messages API: a server-side tool-use loop that calls live road-routing tools, model routing (small model for simple turns, larger for planning), tiered prompt caching, and per-tenant token and cost accounting that records counts, never tenant text. Eight more LLM features run beside it.'},
-  {id:'edge',kind:'edge',h:30,label:'EDGE',sub:'KEYCLOAK · OIDC · RBAC',info:'Multi-tenant security with Keycloak (OIDC, RBAC) and tenant isolation on every request.'},
-  {id:'requests',h:34,label:'SHIPMENT REQUESTS',sub:'MODULE',info:'Where an RFQ starts: a shipper describes what needs to move, by road, sea, air or rail.'},
-  {id:'bids',h:34,label:'BIDS',sub:'MODULE',info:'Carriers and forwarders bid on open requests.'},
-  {id:'deals',h:34,label:'DEALS',sub:'MODULE',info:'An accepted bid becomes a deal that both sides operate on.'},
-  {id:'tracking',h:34,label:'TRACKING',sub:'MODULE',info:'Shared operations after the deal, including where the freight is.'},
-  {id:'dock',h:34,label:'DOCK SCHEDULING',sub:'MODULE',info:'Booking dock slots for pickups and deliveries.'},
-  {id:'docs',h:34,label:'DOCUMENTS',sub:'MODULE',info:'Every uploaded document is scanned with ClamAV and read with Tesseract OCR.'},
-  {id:'more',h:56,label:'+7 DOMAIN MODULES',sub:'SAME MONOLITH',info:'Seven more domain modules live in the same deployable. Thirteen in total.',thin:7},
-  {id:'lobby',kind:'edge',h:36,label:'CLIENTS',sub:'REACT WEB · REACT NATIVE · SIGNALR',info:'React (Vite) web app and React Native (Expo) iOS/Android apps. Real-time updates over SignalR with a Redis backplane.'},
-  {id:'data',kind:'data',h:40,label:'DATA',sub:'POSTGRESQL · REDIS',info:'PostgreSQL behind the modules; Redis as the SignalR backplane.'},
-  {id:'found',kind:'data',h:30,label:'FOUNDATION',sub:'3,000+ TESTS · CI/CD',info:'More than 3,000 automated tests (xUnit, Testcontainers PostgreSQL, NetArchTest architecture tests) gate a Docker and GitHub Actions pipeline to Azure Container Apps. ADRs record the decisions.'},
+  {id:'ai',kind:'ai',h:28,label:'AI LAYER',sub:'ANTHROPIC API',info:'The Anthropic Messages API, called over plain HTTP. A small model (Haiku 4.5) answers by default; the moment a question is about planning or the model reaches for a tool, a larger one takes over. Grounded and read-only: the handler reads the tenant\'s own operations and hands them over as the only source, and every tool (live location, history, reports, lane intelligence, road routing) runs inside the tenant. Each call is logged with tokens, cache use and dollar cost, never the prompt text. Prompt caching in three tiers.'},
+  {id:'edge',kind:'edge',h:28,label:'EDGE',sub:'KEYCLOAK · 17-STEP PIPELINE',info:'Keycloak (OIDC) issues the token; the API checks it, maps it to its own internal user id, stamps the tenant on the database session, then guards in a deliberate order: suspended company, read-only Viewer role, page access, workflow locks, idempotency keys, rate limits. Seventeen middleware steps, each placed after the one that produces what it needs.'},
+  {id:'identity',h:22,label:'IDENTITY',schema:'identity',info:'Internal user records behind Keycloak, the /me profile, two-factor, new-device alerts, personal-data deletion.'},
+  {id:'companies',h:22,label:'COMPANIES',schema:'companies',info:'Companies, members and roles, invitations with one-time codes, carrier lanes, the provider network, plans and entitlements.'},
+  {id:'requests',h:22,label:'SHIPMENT REQUESTS',schema:'shipment_requests',info:'Requests (the marketplace listings), invitations, bidding windows, revisions, awards and match suggestions.'},
+  {id:'bids',h:22,label:'BIDS',schema:'bids',info:'Bids, negotiation and contracted lane prices.'},
+  {id:'deals',h:22,label:'DEALS',schema:'deals',info:'The closing room, deal chat with in-chat AI, commission, PDF invoices and statements, ratings.'},
+  {id:'tracking',h:22,label:'TRACKING',schema:'tracking',info:'The largest module: operations, milestones, GPS and ship AIS positions, driver assignments, field reports, alerts, the AI assistant, CO2e.'},
+  {id:'docs',h:22,label:'DOCUMENTS',schema:'documents',info:'The single custodian of files: deal documents, attachments, compliance papers. Every upload is scanned with ClamAV before it is stored, and a failed scan counts as unsafe. Downloads go straight from blob storage on a 15-minute signed link.'},
+  {id:'notifications',h:22,label:'NOTIFICATIONS',schema:'notifications',info:'The bell, plus email, push and WhatsApp channels, mutes and push devices. A notification goes to a company desk (sales, operations, finance, documents), not to one person.'},
+  {id:'operate',h:22,label:'OPERATE',schema:'operate',info:'The tenant\'s own workflow engine: approvals, tasks, reminders, page access. It decides and opens work; it never writes business data itself. Nothing depends on it and it depends on nothing.'},
+  {id:'platform',h:22,label:'PLATFORM ADMIN',schema:'platform_admin',info:'Back office: audit log, time-boxed break-glass access, settings, commission rules, the AI cost ledger.'},
+  {id:'dock',h:22,label:'DOCK SCHEDULING',schema:'dockscheduling',info:'Facilities, ramps and appointments.'},
+  {id:'changelog',h:22,label:'CHANGELOG',schema:'changelog',info:'Release-note reactions and user feedback.'},
+  {id:'reference',h:22,label:'REFERENCE',schema:'reference',info:'Countries, cities, places, UN/LOCODE terminals, emission factors, central-bank exchange rates, weather.'},
+  {id:'lobby',kind:'edge',h:30,label:'CLIENTS',sub:'REACT WEB · REACT NATIVE · SIGNALR',info:'A React SPA (Vite, feature-sliced) and an Expo React Native app call one API. The SignalR hub carries signals, never data: a client that hears "this deal changed" re-reads through the same authorised REST endpoints, so permissions live in one place.'},
+  {id:'data',kind:'data',h:34,label:'DATA',sub:'POSTGRESQL · ROW-LEVEL SECURITY · BLOB',info:'One PostgreSQL database, one schema and one DbContext per module. Every tenant table carries a row-level security policy, forced even for the owner role, and the app connects with a role that cannot bypass it (checked at startup, or the app refuses to start). Optimistic concurrency on xmin. Files live in blob storage, never in the database.'},
+  {id:'found',kind:'data',h:26,label:'FOUNDATION',sub:'3,000+ TESTS · CI/CD',info:'Behaviour tests, integration tests on real PostgreSQL under the restricted role (an admin role would pass every isolation test for the wrong reason), and architecture tests as fitness functions: module isolation, layer direction, an RLS-coverage ratchet, cross-tenant notification rules. Docker and GitHub Actions to Azure Container Apps.'},
 ];
-const XR_SHAFT={info:'The shaft is MediatR: commands and queries (CQRS) travel through it, and domain events keep the modules consistent. Architecture tests (NetArchTest) and ADRs enforce the boundaries between floors.'};
+const XR_SHAFT={info:'Modules never reference each other; an architecture test fails the build if one tries. They talk two ways. Synchronously through contracts in a shared kernel: read snapshots, and write contracts that run in the target module\'s own transaction and are idempotent. Asynchronously through domain events written to the module\'s outbox in the same transaction, dispatched every five seconds under a PostgreSQL advisory lock, at least once, to idempotent handlers. No distributed transactions.'};
 let xrBuilt=false,xrRaf=0,xrY={};
 const NS='http://www.w3.org/2000/svg';
 const sv=(tag,attrs,parent=xrSvg)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
+function xrShow(rect,title,text){xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));if(rect)rect.classList.add('on');xrCard.innerHTML=`<b>${title}</b><span>${text}</span>`}
 function xrBuild(){
   xrSvg.innerHTML='';
   const X0=120,X1=420,SH=150;let y=58;
@@ -4696,29 +4750,105 @@ function xrBuild(){
   sv('text',{x:20,y:33,class:'xsub'}).textContent='ROUTING API';
   XR_FLOORS.forEach((f,i)=>{
     const g=sv('g',{tabindex:0,role:'button','aria-label':`${f.label}: ${f.info}`});
-    const r=sv('rect',{x:X0,y,width:X1-X0,height:f.h,class:`xf ${f.kind||''} draw`,style:`animation-delay:${i*90}ms`},g);
-    if(f.thin)for(let k=1;k<f.thin;k++)sv('line',{x1:SH+12,x2:X1,y1:y+k*f.h/f.thin,y2:y+k*f.h/f.thin,stroke:'rgba(0,240,255,.22)'},g);
-    sv('text',{x:SH+20,y:y+f.h/2+(f.sub?-1:4),class:'xlabel'},g).textContent=f.label;
-    if(f.sub)sv('text',{x:SH+20,y:y+f.h/2+11,class:'xsub'},g).textContent=f.sub;
-    const show=()=>{xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));r.classList.add('on');xrCard.innerHTML=`<b>${f.label}</b><span>${f.info}</span>`};
-    g.addEventListener('mouseenter',show);g.addEventListener('focus',show);g.addEventListener('click',show);
+    const r=sv('rect',{x:X0,y,width:X1-X0,height:f.h,class:`xf ${f.kind||''} draw`,style:`animation-delay:${i*55}ms`},g);
+    if(f.kind){
+      sv('text',{x:SH+20,y:y+f.h/2-1,class:'xlabel'},g).textContent=f.label;
+      sv('text',{x:SH+20,y:y+f.h/2+10,class:'xsub'},g).textContent=f.sub;
+    }else{
+      sv('text',{x:SH+20,y:y+f.h/2+4,class:'xlabel'},g).textContent=f.label;
+      sv('text',{x:X1-8,y:y+f.h/2+3,class:'xsub','text-anchor':'end'},g).textContent=f.schema;
+      sv('line',{x1:SH,x2:X1,y1:y,y2:y,class:'slab'});
+    }
+    const show=()=>{if(!xrJ)xrShow(r,f.label+(f.schema?` · schema ${f.schema}`:''),f.info)};
+    g.addEventListener('mouseenter',show);g.addEventListener('focus',show);
+    g.addEventListener('click',()=>{xrJ=null;xrShow(r,f.label+(f.schema?` · schema ${f.schema}`:''),f.info)});
     xrY[f.id]=y+f.h/2;
-    if(!f.kind&&i>2)sv('line',{x1:SH,x2:X1,y1:y,y2:y,class:'slab'});
-    y+=f.h+4;
-    if(f.id==='lobby'){sv('line',{x1:60,x2:460,y1:y-2,y2:y-2,stroke:'#57647E','stroke-dasharray':'2 4'});y+=6}
+    y+=f.h+3;
+    if(f.id==='lobby'){sv('line',{x1:60,x2:460,y1:y-1,y2:y-1,stroke:'#57647E','stroke-dasharray':'2 4'});y+=6}
   });
   /* the shaft: every module floor opens onto it */
-  const top=xrY.requests-17,bot=xrY.more+28;
+  const top=xrY.identity-14,bot=xrY.reference+14;
   const sh=sv('g',{tabindex:0,role:'button','aria-label':'Shaft: '+XR_SHAFT.info});
   const shr=sv('rect',{x:X0+2,y:top,width:SH-X0-4,height:bot-top,class:'xf draw',style:'fill:rgba(255,46,136,.05);stroke:rgba(255,46,136,.6)'},sh);
   const cx=X0+(SH-X0)/2+3,cy=(top+bot)/2;
-  sv('text',{x:cx,y:cy,class:'xsub','text-anchor':'middle',transform:`rotate(-90 ${cx} ${cy})`,style:'fill:#FF2E88'},sh).textContent='SHAFT · MEDIATR · DOMAIN EVENTS';
-  const showSh=()=>{xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));shr.classList.add('on');xrCard.innerHTML=`<b>SHAFT · CQRS · DOMAIN EVENTS</b><span>${XR_SHAFT.info}</span>`};
-  sh.addEventListener('mouseenter',showSh);sh.addEventListener('focus',showSh);sh.addEventListener('click',showSh);
+  sv('text',{x:cx,y:cy,class:'xsub','text-anchor':'middle',transform:`rotate(-90 ${cx} ${cy})`,style:'fill:#FF2E88'},sh).textContent='CONTRACTS · MEDIATR · OUTBOX EVENTS';
+  const showSh=()=>{if(!xrJ)xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)};
+  sh.addEventListener('mouseenter',showSh);sh.addEventListener('focus',showSh);sh.addEventListener('click',()=>{xrJ=null;xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)});
+  xrY.shaftTop=top;
   xrBuilt=true;
 }
 /* the lifecycle: request → bids → deal → tracking → documents, always by way of the shaft */
 const XR_ROUTE=['requests','bids','deals','tracking','docs'];
+/* two real request journeys, step for step from the platform's architecture guide */
+const XR_JOURNEYS={
+  accept:{title:'ACCEPT A BID',steps:[
+    'The shipper clicks accept. The browser sends the request with its Keycloak token and a correlation id; the web server proxies it to the API.',
+    'The pipeline checks the token, maps the internal user, stamps the tenant on the database session, and runs the guards (suspended company, Viewer, page access).',
+    'The endpoint turns it into an AcceptBid command; validation runs first, then MediatR hands it to the Bids handler.',
+    'Bids checks its own rules: is the bid still pending, does this request really belong to the caller?',
+    'Through contracts, not tables: Shipment requests marks the request awarded, Deals opens the deal. Each writes in its own transaction and is idempotent.',
+    'Bids saves last, so a failure earlier leaves nothing half done. Row-level security limits every query to the tenant; the domain events land in the outbox in the same transaction.',
+    'Within about five seconds the outbox dispatcher fans out: losing bidders are told, the winner\'s desk is notified, commission and invoice are created.',
+    'SignalR tells open tabs that the deal changed; they re-read it. Phones get a push.',
+  ]},
+  arrive:{title:'A BID ARRIVES',steps:[
+    'A carrier places a bid from the web or the mobile app; the pipeline checks the token and stamps the carrier\'s tenant.',
+    'The Bids handler saves the bid; the bid raises BidPlaced.',
+    'The bid and its outbox row are written in one transaction.',
+    'Within about five seconds the dispatcher, in system scope under an advisory lock, publishes the event.',
+    'The handler resolves the shipper\'s sales desk: people assigned in Operate, else owners and admins.',
+    'The bell row is always written; SignalR signals open tabs; email and push follow the channel policy.',
+    'This crosses tenants on purpose. It runs from the outbox, so row-level security cannot empty the audience. Done inside the request, the shipper would have heard nothing.',
+  ]},
+};
+let xrJ=null;
+function xrJourney(key){
+  if(!xrY.lobby)return;
+  const J=XR_JOURNEYS[key],FX=330,SX=135,OX=436,Y=xrY,top=Y.shaftTop;
+  const P=[[FX,Y.lobby,0]];
+  const add=(st,...pts)=>pts.forEach(p=>P.push([p[0],p[1],st]));
+  if(key==='accept'){
+    add(0,[OX,Y.lobby],[OX,Y.edge],[FX,Y.edge]);
+    add(1,[FX-70,Y.edge],[FX,Y.edge]);
+    add(2,[SX,top],[SX,Y.bids],[FX,Y.bids]);
+    add(3,[FX+50,Y.bids],[FX,Y.bids]);
+    add(4,[SX,Y.bids],[SX,Y.requests],[FX,Y.requests],[SX,Y.requests],[SX,Y.deals],[FX,Y.deals]);
+    add(5,[SX,Y.deals],[SX,Y.bids],[FX,Y.bids],[OX,Y.bids],[OX,Y.data],[FX,Y.data]);
+    add(6,[OX,Y.data],[OX,Y.notifications],[FX,Y.notifications]);
+    add(7,[OX,Y.notifications],[OX,Y.lobby],[FX,Y.lobby]);
+  }else{
+    add(0,[OX,Y.lobby],[OX,Y.edge],[FX,Y.edge]);
+    add(1,[SX,top],[SX,Y.bids],[FX,Y.bids]);
+    add(2,[OX,Y.bids],[OX,Y.data],[FX,Y.data]);
+    add(3,[OX,Y.data],[OX,Y.bids],[FX,Y.bids]);
+    add(4,[SX,Y.bids],[SX,Y.operate],[FX,Y.operate],[SX,Y.operate],[SX,Y.notifications],[FX,Y.notifications]);
+    add(5,[OX,Y.notifications],[OX,Y.lobby],[FX,Y.lobby]);
+    add(6,[FX-60,Y.lobby],[FX,Y.lobby]);
+  }
+  xrSvg.querySelectorAll('.jtrail,.jdot').forEach(n=>n.remove());
+  sv('polyline',{class:'jtrail',points:P.map(p=>p[0]+','+p[1]).join(' ')});
+  const dot=sv('circle',{class:'jdot',r:4.5,cx:P[0][0],cy:P[0][1]});
+  const lens=[];let tot=0;for(let k=1;k<P.length;k++){const l=Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);lens.push(l);tot+=l}
+  xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));
+  xrCard.innerHTML=`<b>REQUEST JOURNEY · ${J.title}</b><ol>${J.steps.map(t=>`<li>${t}</li>`).join('')}</ol>`;
+  document.querySelectorAll('#xray [data-journey]').forEach(b=>b.classList.toggle('on',b.dataset.journey===key));
+  const lis=[...xrCard.querySelectorAll('li')];
+  /* slow enough to read: the dot waits at each step so the text keeps pace */
+  xrJ={P,lens,tot,dot,lis,t0:performance.now(),speed:.11,last:-1};
+  sfx.blip(740,.05,'square',.018,1.4);
+  if(reduced){lis.forEach(l=>l.classList.add('done'));dot.setAttribute('cx',P.at(-1)[0]);dot.setAttribute('cy',P.at(-1)[1]);xrJ=null}
+}
+function xrJourneyTick(now){
+  const j=xrJ;if(!j)return false;
+  let d=(now-j.t0)*j.speed,k=0;
+  while(k<j.lens.length&&d>j.lens[k]){d-=j.lens[k];k++}
+  if(k>=j.lens.length){j.lis.forEach(l=>{l.classList.remove('on');l.classList.add('done')});document.querySelectorAll('#xray [data-journey]').forEach(b=>b.classList.remove('on'));xrJ=null;return false}
+  const a=j.P[k],b=j.P[k+1],e=d/j.lens[k];
+  j.dot.setAttribute('cx',a[0]+(b[0]-a[0])*e);j.dot.setAttribute('cy',a[1]+(b[1]-a[1])*e);
+  const st=b[2];
+  if(st!==j.last){j.lis.forEach((l,n)=>{l.classList.toggle('on',n===st);l.classList.toggle('done',n<st)});const cur=j.lis[st];if(cur&&cur.parentElement){const ol=cur.parentElement;ol.scrollTop=Math.max(0,cur.offsetTop-ol.offsetTop-ol.clientHeight/3)}if(j.last>=0)sfx.blip(880+st*90,.035,'square',.012);j.last=st}
+  return true;
+}
 function xrAnimate(){
   if(reduced)return;
   const shaftX=135,floorX=330;
@@ -4733,6 +4863,7 @@ function xrAnimate(){
   const t0=performance.now(),LEG=520;
   const tick=now=>{
     const t=now-t0,total=legs.length*LEG+900,lt=t%total,li=Math.floor(lt/LEG);
+    if(xrJourneyTick(now)){p.setAttribute('opacity',0);bad.setAttribute('opacity',0);xrRaf=requestAnimationFrame(tick);return}
     if(li<legs.length){const [x1,y1,x2,y2]=legs[li],k=Math.min(1,(lt-li*LEG)/LEG),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;p.setAttribute('cx',x1+(x2-x1)*e);p.setAttribute('cy',y1+(y2-y1)*e);p.setAttribute('opacity',1)}
     else p.setAttribute('opacity',0);
     /* the AI layer pings the routing API out past the walls */
@@ -4740,7 +4871,7 @@ function xrAnimate(){
     ai.setAttribute('cx',ax);ai.setAttribute('cy',ay);
     /* every few seconds a shortcut tries the slab between BIDS and TRACKING and gets turned back */
     const bt=(t%5200)/5200;
-    if(bt>.55&&bt<.8){const k=(bt-.55)/.25,ys=xrY.bids,yb=xrY.deals-19,yy=k<.5?ys+(yb-ys)*k*2:yb-(yb-ys)*(k-.5)*2;bad.setAttribute('cx',300);bad.setAttribute('cy',yy);bad.setAttribute('opacity',k>.4&&k<.6?1:.55)}
+    if(bt>.55&&bt<.8){const k=(bt-.55)/.25,ys=xrY.bids,yb=xrY.bids+12,yy=k<.5?ys+(yb-ys)*k*2:yb-(yb-ys)*(k-.5)*2;bad.setAttribute('cx',300);bad.setAttribute('cy',yy);bad.setAttribute('opacity',k>.4&&k<.6?1:.55)}
     else bad.setAttribute('opacity',0);
     xrRaf=requestAnimationFrame(tick);
   };
@@ -4750,11 +4881,23 @@ function xrOpen(){
   if(!xrEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
   if(!plEl.hidden)plainClose(true);
-  xrBuild();xrEl.hidden=false;document.documentElement.classList.add('brlock');
+  xrJ=null;xrBuild();xrEl.hidden=false;document.documentElement.classList.add('brlock');
+  xrEl.classList.remove('xr-scan');void xrEl.offsetWidth;xrEl.classList.add('xr-scan');
   xrAnimate();setTimeout(()=>$('#xrClose').focus(),40);
 }
-function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrEl.hidden=true;document.documentElement.classList.remove('brlock')}
+function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrJ=null;xrEl.hidden=true;$('#xrTower').style.transform='';document.documentElement.classList.remove('brlock')}
+/* a gentle isometric tilt that follows the mouse */
+(function(){
+  const tw=$('#xrTower');let q=0;
+  tw.addEventListener('pointermove',e=>{
+    if(reduced||e.pointerType!=='mouse')return;
+    const r=tw.getBoundingClientRect(),dx=(e.clientX-r.left)/r.width-.5,dy=(e.clientY-r.top)/r.height-.5;
+    cancelAnimationFrame(q);q=requestAnimationFrame(()=>{tw.style.transform=`perspective(1100px) rotateY(${(dx*9).toFixed(2)}deg) rotateX(${(-dy*6).toFixed(2)}deg)`});
+  });
+  tw.addEventListener('pointerleave',()=>{cancelAnimationFrame(q);tw.style.transform=''});
+})();
 $('#xrClose').addEventListener('click',xrClose);
+xrEl.addEventListener('click',e=>{const b=e.target.closest('[data-journey]');if(b)xrJourney(b.dataset.journey)});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-xray]');if(t){e.preventDefault();vtGo(xrOpen,t,xrEl)}});
 addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!xrEl.hidden){xrClose();return}
@@ -5392,6 +5535,17 @@ const DIR_SCENES={
     [8200,'cost check','the 3.3K prompt sat under Haiku\'s 4,096-token cache floor. Sonnet caches it and costs less per answer'],
     [10000,'verified','19/19 with global checks on every case: exact email, no markdown links'],
     [12500,'prevention','every run published at /evals. impact on visitors: none, the fix shipped first'],
+  ],report:'fixer'},
+  /* the signal-jack's footage, captioned with TENANT-001 from the logistics platform */
+  postmortem2:{max:17500,clock:'hack',report:'rls',beats:[
+    [0,'the invite','a shipper invites a carrier to bid. the notification belongs on the carrier\'s desk'],
+    [1400,'wrong tenant','the request runs as the shipper, so reading the carrier\'s team runs under the shipper\'s row-level security'],
+    [3000,'empty audience','the policy does its job: zero rows. the notification goes to nobody, silently'],
+    [8000,'green suite','about 2,900 tests pass. none of them crossed tenants this way'],
+    [9000,'a user notices','a real user asks why the carrier never heard. that is the detection'],
+    [10200,'the fix','cross-tenant audiences resolve only from the outbox, which runs in system scope'],
+    [12100,'the guard','an architecture test now fails the build if a request handler tries it again'],
+    [17000,'the lesson','isolation that works can still break a feature. test the seams between tenants'],
   ]},
 };
 let dirScene='incident';
@@ -5411,7 +5565,8 @@ function dirRender(){
   dirSlider.max=sc.max;
   dirBeats.innerHTML=sc.beats.map(b=>`<button data-ms="${b[0]}">${b[1]}</button>`).join('');
   dirEl.querySelectorAll('.dtabs button').forEach(b=>b.classList.toggle('on',b.dataset.scene===dirScene));
-  dirEl.classList.toggle('pmode',dirScene==='postmortem');
+  dirEl.classList.toggle('pmode',!!DIR_SCENES[dirScene].report);
+  $('#dirPm').dataset.pm=DIR_SCENES[dirScene].report||'';
 }
 function dirLiveFn(){
   DBG_INCT=0;DBG_HKT=0;resetIncident();resetHack();
@@ -5426,18 +5581,19 @@ dirBeats.addEventListener('click',e=>{const b=e.target.closest('[data-ms]');if(!
 dirEl.querySelector('.dtabs').addEventListener('click',e=>{const b=e.target.closest('[data-scene]');if(!b)return;dirScene=b.dataset.scene;dirRender();dirSlider.value=0;dirApply(1)});
 $('#dirClose').addEventListener('click',dirClose);
 $('#dirLive').addEventListener('click',dirLiveFn);
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!dirEl.hidden)dirClose()});
+/* Esc closes the top layer only: a report or file open over the reel keeps the reel */
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!dirEl.hidden&&$('#pmbox').hidden&&$('#matchbox').hidden&&!document.querySelector('.fview.show'))dirClose()});
 if(/[?&]director/.test(location.search))dirOpen();
 /* postmortem: the director's third reel, plus the written report */
 const pmEl=$('#pmbox');
-function pmOpen(){pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>$('#pmClose').focus(),40)}
+function pmOpen(id='fixer'){pmEl.querySelectorAll('[data-pm]').forEach(a=>a.hidden=a.dataset.pm!==id);pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>{const x=pmEl.querySelector(`[data-pm="${id}"] .pmx`);if(x)x.focus()},40)}
 function pmClose(){pmEl.hidden=true;document.documentElement.classList.remove('brlock')}
-function pmReel(){if(!plEl.hidden)plainClose(true);dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
-$('#pmClose').addEventListener('click',pmClose);
+function pmReel(id='fixer'){if(!plEl.hidden)plainClose(true);dirScene=id==='rls'?'postmortem2':'postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
+pmEl.addEventListener('click',e=>{if(e.target.closest('.pmx'))pmClose()});
 pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
-document.addEventListener('click',e=>{const t=e.target.closest('[data-postmortem]');if(t){e.preventDefault();vtGo(pmOpen,t,pmEl.querySelector('.pm'))}});
-if(/[?&]postmortem/.test(location.search)){endBoot();pmReel();pmOpen()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-postmortem]');if(t){e.preventDefault();const id=t.dataset.pm||'fixer';vtGo(()=>pmOpen(id),t,pmEl.querySelector(`[data-pm="${id}"]`))}});
+if(/[?&]postmortem/.test(location.search)){const id=/postmortem=rls/.test(location.search)?'rls':'fixer';endBoot();pmReel(id);pmOpen(id)}
 
 /* ============ PALETTE ============ */
 const ACTIONS=[
@@ -5459,6 +5615,7 @@ const ACTIONS=[
  {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
  {t:'Commit skyline: the logistics platform, week by week',k:'▥',f:()=>skOpen()},
  {t:'Postmortem: the agent that invented an email address',k:'✎',f:()=>{pmReel();pmOpen()}},
+ {t:'Postmortem: the notification nobody received (tenant isolation)',k:'✎',f:()=>{pmReel('rls');pmOpen('rls')}},
  {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];

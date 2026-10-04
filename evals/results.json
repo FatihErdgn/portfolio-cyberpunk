@@ -1,16 +1,16 @@
 {
   "summary": {
     "model": "claude-sonnet-5-5",
-    "ran_at": "2026-10-04T14:07:12.837Z",
+    "ran_at": "2026-10-04T14:16:02.464Z",
     "cases": 25,
     "passed": 25,
-    "usd_total": 0.1273,
-    "usd_per_answer": 0.00509,
+    "usd_total": 0.1374,
+    "usd_per_answer": 0.0055,
     "by_agent": {
       "fixer": {
         "cases": 20,
         "passed": 20,
-        "usd_per_answer": 0.00384
+        "usd_per_answer": 0.00434
       },
       "refinery": {
         "cases": 5,
@@ -19,10 +19,10 @@
       }
     },
     "latency_ms": {
-      "p50": 3400,
+      "p50": 3368,
       "p95": 10297
     },
-    "cache_read_tokens": 177616
+    "cache_read_tokens": 170852
   },
   "results": [
     {
@@ -48,17 +48,17 @@
           "ok": true
         }
       ],
-      "reply": "All of his LLM work is in the B2B logistics platform he builds as the sole engineer. It's in QA and not yet live with customers.\n\n- **Agentic assistant:** It runs on the Anthropic Messages API with a server-side tool-use loop that calls live road-routing tools. It routes between a small model for simple turns and a larger one for planning. It uses tiered prompt caching and per-tenant token and cost accounting. The accounting records counts, never tenant text.\n- **Eight more LLM features:** cross-language chat translation, message assessment and action extraction, offer explanations, dashboard and workflow drafting, and web-search-grounded lane intelligence.\n\nSeparately, at SOCAR Türkiye he built the human-in-the-loop interface around an ML pricing model. That is ML integration, not an LLM. He didn't build the model itself.\n\nHe has no production RAG or vector search yet, and no formal LLM eval suite. The eval suite is the next thing he's working on. I've opened the Applied AI case file for the details.",
+      "reply": "All of his LLM work is in the logistics platform, which is in QA and not yet live with customers. I've opened the Applied AI case file.\n\n**Agentic assistant:** It runs on the Anthropic Messages API. It is grounded and read-only, because it only sees the tenant's own operations as its source. It calls server-side tools that run tenant-scoped: live location, history, reports, lane intelligence and road routing. Other parts of it:\n- Model routing, with Haiku 4.5 by default and a larger model for planning or tool use.\n- Three-tier prompt caching.\n- A per-call cost ledger that records counts and dollars, never prompt text.\n- Rate limits and a per-company daily quota.\n- Chat content marked as data, as protection against prompt injection.\n\n**Eight more LLM features:** cross-language chat translation, message assessment and action extraction, offer explanations, dashboard and workflow drafting, and web-search-grounded lane intelligence.\n\nAt SOCAR he built the interface and workflow around an ML model. That is a pricing model, not an LLM.\n\nGaps: he has no production RAG or vector search yet, and no formal LLM eval suite in production. The eval suite is what he is working on next.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 5817,
-      "usd": 0.0062228000000000006,
+      "ms": 6007,
+      "usd": 0.0185114,
       "usage": {
         "input_tokens": 248,
-        "output_tokens": 390,
-        "cache_read_input_tokens": 9134,
-        "cache_creation_input_tokens": 0
+        "output_tokens": 451,
+        "cache_read_input_tokens": 5002,
+        "cache_creation_input_tokens": 5002
       }
     },
     {
@@ -316,14 +316,14 @@
           "ok": true
         }
       ],
-      "reply": "His main backend stack is C# on .NET 10, with EF Core, and he uses DDD, Clean Architecture and CQRS with MediatR. On the logistics platform he built a modular monolith of 13 domain modules, with domain events, SignalR on a Redis backplane and PostgreSQL. He also lists RabbitMQ, REST APIs and workflow engines, and he has used Node.js and Express. For testing he uses xUnit, Testcontainers and NetArchTest. Deployment is Docker and GitHub Actions to Azure Container Apps.",
+      "reply": "His main backend stack is C# on .NET 10 with EF Core and PostgreSQL. He uses DDD, Clean Architecture and CQRS with MediatR, and structures systems as modular monoliths. Around that he works with SignalR, Redis, RabbitMQ and Keycloak (OIDC). Testing is xUnit, Testcontainers and NetArchTest, and deployment is Docker and GitHub Actions to Azure Container Apps. He also has Node.js/Express experience.\n\nThe logistics platform is the fullest example. It is a .NET 10 modular monolith with 13 modules, and he is the sole engineer on it.",
       "tools": [],
-      "ms": 2638,
-      "usd": 0.0029456,
+      "ms": 2870,
+      "usd": 0.0033004,
       "usage": {
         "input_tokens": 85,
-        "output_tokens": 187,
-        "cache_read_input_tokens": 4528,
+        "output_tokens": 213,
+        "cache_read_input_tokens": 5002,
         "cache_creation_input_tokens": 0
       }
     },
@@ -350,16 +350,14 @@
           "ok": true
         }
       ],
-      "reply": "The platform's name isn't public, so I can't share it. Fatih can tell you more directly if you email him at fatiherdogann099@gmail.com.\n\nWhat I can say is that it's a B2B freight platform where shippers, carriers and forwarders run RFQs, bidding and deals. He built it as the sole engineer, and it's currently in QA ahead of go-live. I'll open the case file so you can see the details.\nThe logistics case file is open now. It covers the architecture, the test suite and the stack. If you'd like to ask about the name or a possible demo, I can draft an email to Fatih.",
-      "tools": [
-        "open_case_file"
-      ],
-      "ms": 4052,
-      "usd": 0.0050072,
+      "reply": "The platform's name isn't public, so I can't share it. If you need it, email Fatih at fatiherdogann099@gmail.com and he can tell you directly. I can describe what it does and how it's built. It's a B2B freight platform that he built as the sole engineer, and it's in QA ahead of go-live.",
+      "tools": [],
+      "ms": 2261,
+      "usd": 0.0021904,
       "usage": {
-        "input_tokens": 383,
-        "output_tokens": 243,
-        "cache_read_input_tokens": 9056,
+        "input_tokens": 90,
+        "output_tokens": 101,
+        "cache_read_input_tokens": 5002,
         "cache_creation_input_tokens": 0
       }
     },
@@ -691,17 +689,17 @@
           "ok": true
         }
       ],
-      "reply": "The architecture X-ray and the case file are both open now.\n\nIn short, it's a .NET 10 modular monolith with 13 domain modules, covering shipment requests, bids, deals, tracking, dock scheduling, documents and more. It uses DDD, Clean Architecture, CQRS with MediatR and domain events. Architecture tests (NetArchTest) and ADRs enforce the module boundaries. Keycloak handles multi-tenant security, SignalR runs on a Redis backplane, and it deploys with Docker and GitHub Actions to Azure Container Apps.\n\nFatih built it alone, and it's currently in QA ahead of go-live, so it has no live customers yet.",
+      "reply": "The architecture X-ray and the case file are both open now.\n\nIn short, it's a .NET 10 modular monolith with 13 modules. Each module has its own PostgreSQL schema and four layers: Domain, Application, Infrastructure and Endpoints. Modules never reference each other. They talk through synchronous contracts in a shared kernel, or through domain events sent via a per-module transactional outbox. Tenant isolation is enforced in the database with PostgreSQL row-level security. Architecture tests enforce the module boundaries.\n\nFatih built it alone, and it's currently in QA ahead of go-live. If you want more detail on a part, such as the outbox, the security pipeline or the AI layer, ask and I'll go into it.",
       "tools": [
         "show_section",
         "open_case_file"
       ],
-      "ms": 4600,
-      "usd": 0.0057852,
+      "ms": 4598,
+      "usd": 0.0061048000000000005,
       "usage": {
         "input_tokens": 367,
-        "output_tokens": 324,
-        "cache_read_input_tokens": 9056,
+        "output_tokens": 337,
+        "cache_read_input_tokens": 10004,
         "cache_creation_input_tokens": 0
       }
     },
