@@ -39,7 +39,7 @@ h1{font-family:'Chakra Petch',sans-serif;font-size:clamp(26px,5vw,40px);margin:6
 <main>
   <div class="top"><a href="/">fatiherdogan.dev</a> / evals</div>
   <h1>FIXER eval report</h1>
-  <p class="lede">FIXER is the Claude agent in the site's terminal. Every change to its prompt or tools is measured against the same recruiter questions: facts it must get right, gaps it must admit, things it must never leak, and tools it should reach for. Grading is plain string and tool checks, so the score is reproducible.</p>
+  <p class="lede">Two Claude agents run on this site: FIXER in the terminal, and the industrial ops copilot in the refinery control room (synthetic Unit 300). Every change to their prompts or tools is measured against the same questions: facts they must get right, gaps they must admit, things they must never leak, and tools they should reach for. Grading is plain string and tool checks, so the score is reproducible.</p>
   <section class="kpis" id="kpis"></section>
   <section id="cases"><p class="empty">Loading results…</p></section>
 </main>
@@ -49,9 +49,9 @@ fetch('/evals/results.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return
   const kpi=(v,k)=>`<div class="kpi"><div class="v">${v}</div><div class="k">${k}</div></div>`;
   document.getElementById('kpis').innerHTML=
     kpi(`${s.passed}/${s.cases}`,'cases passed')+kpi(`${s.latency_ms.p50} ms`,'latency p50')+kpi(`${s.latency_ms.p95} ms`,'latency p95')+
-    kpi(`$${s.usd_per_answer.toFixed(4)}`,'cost per answer')+kpi(esc(s.model),'model')+kpi(new Date(s.ran_at).toISOString().slice(0,10),'last run');
+    (s.by_agent?kpi(`$${s.by_agent.fixer.usd_per_answer.toFixed(4)}`,'FIXER, per answer')+kpi(`$${s.by_agent.refinery.usd_per_answer.toFixed(4)}`,'ops copilot, per question'):kpi(`$${s.usd_per_answer.toFixed(4)}`,'cost per answer'))+kpi(esc(s.model),'model')+kpi(new Date(s.ran_at).toISOString().slice(0,10),'last run');
   document.getElementById('cases').innerHTML=results.map(r=>`<details class="case ${r.pass?'pass':'fail'}">
-    <summary><span class="st">${r.pass?'PASS':'FAIL'}</span><span class="q">${esc(r.q)}</span><span class="meta">${r.ms} ms · $${(r.usd||0).toFixed(4)}${r.tools.length?` · ${esc(r.tools.join(', '))}`:''}</span></summary>
+    <summary><span class="st">${r.pass?'PASS':'FAIL'}</span><span class="q">${r.agent==='refinery'?'<span style="color:#FF8A3D">[ops copilot]</span> ':''}${esc(r.q)}</span><span class="meta">${r.ms} ms · $${(r.usd||0).toFixed(4)}${r.tools.length?` · ${esc(r.tools.join(', '))}`:''}</span></summary>
     <div class="body">${r.checks.map(c=>`<div class="${c.ok?'ok':'no'}">${c.ok?'✓':'✗'} ${esc(c.check)}</div>`).join('')}<blockquote>${esc(r.reply||r.error||'(no text, tools only)')}</blockquote></div>
   </details>`).join('');
 }).catch(()=>{document.getElementById('cases').innerHTML='<p class="empty">No eval run has been published yet.</p>'});

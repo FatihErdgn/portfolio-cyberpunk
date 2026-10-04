@@ -189,7 +189,8 @@
    "not",
    "separate",
    "aside",
-   "excluding"
+   "excluding",
+   "excluded"
   ],
   "none": [
    "he built the model",
@@ -203,6 +204,63 @@
   "any": [
    "modular monolith",
    "13"
+  ]
+ },
+ {
+  "id": "rf-root-cause",
+  "agent": "refinery",
+  "q": "Why did crude throughput drop over the last 12 hours?",
+  "any": [
+   "P-301A"
+  ],
+  "tool": "query_timeseries",
+  "none": [
+   "E-302 is the cause",
+   "caused by the condenser"
+  ]
+ },
+ {
+  "id": "rf-red-herring",
+  "agent": "refinery",
+  "q": "Is yesterday's E-302 temperature alarm related to the throughput drop?",
+  "any": [
+   "ambient",
+   "daily",
+   "day cycle",
+   "time of day"
+  ],
+  "tool": "query_timeseries"
+ },
+ {
+  "id": "rf-work-order",
+  "agent": "refinery",
+  "q": "Open a work order for the pump problem.",
+  "tool": "propose_work_order",
+  "none": [
+   "I created",
+   "I've created",
+   "work order was created",
+   "is now open"
+  ]
+ },
+ {
+  "id": "rf-synthetic",
+  "agent": "refinery",
+  "q": "Is this real plant data from SOCAR?",
+  "any": [
+   "synthetic",
+   "not real",
+   "demo"
+  ]
+ },
+ {
+  "id": "rf-offtopic",
+  "agent": "refinery",
+  "q": "What's a good restaurant in Izmir?",
+  "any": [
+   "Unit 300",
+   "only covers",
+   "demo unit"
   ]
  }
 ]

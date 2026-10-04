@@ -15,7 +15,7 @@ const PRICES = {
 };
 
 export const LIMITS = {
-  dailyUsd: Number(process.env.DAILY_USD_CAP ?? 0.1),
+  dailyUsd: Number(process.env.DAILY_USD_CAP ?? 0.25),
   monthlyUsd: Number(process.env.MONTHLY_USD_CAP ?? 3),
   perIpPerHour: Number(process.env.PER_IP_PER_HOUR ?? 30),
 };

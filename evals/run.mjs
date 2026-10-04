@@ -4,19 +4,25 @@
    Usage: PORTFOLIO_ANTHROPIC_KEY=... node evals/run.mjs */
 import fs from 'node:fs';
 import { runFixer } from '../api/fixer.js';
+import { runRefinery } from '../api/refinery.js';
 
-const cases = JSON.parse(fs.readFileSync(new URL('./cases.json', import.meta.url)));
+const allCases = JSON.parse(fs.readFileSync(new URL('./cases.json', import.meta.url)));
+/* --only id[,id]: rerun just those cases and merge them into the existing results (saves budget) */
+const only = (process.argv.find(a => a.startsWith('--only=')) ?? '').slice(7).split(',').filter(Boolean);
+const cases = only.length ? allCases.filter(c => only.includes(c.id)) : allCases;
+const prev = only.length ? JSON.parse(fs.readFileSync(new URL(process.env.EVAL_OUT ?? './results.json', import.meta.url))).results : [];
 const results = [];
 let usd = 0;
 
 for (const c of cases) {
   const t0 = performance.now();
   let out, err;
-  try { out = await runFixer([{ role: 'user', content: c.q }]); } catch (e) { err = String(e.message ?? e); }
+  const run = c.agent === 'refinery' ? runRefinery : runFixer;
+  try { out = await run([{ role: 'user', content: c.q }]); } catch (e) { err = String(e.message ?? e); }
   const ms = Math.round(performance.now() - t0);
   const text = out?.reply ?? '';
   const low = text.toLowerCase();
-  const tools = (out?.actions ?? []).map(a => a.tool);
+  const tools = [...new Set([...(out?.actions ?? []).map(a => a.tool), ...(out?.trace ?? []).map(t => t.tool)])];
   const checks = [];
   if (c.any) checks.push({ check: `mentions one of: ${c.any.join(' | ')}`, ok: c.any.some(x => low.includes(x.toLowerCase())) });
   if (c.none) checks.push({ check: `never says: ${c.none.join(' | ')}`, ok: !c.none.some(x => low.includes(x.toLowerCase())) });
@@ -36,10 +42,16 @@ for (const c of cases) {
   if (err) checks.push({ check: 'no error', ok: false });
   const pass = checks.every(x => x.ok);
   usd += out?.usd ?? 0;
-  results.push({ id: c.id, q: c.q, pass, checks, reply: text, tools, ms, usd: out?.usd ?? 0, usage: out?.usage, error: err });
+  results.push({ id: c.id, agent: c.agent ?? 'fixer', q: c.q, pass, checks, reply: text, tools, ms, usd: out?.usd ?? 0, usage: out?.usage, error: err });
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${c.id.padEnd(16)} ${String(ms).padStart(5)}ms  ${tools.join(',')}`);
 }
 
+if (only.length) {
+  const fresh = new Map(results.map(r => [r.id, r]));
+  const merged = allCases.map(c => fresh.get(c.id) ?? prev.find(p => p.id === c.id)).filter(Boolean);
+  results.length = 0; results.push(...merged);
+  usd = results.reduce((a, r) => a + (r.usd ?? 0), 0);
+}
 const lat = results.map(r => r.ms).sort((a, b) => a - b);
 const pct = p => lat[Math.min(lat.length - 1, Math.floor(p * lat.length))];
 const summary = {
@@ -49,6 +61,7 @@ const summary = {
   passed: results.filter(r => r.pass).length,
   usd_total: +usd.toFixed(4),
   usd_per_answer: +(usd / results.length).toFixed(5),
+  by_agent: Object.fromEntries(['fixer', 'refinery'].map(a => { const rs = results.filter(r => r.agent === a); return [a, { cases: rs.length, passed: rs.filter(r => r.pass).length, usd_per_answer: rs.length ? +(rs.reduce((x, r) => x + r.usd, 0) / rs.length).toFixed(5) : 0 }]; })),
   latency_ms: { p50: pct(0.5), p95: pct(0.95) },
   cache_read_tokens: results.reduce((a, r) => a + (r.usage?.cache_read_input_tokens ?? 0), 0),
 };

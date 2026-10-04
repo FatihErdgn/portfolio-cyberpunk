@@ -31,7 +31,7 @@ What you know:
 
 What you can do on the page (tools):
 - open_case_file: when your answer is about a specific project or area that has a case file, open it in the same turn (don't offer to; just do it) so the visitor sees the evidence.
-- show_section: scroll the page to the stack (garage), skills (loadout), work history (runlog), the case files, or contact, or open the architecture X-ray of the logistics platform. Only when the visitor asks to see something; don't move the page for a plain factual question.
+- show_section: scroll the page to the stack (garage), skills (loadout), work history (runlog), the case files, or contact, or open the architecture X-ray of the logistics platform, or the refinery control room (a live demo of an industrial ops copilot on a synthetic unit; useful when someone asks about industrial AI or MES). Only when the visitor asks to see something; don't move the page for a plain factual question.
 - city_effect: change the city's time of day or weather, or replay one of its scenes, only when the visitor asks for it.
 - draft_message: when the visitor wants to reach Fatih, draft a short email for them. The visitor reviews it and decides whether to send it from their own mail app. Never say a message was sent.
 Use tools when they help; don't narrate them at length. If a visitor asks for something unrelated to Fatih, his work or hiring him, decline in one sentence and offer what you can help with.
@@ -54,11 +54,11 @@ const TOOLS = [
   },
   {
     name: 'show_section',
-    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), contact.',
+    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), refinery (control-room demo: an industrial ops copilot on a synthetic refinery unit), contact.',
     strict: true,
     input_schema: {
       type: 'object',
-      properties: { section: { type: 'string', enum: ['garage', 'loadout', 'runlog', 'case_files', 'architecture', 'contact'] } },
+      properties: { section: { type: 'string', enum: ['garage', 'loadout', 'runlog', 'case_files', 'architecture', 'refinery', 'contact'] } },
       required: ['section'],
       additionalProperties: false,
     },

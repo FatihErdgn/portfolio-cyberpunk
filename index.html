@@ -1089,6 +1089,74 @@ html.plainlock #matchbox{z-index:9700}
 #xrSvg .xsub{font-size:9px;fill:var(--dim);pointer-events:none;letter-spacing:.08em}
 @media (max-width:860px){#xray{grid-template-columns:1fr;align-content:start;overflow-y:auto;padding:64px 16px 70px}.xr-card{min-height:0}}
 @media (prefers-reduced-motion:reduce){#xrSvg .draw{animation:none;stroke-dashoffset:0}}
+
+/* ============ REFINERY CONTROL ROOM (Industrial Ops Copilot, synthetic Unit 300) ============ */
+#refinery{position:fixed;inset:0;z-index:1300;overflow-y:auto;overscroll-behavior:contain;padding:64px 20px 40px;
+  background:radial-gradient(60% 70% at 30% 40%,rgba(255,138,61,.06),transparent 60%),rgba(3,5,9,.92);backdrop-filter:blur(3px)}
+#refinery[hidden]{display:none}
+.rf-wrap{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,1fr);gap:18px}
+.rf-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.rf-head .k{color:#FF8A3D;font-size:11px;letter-spacing:.18em}
+.rf-head h3{font-family:'Chakra Petch',sans-serif;font-size:clamp(22px,2.6vw,32px);margin:4px 0 0;line-height:1.05}
+.rf-head p{margin:6px 0 0;color:var(--dim);font-size:12px;max-width:70ch}
+.rf-badge{font-size:10px;letter-spacing:.14em;color:#FF8A3D;border:1px solid rgba(255,138,61,.5);padding:4px 10px}
+.rf-close{background:none;border:1px solid var(--line);color:var(--dim);font:11px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:6px 12px;cursor:pointer}
+.rf-close:hover{color:#FF8A3D;border-color:#FF8A3D}
+.rf-panel{background:rgba(7,10,18,.92);border:1px solid var(--line);padding:14px}
+.rf-panel h4{margin:0 0 10px;font-size:11px;letter-spacing:.16em;color:var(--dim);font-weight:400}
+#rfSvg{width:100%;height:auto;display:block}
+#rfSvg text{font-family:'Share Tech Mono',monospace}
+#rfSvg .eq{fill:rgba(0,240,255,.04);stroke:rgba(0,240,255,.55);stroke-width:1.2;cursor:pointer;transition:fill .2s,stroke .2s}
+#rfSvg g[data-eq]:hover .eq{fill:rgba(0,240,255,.14)}
+#rfSvg .pipe{stroke:rgba(140,170,210,.45);stroke-width:2;fill:none}
+#rfSvg .flow{stroke:#00F0FF;stroke-width:2;fill:none;stroke-dasharray:4 10;animation:rfFlow 1.4s linear infinite}
+@keyframes rfFlow{to{stroke-dashoffset:-28}}
+#rfSvg .eqlbl{font-size:10px;fill:var(--fg);pointer-events:none}
+#rfSvg .tagv{font-size:10px;fill:#9FB3D1;pointer-events:none}
+#rfSvg .tagv.alarm{fill:#FF3B3B}
+#rfSvg .tagbg{fill:#05070D;stroke:var(--line)}
+#rfSvg .tagbg.alarm{stroke:#FF3B3B}
+#rfSvg g.hl .eq{stroke:#FF8A3D;fill:rgba(255,138,61,.16);filter:drop-shadow(0 0 6px rgba(255,138,61,.8))}
+#rfSvg g.alarming .eq{stroke:#FF3B3B;animation:rfBlink 1.1s steps(2) infinite}
+@keyframes rfBlink{50%{stroke:rgba(255,59,59,.25)}}
+.rf-trends{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.rf-tr{border:1px solid var(--line);padding:8px 10px;background:#05070D}
+.rf-tr .h{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)}
+.rf-tr .h b{color:var(--fg);font-weight:400}
+.rf-tr .h .al{color:#FF3B3B}
+.rf-tr svg{width:100%;height:54px;display:block;margin-top:4px}
+.rf-tr .ax{display:flex;justify-content:space-between;font-size:9px;color:var(--dim)}
+.rf-cop{display:flex;flex-direction:column;min-height:560px}
+.rf-log{flex:1;overflow-y:auto;font-size:12.5px;line-height:1.65;padding-right:4px;max-height:58vh}
+.rf-msg{margin:0 0 12px}
+.rf-msg.u{color:#9FB3D1}
+.rf-msg.u::before{content:'OPERATOR ▸ ';color:var(--dim);font-size:10px;letter-spacing:.12em}
+.rf-msg.a{color:var(--fg);white-space:pre-wrap}
+.rf-msg.a::before{content:'COPILOT ▸ ';color:#FF8A3D;font-size:10px;letter-spacing:.12em}
+.rf-msg.sys{color:var(--dim);font-size:11px}
+.rf-trace{margin:0 0 10px;border-left:2px solid rgba(255,138,61,.4);padding:2px 0 2px 10px;font-size:11px;color:var(--dim)}
+.rf-trace div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rf-trace b{color:#FF8A3D;font-weight:400}
+.rf-wait::after{content:'';animation:fxdots 1.2s steps(4) infinite}
+.rf-wo{border:1px solid rgba(255,138,61,.6);background:rgba(255,138,61,.06);padding:10px 12px;margin:0 0 12px;font-size:12px}
+.rf-wo .t{color:#FF8A3D;font-size:10px;letter-spacing:.14em;margin-bottom:4px}
+.rf-wo b{display:block;color:var(--fg);font-weight:400;margin-bottom:4px}
+.rf-wo p{margin:0 0 8px;color:var(--dim)}
+.rf-wo button,.rf-chips button,.rf-in button{font:11px 'Share Tech Mono',monospace;letter-spacing:.08em;padding:6px 10px;cursor:pointer;background:transparent;color:#FF8A3D;border:1px solid rgba(255,138,61,.7);margin-right:6px}
+.rf-wo button[data-rej]{color:var(--dim);border-color:var(--line)}
+.rf-wo button:hover,.rf-chips button:hover,.rf-in button:hover{background:rgba(255,138,61,.12)}
+.rf-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.rf-chips button{margin:0;text-align:left;letter-spacing:.02em}
+.rf-in{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+.rf-in input{flex:1;background:#04070C;border:1px solid var(--line);color:var(--fg);font:12px 'Share Tech Mono',monospace;padding:8px}
+.rf-in input:focus{outline:1px solid #FF8A3D}
+.rf-in button{margin:0}
+.rf-wol{margin-top:12px;font-size:11px;color:var(--dim)}
+.rf-wol div{display:flex;gap:10px;padding:3px 0;border-top:1px dashed var(--line)}
+.rf-wol .id{color:var(--fg);min-width:70px}
+.rf-wol .new{color:#00FF9C}
+@media (max-width:980px){.rf-wrap{grid-template-columns:1fr}.rf-cop{min-height:0}.rf-log{max-height:none}}
+@media (max-width:560px){.rf-trends{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="crt">
@@ -1403,6 +1471,7 @@ html.plainlock #matchbox{z-index:9700}
       <p>Integrated industrial and process operations into MES for <span class="redact">real-time production monitoring</span> and better operational visibility.</p>
       <p>Built executive-level reporting drawn directly from process and production data systems. I delivered these alongside operations, maintenance and IT teams so the OT solutions work across the whole refinery.</p>
     </div>
+    <button type="button" class="xr-open" data-refinery style="color:#FF8A3D;border-color:rgba(255,138,61,.6)">▸ OPEN THE UNIT 300 COPILOT DEMO</button>
     <div class="dtags"><span>mes integration</span><span>phd</span><span>process analysis</span><span>executive reporting</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
   </section>
@@ -1532,6 +1601,7 @@ html.plainlock #matchbox{z-index:9700}
     <section aria-labelledby="pl-inspect">
       <h2 id="pl-inspect">Things you can inspect</h2>
       <div class="pl-proofs">
+        <button type="button" data-refinery><span>Industrial ops copilot on a synthetic refinery unit</span><small>live AI demo</small></button>
         <button type="button" data-xray><span>Architecture X-ray of the logistics platform</span><small>interactive</small></button>
         <a href="/evals"><span>Eval report for this site's AI agent</span><small>pass rate, latency, cost</small></a>
         <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
@@ -1556,6 +1626,31 @@ html.plainlock #matchbox{z-index:9700}
     <div class="xr-legend"><span><i style="background:#00FF9C"></i>edge</span><span><i style="background:#00F0FF"></i>domain modules</span><span><i style="background:#FF8A3D"></i>AI layer</span><span><i style="background:#9D4EDD"></i>data</span><span><i style="background:#FF2E88"></i>boundaries</span></div>
   </div>
   <svg id="xrSvg" viewBox="0 0 460 640" role="img" aria-label="Cutaway of the platform as a tower"></svg>
+</div>
+<div id="refinery" hidden role="dialog" aria-modal="true" aria-labelledby="rfTitle">
+  <div class="rf-wrap">
+    <div class="rf-head">
+      <div><div class="k">CONTROL ROOM // INDUSTRIAL OPS COPILOT</div><h3 id="rfTitle">Unit 300, crude distillation</h3>
+        <p>A copilot that investigates with historian, alarm and work-order tools, points at equipment, and proposes maintenance that an operator approves. The unit and its data are synthetic: a demo of the pattern, not any real plant.</p></div>
+      <div style="display:flex;gap:10px;align-items:center"><span class="rf-badge">SYNTHETIC DATA</span><button type="button" class="rf-close" id="rfClose">✕ CLOSE [ESC]</button></div>
+    </div>
+    <div class="rf-panel">
+      <h4>PROCESS · LIVE</h4>
+      <svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg>
+      <div class="rf-trends" id="rfTrends"></div>
+      <div class="rf-wol" id="rfWol"></div>
+    </div>
+    <div class="rf-panel rf-cop">
+      <h4>COPILOT · CLAUDE SONNET 5.5 WITH PLANT TOOLS</h4>
+      <div class="rf-log" id="rfLog" aria-live="polite"><div class="rf-msg sys">Ask about the unit, or pick a question. Click equipment on the schematic to ask about it. Every tool call the copilot makes is shown.</div></div>
+      <div class="rf-chips" id="rfChips">
+        <button type="button">Why did crude throughput drop over the last 12 hours?</button>
+        <button type="button">Which alarms matter right now, and which can wait?</button>
+        <button type="button">Is yesterday's E-302 temperature alarm related?</button>
+      </div>
+      <form class="rf-in" id="rfForm"><input id="rfIn" autocomplete="off" placeholder="ask about Unit 300" aria-label="question for the copilot"><button type="submit">ASK</button></form>
+    </div>
+  </div>
 </div>
 <div id="matchbox" hidden>
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
@@ -1942,8 +2037,63 @@ function buildCity(){
   beams=[{x:W*.22,base:-.5,sp:.00023,amp:.42},{x:W*.7,base:-.62,sp:.00017,amp:.5}];
   pickIncident();
   pickHack();
+  pickRefinery();
   bakeCity();
   RNG=Math.random;                         // generation's done; hand the dice back to chaos
+}
+/* a refinery on the front skyline: tank, two columns, a fired heater, a pipe rack, and a flare
+   stack taller than anything around it. The flare burns live; while Unit 300's demo fault is
+   active an amber beacon blinks at the pump bay. */
+let refy=null;
+function pickRefinery(){
+  refy=null;
+  const front=layers[2];if(!front||W<320)return;
+  /* front row, right of the incident tower: the one stretch of skyline the hero never covers.
+     The flare stays below the chopper's hover line so the two scenes never collide. */
+  const x=Math.round(W*0.885),base=Math.round(H*0.8),w=50;
+  refy={x,w,base,h:Math.round(H*0.30),vt:'refinery',win:[],shadowed:false,shade:TOD.shades[2],L:2,
+    neon:null,board:null,kanji:null,strip:null,esc:false,duct:0};
+  layers[2]=front.filter(b=>b.x+b.w<x-2||b.x>x+w+2);
+  layers[2].push(refy);
+}
+function bakeRefinery(X,bd){
+  const x=bd.x,b=bd.base,c=bd.shade,rim=TOD.rim[1],w=bd.w;
+  const F=(px,py,pw,ph,col=c)=>{X.fillStyle=col;X.fillRect(px,py,pw,ph)};
+  F(x,b-10,13,10+H);F(x+1,b-11,11,1);                                  // tank
+  F(x+16,b-Math.round(H*.22),6,Math.round(H*.22)+H);                   // main column
+  for(let y=b-Math.round(H*.22)+5;y<b;y+=6)F(x+15,y,8,1,'rgba(150,180,220,.22)');
+  F(x+25,b-Math.round(H*.15),5,Math.round(H*.15)+H);                   // second column
+  for(let y=b-Math.round(H*.15)+5;y<b;y+=7)F(x+24,y,7,1,'rgba(150,180,220,.18)');
+  F(x+33,b-12,9,12+H);F(x+36,b-22,3,10);                               // heater + stack
+  bd.flareX=x+46;bd.flareTop=b-bd.h;
+  F(bd.flareX,bd.flareTop,1,bd.h+H,'rgba(150,180,220,.55)');           // flare stack
+  X.fillStyle='rgba(150,180,220,.16)';
+  for(let k=0;k<bd.h;k+=3){X.fillRect(bd.flareX-Math.round(k*.18),bd.flareTop+k,1,1);X.fillRect(bd.flareX+Math.round(k*.18),bd.flareTop+k,1,1)}
+  F(x-2,b-7,w+2,1,'rgba(150,180,220,.3)');F(x-2,b-4,w+2,1,'rgba(150,180,220,.22)');   // pipe rack
+  F(x+16,b-Math.round(H*.22),6,1,rim);F(x+25,b-Math.round(H*.15),5,1,rim);
+  /* the platform lights are what make a refinery read as one at night */
+  bd.lights=[];
+  for(let y=b-Math.round(H*.22)+5;y<b-4;y+=6)bd.lights.push([x+15,y],[x+22,y]);
+  for(let y=b-Math.round(H*.15)+5;y<b-4;y+=7)bd.lights.push([x+24,y]);
+  bd.lights.push([x+2,b-12],[x+11,b-12],[x+34,b-13],[x+41,b-13]);
+  F(x+16,b-Math.round(H*.22),1,Math.round(H*.22),'rgba(150,190,240,.28)');F(x+25,b-Math.round(H*.15),1,Math.round(H*.15),'rgba(150,190,240,.24)');
+  bd.topY=bd.flareTop;bd.beaconY=bd.flareTop-1;
+}
+function drawRefinery(t,par,yoff){
+  if(!refy||refy.flareX===undefined)return;
+  const fx=refy.flareX-par,fy=refy.flareTop+yoff;
+  const f=Math.sin(t*.011)*1.2+Math.sin(t*.027)*.8,hgt=4+Math.round(Math.abs(f)*1.4);
+  for(let r=4;r>=1;r--){ctx.fillStyle=`rgba(255,138,61,${.05*r})`;ctx.fillRect(fx-r-1,fy-hgt-r,3+r*2,hgt+r*2)}
+  ctx.fillStyle='#FF8A3D';ctx.fillRect(fx-1,fy-hgt,3,hgt);
+  ctx.fillStyle='#FFD36B';ctx.fillRect(fx,fy-hgt+1+(f>0?1:0),1,hgt-2);
+  refy.lights.forEach(([lx,ly],i)=>{
+    const on=((t*.001+i*.37)%5)>.15;if(!on)return;
+    ctx.fillStyle=i%3?'rgba(255,214,140,.85)':'rgba(255,240,210,.9)';ctx.fillRect(lx-par,ly+yoff,1,1);
+    ctx.fillStyle='rgba(255,190,110,.12)';ctx.fillRect(lx-1-par,ly-1+yoff,3,3);
+  });
+  /* the flare lights the stack from above */
+  ctx.fillStyle='rgba(255,138,61,.10)';ctx.fillRect(fx-6,fy,13,14);
+  if((t%1100)<550){ctx.fillStyle='rgba(255,170,60,.9)';ctx.fillRect(refy.x+3-par,refy.base-14+yoff,2,2);ctx.fillStyle='rgba(255,170,60,.18)';ctx.fillRect(refy.x+1-par,refy.base-16+yoff,6,6)}
 }
 /* ---- soft resets: play a scene again without rebuilding its tower ---- */
 function resetIncident(){
@@ -2608,6 +2758,7 @@ function bakeCity(){
     const X=bakeX[L];
     X.clearRect(0,0,W,H);
     b.forEach(bd=>{
+      if(bd.vt==='refinery'){bakeRefinery(X,bd);return}
       const bx=bd.x,topY=bd.base-bd.h;
       /* ambient occlusion gap */
       X.fillStyle='rgba(0,0,0,.4)';X.fillRect(bx-2,topY+2,2,bd.h+H);
@@ -2786,6 +2937,7 @@ function city(t){
     const par=Math.round(mxr*(L+1)*5);
     const yoff=-Math.min(Math.round(scrollY/PXS*0.02*(L*0.5+0.35)),Math.round(H*0.05));
     ctx.drawImage(bakeC[L],-par,yoff);
+    if(L===2)drawRefinery(t,par,yoff);
     if(TOD.haze&&L<2){ctx.fillStyle=TOD.haze[L];ctx.fillRect(0,0,W,H)}   // far towers sink into the hour's air
     b.forEach(bd=>{
       const bx=bd.x-par,topY=bd.topY+yoff;
@@ -3590,6 +3742,7 @@ if (!deckStatic && fdeck) {
       document.querySelector('#matchbox:not([hidden])') ||
       document.querySelector('#plain:not([hidden])') ||
       document.querySelector('#xray:not([hidden])') ||
+      document.querySelector('#refinery:not([hidden])') ||
       document.querySelector('#breach:not([hidden])')
     );
   }
@@ -4098,7 +4251,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -4123,6 +4276,7 @@ const CMDS={
  fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
  match:()=>{mOpen();return `contract match open. paste the job post.`},
  xray:()=>{xrOpen();return `architecture x-ray on. press X or ESC to put the walls back.`},
+ refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
  plain:()=>{plainOpen();return `plain version open. the neon waits.`},
 };
 /* protocols that take arguments — the plain lookup below stays fast for everything else */
@@ -4195,6 +4349,7 @@ function fxMeter(usage,usd){
 const caseTitle=i=>{const d=document.querySelectorAll('.dossier')[i];return d?d.querySelector('.dtitle').dataset.text:''};
 function fxSection(sec){
   if(sec==='architecture'){xrOpen();return 'opened the architecture x-ray'}
+  if(sec==='refinery'){rfOpen();return 'opened the refinery control room'}
   if(sec==='contact'){const w=document.getElementById('wreveal');if(w)w.classList.add('show');return 'opened the contact card'}
   if(sec==='case_files'){if(!deckStatic&&typeof scrollToDeckFile==='function')scrollToDeckFile(0);else $('#fstage').scrollIntoView({behavior:'smooth'});return 'moved to the case files'}
   const el=$({garage:'#garage',loadout:'#implants',runlog:'#runlog'}[sec]||'#garage');
@@ -4393,10 +4548,134 @@ addEventListener('keydown',e=>{
     const a=document.activeElement;
     if(a&&(a.matches('input,textarea,select,[contenteditable="true"]')))return;
     if(!xrEl.hidden){xrClose();return}
-    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!boot.classList.contains('done'))return;
+    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!boot.classList.contains('done'))return;
     xrOpen();
   }
 });
+
+
+/* ============ REFINERY CONTROL ROOM: Industrial Ops Copilot on synthetic Unit 300 ============ */
+/* The browser draws from the same simulation module the copilot's tools read on the server,
+   so the numbers on the schematic are the numbers the agent reasons over. */
+const rfEl=$('#refinery'),rfSvg=$('#rfSvg'),rfLog=$('#rfLog'),rfIn=$('#rfIn');
+const RF_RECORDED={"q": "Why did crude throughput drop over the last 12 hours?", "reply": "Finding: Throughput fell because feed pump P-301A is degrading. Its vibration and motor current are climbing while its discharge pressure and flow fall.\n\nEvidence:\n- FI-301 fell from 421.7 to 369.9 m3/h over 12 h (-12.3%). The LO alarm at 385 has been active for 2.4 h.\n- PI-301 fell from 14.18 to 12.0 barg. The LO alarm at 12.6 has been active for 1.8 h.\n- VI-301A rose from 2.16 to 8.48 mm/s. The HI alarm at 5 has been active for 4.4 h.\n- II-301A rose from 181.5 to 202.3 A. The HI alarm at 198 has been active for 1.8 h.\n- All four signals change steadily in one direction, not in a daily cycle. The only other open work order is the E-302 fouling check, which is a daily ambient cycle and doesn't explain this. I didn't query the other tags.\n\nLikely cause: the rising vibration and current, together with falling head and flow, point to a bearing or hydraulic problem in P-301A. This is an inference from the trends, not a confirmed diagnosis.\n\nRecommended action: I've highlighted P-301A and standby P-301B on the schematic. I've also proposed a P1 work order for P-301A, which you need to approve. Prepare a changeover to P-301B, and check its readiness before switching.", "trace": [{"tool": "list_tags", "line": "8 tags"}, {"tool": "query_timeseries", "line": "FI-301, PI-301, VI-301A, II-301A · 12 h → FI-301 421.65→369.9 m3/h (-12.3%); PI-301 14.18→12 barg (-15.4%); VI-301A 2.16→8.48 mm/s (+292.6%); II-301A 181.5→202.26 A (+11.4%)"}, {"tool": "list_alarms", "line": "12 h → VI-301A HI active, FI-301 LO active, PI-301 LO active, II-301A HI active"}, {"tool": "list_work_orders", "line": "7 d → WO-1190 H-301 closed, WO-1201 E-302 open"}, {"tool": "highlight_equipment", "line": "P-301A, P-301B"}, {"tool": "propose_work_order", "line": "P-301A · P1 urgent · awaiting operator"}], "actions": [{"tool": "highlight_equipment", "ids": ["P-301A", "P-301B"]}, {"tool": "propose_work_order", "equipment": "P-301A", "priority": "P1 urgent", "title": "P-301A degrading: high vibration, high current, falling flow and pressure", "justification": "Over 12 h VI-301A rose 2.16 to 8.48 mm/s (HI 5, active since -4.4 h), II-301A rose 181.5 to 202.3 A (HI 198), PI-301 fell 14.18 to 12.0 barg, FI-301 fell 421.7 to 369.9 m3/h (LO 385). Pattern is consistent with bearing or hydraulic degradation. Inspect P-301A and prepare changeover to standby P-301B."}], "usd": 0.014901600000000001};
+let SIM=null,rfHist=[],rfBusy=false,rfTimer=0,rfWoSeq=1207,rfBuilt=false;
+const RF_EQ={
+  'T-300':{x:18,y:150,w:70,h:100,shape:'tank'},
+  'P-301A':{x:140,y:212,r:15,shape:'pump'},
+  'P-301B':{x:140,y:268,r:11,shape:'pump'},
+  'H-301':{x:220,y:120,w:74,h:130,shape:'heater'},
+  'C-301':{x:356,y:22,w:42,h:256,shape:'column'},
+  'E-302':{x:452,y:30,w:62,h:30,shape:'hx'},
+  'D-310':{x:520,y:110,w:96,h:34,shape:'drum'},
+};
+const RF_TAGPOS={'FI-301':[176,186],'PI-301':[112,180],'VI-301A':[98,236],'II-301A':[164,244],'TI-305':[300,108],'TI-312':[468,74],'LI-310':[538,160],'FI-320':[600,212]};
+function rfBuild(){
+  if(rfBuilt)return;rfBuilt=true;
+  const sv2=(tag,a,p=rfSvg)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+  /* pipes first, under the equipment */
+  [['M88 230 H125'],['M155 212 V190 H220'],['M151 268 H170 V190'],['M294 140 H330 V250 H356'],['M377 22 V8 H483 V30'],['M483 60 V127 H520'],['M568 144 V212 H650'],['M520 120 H398']]
+    .forEach(([d])=>{sv2('path',{d,class:'pipe'});sv2('path',{d,class:'flow'})});
+  for(const [id,g] of Object.entries(RF_EQ)){
+    const grp=sv2('g',{'data-eq':id,tabindex:0,role:'button','aria-label':`${id}: ${SIM.EQUIPMENT[id]}. Ask about it.`});
+    if(g.shape==='pump'){sv2('circle',{cx:g.x,cy:g.y,r:g.r,class:'eq'},grp);sv2('path',{d:`M${g.x-g.r*.5} ${g.y-g.r*.6} L${g.x+g.r*.7} ${g.y} L${g.x-g.r*.5} ${g.y+g.r*.6}z`,fill:'none',stroke:'rgba(0,240,255,.5)'},grp)}
+    else if(g.shape==='drum')sv2('rect',{x:g.x,y:g.y,width:g.w,height:g.h,rx:16,class:'eq'},grp);
+    else if(g.shape==='column'){sv2('rect',{x:g.x,y:g.y,width:g.w,height:g.h,rx:18,class:'eq'},grp);for(let k=1;k<9;k++)sv2('line',{x1:g.x+4,x2:g.x+g.w-4,y1:g.y+k*g.h/9,y2:g.y+k*g.h/9,stroke:'rgba(0,240,255,.2)'},grp)}
+    else if(g.shape==='heater'){sv2('rect',{x:g.x,y:g.y,width:g.w,height:g.h,class:'eq'},grp);sv2('rect',{x:g.x+g.w/2-6,y:g.y-34,width:12,height:34,class:'eq'},grp);
+      for(let k=0;k<3;k++)sv2('path',{d:`M${g.x+16+k*20} ${g.y+g.h-8} q5 -14 0 -22 q-5 10 0 22`,fill:'rgba(255,138,61,.55)'},grp)}
+    else if(g.shape==='hx'){sv2('rect',{x:g.x,y:g.y,width:g.w,height:g.h,rx:6,class:'eq'},grp);sv2('path',{d:`M${g.x+6} ${g.y+15} h10 l6 -8 l6 16 l6 -16 l6 16 l6 -8 h10`,fill:'none',stroke:'rgba(0,240,255,.4)'},grp)}
+    else sv2('rect',{x:g.x,y:g.y,width:g.w,height:g.h,rx:4,class:'eq'},grp);
+    const lx=g.shape==='pump'?g.x-g.r:g.x,ly=g.shape==='pump'?g.y+g.r+12:(g.shape==='column'?g.y+g.h+14:g.y+g.h+13);
+    sv2('text',{x:lx,y:ly,class:'eqlbl'},grp).textContent=id;
+    const ask=()=>{rfIn.value=`What's going on with ${id}?`;rfIn.focus()};
+    grp.addEventListener('click',ask);grp.addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
+  }
+  for(const [tag,[x,y]] of Object.entries(RF_TAGPOS)){
+    const g=sv2('g',{'data-tag':tag});
+    sv2('rect',{x:x-2,y:y-11,width:84,height:26,rx:2,class:'tagbg'},g);
+    sv2('text',{x:x+3,y:y,class:'tagv'},g).textContent=tag;
+    sv2('text',{x:x+3,y:y+11,class:'tagv val'},g).textContent='';
+  }
+  /* trends */
+  const tr=$('#rfTrends');
+  tr.innerHTML=['FI-301','VI-301A','PI-301','TI-312'].map(t=>`<div class="rf-tr" data-tr="${t}"><div class="h"><span><b>${t}</b> ${SIM.TAGS[t].desc}</span><span class="cur"></span></div><svg viewBox="0 0 200 54" preserveAspectRatio="none"></svg><div class="ax"><span>-24 h</span><span>now</span></div></div>`).join('');
+  tr.querySelectorAll('.rf-tr').forEach(el=>{
+    const t=el.dataset.tr,m=SIM.TAGS[t],pts=SIM.series(t,24,96),vs=pts.map(p=>p.v);
+    const lim=m.hi??m.lo,lo=Math.min(...vs,lim??Infinity),hi=Math.max(...vs,lim??-Infinity),pad=(hi-lo)*.12||1;
+    const Y=v=>54-((v-lo+pad)/(hi-lo+pad*2))*54,X=i=>i/(pts.length-1)*200;
+    const svg=el.querySelector('svg');
+    if(lim!==undefined)sv2('line',{x1:0,x2:200,y1:Y(lim),y2:Y(lim),stroke:'rgba(255,59,59,.55)','stroke-dasharray':'3 3','vector-effect':'non-scaling-stroke'},svg);
+    sv2('polyline',{points:pts.map((p,i)=>`${X(i)},${Y(p.v)}`).join(' '),fill:'none',stroke:t==='TI-312'?'#9D4EDD':'#00F0FF','stroke-width':1.5,'vector-effect':'non-scaling-stroke'},svg);
+  });
+  rfRenderWos();
+}
+function rfRenderWos(extra){
+  const w=$('#rfWol');
+  if(extra)rfWos.unshift(extra);
+  w.innerHTML='<div style="border:0;color:var(--dim);letter-spacing:.14em;font-size:10px">WORK ORDERS</div>'+rfWos.map(o=>`<div><span class="id ${o.isNew?'new':''}">${o.id}</span><span>${o.eq}</span><span>${fxEsc(o.title)}</span><span style="margin-left:auto">${o.status}</span></div>`).join('');
+}
+let rfWos=[];
+function rfTick(){
+  const active=new Set(SIM.alarms(1).filter(a=>a.active).map(a=>a.tag));
+  for(const [tag,m] of Object.entries(SIM.TAGS)){
+    const v=SIM.value(tag,-Math.random()*0.03),g=rfSvg.querySelector(`[data-tag="${tag}"]`),al=active.has(tag);
+    if(g){g.querySelector('.val').textContent=`${v.toFixed(v>100?0:1)} ${m.unit}`;g.querySelectorAll('.tagv').forEach(n=>n.classList.toggle('alarm',al));g.querySelector('.tagbg').classList.toggle('alarm',al)}
+    const tr=document.querySelector(`[data-tr="${tag}"] .cur`);if(tr)tr.innerHTML=`<span class="${al?'al':''}">${v.toFixed(1)} ${m.unit}</span>`;
+  }
+  const alEq=new Set(SIM.alarms(1).filter(a=>a.active).map(a=>a.eq));
+  rfSvg.querySelectorAll('g[data-eq]').forEach(g=>g.classList.toggle('alarming',alEq.has(g.dataset.eq)&&!g.classList.contains('hl')));
+}
+async function rfOpen(){
+  if(!rfEl.hidden)return;
+  document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
+  if(!plEl.hidden)plainClose();
+  if(!xrEl.hidden)xrClose();
+  rfEl.hidden=false;document.documentElement.classList.add('brlock');
+  if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
+  rfBuild();rfTick();clearInterval(rfTimer);rfTimer=setInterval(rfTick,2000);
+  setTimeout(()=>rfIn.focus(),60);
+}
+function rfClose(){if(rfEl.hidden)return;clearInterval(rfTimer);rfEl.hidden=true;document.documentElement.classList.remove('brlock')}
+$('#rfClose').addEventListener('click',rfClose);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!rfEl.hidden)rfClose()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-refinery]')){e.preventDefault();rfOpen()}});
+const rfAdd=(cls,html)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=html;rfLog.appendChild(d);rfLog.scrollTop=rfLog.scrollHeight;return d};
+function rfHighlight(ids){rfSvg.querySelectorAll('g[data-eq]').forEach(g=>g.classList.toggle('hl',ids.includes(g.dataset.eq)))}
+function rfProposal(a){
+  const d=rfAdd('rf-wo',`<div class="t">WORK ORDER PROPOSAL · NEEDS OPERATOR APPROVAL</div><b>${fxEsc(a.equipment)} · ${fxEsc(a.priority)} · ${fxEsc(a.title)}</b><p>${fxEsc(a.justification)}</p><button type="button" data-app>APPROVE</button><button type="button" data-rej>REJECT</button>`);
+  d.addEventListener('click',e=>{
+    if(e.target.closest('[data-app]')){const id=`WO-${rfWoSeq++}`;rfRenderWos({id,eq:a.equipment,title:a.title,status:'open (demo)',isNew:true});d.innerHTML=`<div class="t">APPROVED BY OPERATOR</div><b>${id} created in the demo work-order list.</b>`;rfHist.push({role:'user',content:`(The operator approved the proposal; it is now ${id}.)`},{role:'assistant',content:'Noted.'})}
+    else if(e.target.closest('[data-rej]')){d.innerHTML='<div class="t">REJECTED BY OPERATOR</div><b>Nothing was created.</b>';rfHist.push({role:'user',content:'(The operator rejected the work order proposal.)'},{role:'assistant',content:'Understood.'})}
+  });
+}
+function rfRender(o,recorded){
+  if(o.trace&&o.trace.length)rfAdd('rf-trace',o.trace.map(t=>`<div><b>${t.tool}</b> ${fxEsc(t.line)}</div>`).join(''));
+  rfAdd('rf-msg a',fxEsc(o.reply||'(no answer)')+(recorded?'\n\n<span style="color:var(--dim);font-size:11px">Recorded run from Oct 4, 2026, shown because the live line is closed.</span>':''));
+  for(const a of o.actions||[]){
+    if(a.tool==='highlight_equipment')rfHighlight(a.ids);
+    if(a.tool==='propose_work_order')rfProposal(a);
+  }
+}
+async function rfAsk(q){
+  q=q.trim();if(!q||rfBusy)return;
+  rfBusy=true;rfAdd('rf-msg u',fxEsc(q));rfHist.push({role:'user',content:q.slice(0,1200)});
+  const w=rfAdd('rf-msg sys rf-wait','copilot is investigating with plant tools');
+  let data;
+  try{const r=await fetch('/api/refinery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:rfHist.slice(-8)})});data=await r.json().catch(()=>({}));if(!r.ok&&!data.offline)data={offline:'upstream-error'}}
+  catch(_){data={offline:'upstream-error'}}
+  w.remove();
+  if(data.offline||!data.reply){
+    rfHist.pop();
+    rfAdd('rf-msg sys',`Copilot offline: ${FX_OFF[data.offline]||'no answer came back'}.`);
+    if(!rfLog.querySelector('[data-rec]')){rfAdd('rf-msg u',fxEsc(RF_RECORDED.q)).dataset.rec=1;rfRender(RF_RECORDED,true)}
+    rfBusy=false;return;
+  }
+  rfHist.push({role:'assistant',content:data.reply});
+  fxMeter(data.usage,data.usd);
+  rfRender(data,false);rfBusy=false;
+}
+$('#rfForm').addEventListener('submit',e=>{e.preventDefault();const q=rfIn.value;rfIn.value='';rfAsk(q)});
+$('#rfChips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)rfAsk(b.textContent)});
 
 /* ============ CONTRACT MATCH (Claude via /api/match) ============ */
 const mBox=$('#matchbox'),mForm=$('#mForm'),mJd=$('#mJd'),mGo=$('#mGo'),mOut=$('#mOut');
@@ -4793,6 +5072,7 @@ const ACTIONS=[
  {t:'Contract match: check a job post',k:'⚖',f:()=>mOpen()},
  {t:'Plain version (for a quick read)',k:'☀',f:()=>plainOpen()},
  {t:'Architecture X-ray (logistics platform)',k:'X',f:()=>xrOpen()},
+ {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
  {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
