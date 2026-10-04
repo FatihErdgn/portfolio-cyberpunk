@@ -70,7 +70,7 @@ const TOOLS = [
     input_schema: {
       type: 'object',
       properties: {
-        effect: { type: 'string', enum: ['night', 'dawn', 'day', 'dusk', 'rain', 'storm', 'clear', 'replay_incident', 'replay_hack'] },
+        effect: { type: 'string', enum: ['night', 'dawn', 'dusk', 'rain', 'storm', 'clear', 'replay_incident', 'replay_hack'] },
       },
       required: ['effect'],
       additionalProperties: false,

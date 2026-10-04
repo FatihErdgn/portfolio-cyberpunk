@@ -126,7 +126,7 @@ header.top .cmdk kbd{border:none;background:none;padding:0}
 /* every hour wears its own light, even at rest — the switch reads as four skies, not four glyphs */
 #todSwitch button[data-tod="night"]{color:var(--purple)}
 #todSwitch button[data-tod="dawn"]{color:#FFB661}
-#todSwitch button[data-tod="day"]{color:var(--yellow)}
+#todSwitch button[data-plain]{color:var(--yellow)}
 #todSwitch button[data-tod="dusk"]{color:#FF7A45}
 #todSwitch button:hover{opacity:1;text-shadow:0 0 8px currentColor}
 #todSwitch button.on{opacity:1;background:color-mix(in srgb,currentColor 14%,transparent);text-shadow:0 0 10px currentColor;box-shadow:inset 0 0 12px color-mix(in srgb,currentColor 20%,transparent)}
@@ -998,7 +998,7 @@ body.fx-file .fview-in{margin-left:clamp(24px,5vw,80px);margin-right:calc(min(43
 #plain *{cursor:auto}
 #plain a,#plain button{cursor:pointer}
 #plain a{color:var(--p-acc);text-underline-offset:3px}
-.pl-bar{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px max(16px,calc((100vw - 880px)/2 + 16px));background:rgba(245,247,250,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--p-line)}
+.pl-bar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px max(16px,calc((100vw - 880px)/2 + 16px));background:rgba(245,247,250,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--p-line)}
 .pl-name{font-family:'Chakra Petch',sans-serif;font-weight:700;letter-spacing:.04em;font-size:15px}
 .pl-bar nav{display:flex;gap:18px;align-items:center;font-size:14px}
 .pl-bar nav a{color:var(--p-fg);text-decoration:none}
@@ -1149,7 +1149,7 @@ html.plainlock #matchbox{z-index:9700}
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
     <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — dealt at random each visit; override here">
-      <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button data-tod="day" title="noon: the plain version">☀</button><button data-tod="dusk" title="dusk">◖</button>
+      <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button type="button" data-plain title="plain version: a quick, calm read">☀</button><button data-tod="dusk" title="dusk">◖</button>
     </span>
   </div>
   <nav>
@@ -1879,11 +1879,13 @@ const TOD_PROFILES={
     road:['#232E48','rgba(200,220,255,.22)','#2A3752'],dark:'#182238',
     sky:['rgba(130,170,235,.07)','rgba(130,155,215,.08)']},
 };
+/* noon was retired (Oct 2026): it read flat. The ☀ on the switch now opens the plain version. */
+delete TOD_PROFILES.day;
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
   if(m&&TOD_PROFILES[m])return m;
   /* the hour is dealt at the door, not read off your clock — night, dusk or dawn.
-     noon never comes up on its own; day stays a manual curiosity on the switch. */
+     noon is gone entirely; the ☀ on the switch is the plain version's door. */
   const deal=['night','dusk','dawn'];
   return deal[Math.floor(Math.random()*deal.length)];
 })();
@@ -4096,7 +4098,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|day|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -4153,7 +4155,7 @@ const ARGCMDS={
  tod:a=>{
    const m=(a[0]||'').toLowerCase();
    if(TOD_PROFILES[m])return setTod(m)?`grid clock overridden — <span class="cy">${m}</span>. same town, different light.`:`already ${m}. the hour holds.`;
-   return `usage: <span class="ps">tod night|dusk|dawn|day</span> — currently: <span class="cy">${todName}</span> (or flip the switch up top-left)`;
+   return `usage: <span class="ps">tod night|dusk|dawn</span> — currently: <span class="cy">${todName}</span> (or flip the switch up top-left)`;
  },
 };
 tin.addEventListener('keydown',e=>{
@@ -4275,12 +4277,10 @@ async function askFixer(q){
   mo.observe(term,{attributes:true,attributeFilter:['class']});
 })();
 
-/* ============ PLAIN VIEW: noon is when the city tells it straight ============ */
+/* ============ PLAIN VIEW: the ☀ on the switch; back to the city at sunset ============ */
 const plEl=$('#plain');
-let plPrevTod=null;
 function plainOpen(){
   if(!plEl.hidden)return;
-  plPrevTod=todName;setTod('day');
   plEl.hidden=false;plEl.scrollTop=0;document.documentElement.classList.add('plainlock');
   setTimeout(()=>$('#plClose').focus(),40);
   try{history.replaceState(null,'',location.pathname+'?plain'+location.hash)}catch(_){}
@@ -4288,13 +4288,11 @@ function plainOpen(){
 function plainClose(){
   if(plEl.hidden)return;
   plEl.hidden=true;document.documentElement.classList.remove('plainlock');
+  setTod('dusk');                         // back to the city at sunset
   try{history.replaceState(null,'',location.pathname+location.hash)}catch(_){}
 }
 $('#plClose').addEventListener('click',plainClose);
 document.addEventListener('click',e=>{const t=e.target.closest('[data-plain]');if(t){e.preventDefault();plainOpen()}});
-/* the ☀ switch is the plain version's front door; the city still goes to noon behind it */
-const daySw=document.querySelector('#todSwitch button[data-tod="day"]');
-if(daySw)daySw.addEventListener('click',()=>plainOpen());
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!plEl.hidden&&!document.querySelector('.fview.show')&&$('#matchbox').hidden)plainClose()});
 if(/[?&]plain/.test(location.search)){endBoot();plainOpen()}
 
