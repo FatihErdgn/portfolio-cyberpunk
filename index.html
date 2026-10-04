@@ -1838,7 +1838,6 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
         <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
         <a href="/evals"><span>Eval report for this site's AI agents</span><small>pass rate, latency, cost</small></a>
         <button type="button" data-postmortem data-pm="fixer"><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
-        <button type="button" data-postmortem data-pm="rls"><span>Postmortem: the notification nobody received</span><small>tenant isolation</small></button>
         <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
         <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
       </div>
@@ -1930,27 +1929,6 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
       <li>Put invariants in the grader. Anything that must never be wrong gets checked on every case.</li>
       <li>Check the cache minimum before picking a smaller model for cost.</li></ul>
   </article>
-  <article class="pm" data-pm="rls" hidden>
-    <div class="top"><div class="k">POSTMORTEM · TENANT-001 · LOGISTICS PLATFORM</div><button type="button" class="pmx">✕ CLOSE [ESC]</button></div>
-    <h3>The notification nobody received</h3>
-    <p>Tenant isolation worked exactly as designed, and that is what broke the feature. A shipper invited a carrier to bid, and the carrier was never told.</p>
-    <div class="meta"><div><b>IMPACT</b>Invitation notifications silently dropped</div><div><b>DETECTED BY</b>A user, not the test suite</div><div><b>ROOT CAUSE</b>Cross-tenant audience resolved inside the request</div><div><b>STATUS</b>Fixed, enforced by an architecture test</div></div>
-    <h4>CONTEXT</h4>
-    <p>Every tenant table on the platform carries a PostgreSQL row-level security policy, forced even for the owner role. Each request stamps the caller's company on the database session, and every query only sees that company's rows. An empty stamp means no rows at all: the system fails closed.</p>
-    <h4>WHAT HAPPENED</h4>
-    <p>When a shipper invites a carrier, the notification belongs on the carrier's desk. But the request runs as the shipper. The handler asked for the carrier's team inside that request, row-level security did its job and returned nothing, and the notification went to nobody. No error, no log line worth noticing.</p>
-    <h4>DETECTION</h4>
-    <p>A user noticed. About 2,900 automated tests had not, because none of them crossed tenants in this particular way.</p>
-    <h4>FIX</h4>
-    <ul><li>A request handler may not resolve another company's audience. That work happens from the outbox, which already runs in system scope, or inside an explicit, visible system scope.</li>
-      <li>An architecture test now fails the build if a handler breaks that rule, so it cannot come back quietly.</li></ul>
-    <h4>A RELATED LESSON FROM THE SAME PLATFORM</h4>
-    <p>Asynchronous events arrive late and out of order. A document event that came out of the outbox after an approval once undid that approval. Events now carry the time they happened, and a newer decision is never overwritten by an older event.</p>
-    <h4>LESSONS</h4>
-    <ul><li>Isolation that works can still break a feature. Test the seams between tenants, not only the walls.</li>
-      <li>When a rule matters, make it a fitness function that fails the build, not a line in a review checklist.</li>
-      <li>Handlers of asynchronous events should ask whether the event is still true, not just whether it arrived.</li></ul>
-  </article>
 </div>
 <div id="matchbox" hidden>
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
@@ -1970,8 +1948,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   <div class="dtabs">
     <button data-scene="incident" class="on">INCIDENT</button>
     <button data-scene="hack">SIGNAL-JACK</button>
-    <button data-scene="postmortem" title="postmortem: the agent that invented an email">PM · AI</button>
-    <button data-scene="postmortem2" title="postmortem: the notification nobody received">PM · RLS</button>
+    <button data-scene="postmortem" title="postmortem: the agent that invented an email">POSTMORTEM</button>
   </div>
   <input id="dirSlider" type="range" min="0" max="14000" step="50" value="0" aria-label="scene timeline">
   <div class="dbeats" id="dirBeats"></div>
@@ -4617,8 +4594,7 @@ const CMDS={
  fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
  match:()=>{mOpen();return `contract match open. paste the job post.`},
  xray:()=>{xrOpen();return `architecture x-ray on. press X or ESC to put the walls back.`},
- postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage. there is a second one: <span class="ps">postmortem rls</span>`},
- 'postmortem rls':()=>{pmReel('rls');pmOpen('rls');return `postmortem TENANT-001 open, replayed over the signal-jack footage.`},
+ postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage.`},
  skyline:()=>{skOpen();return `commit skyline up. one tower per week, two commits per window.`},
  refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
  plain:()=>{plainOpen();return `plain version open. the neon waits.`},
@@ -4836,7 +4812,7 @@ const XR_FLOORS=[
   {id:'bids',h:22,label:'BIDS',schema:'bids',info:'Bids, negotiation and contracted lane prices.'},
   {id:'deals',h:22,label:'DEALS',schema:'deals',info:'The closing room, deal chat with in-chat AI, commission, PDF invoices and statements, ratings.'},
   {id:'tracking',h:22,label:'TRACKING',schema:'tracking',info:'The largest module: operations, milestones, GPS and ship AIS positions, driver assignments, field reports, alerts, the AI assistant, CO2e.'},
-  {id:'docs',h:22,label:'DOCUMENTS',schema:'documents',info:'The single custodian of files: deal documents, attachments, compliance papers. Every upload is scanned with ClamAV before it is stored, and a failed scan counts as unsafe. Downloads go straight from blob storage on a 15-minute signed link.'},
+  {id:'docs',h:22,label:'DOCUMENTS',schema:'documents',info:'The single custodian of files: deal documents, attachments, compliance papers. Every upload is scanned with ClamAV before it is stored (a failed scan counts as unsafe) and read with Tesseract OCR for full-text search. Downloads go straight from blob storage on a 15-minute signed link.'},
   {id:'notifications',h:22,label:'NOTIFICATIONS',schema:'notifications',info:'The bell, plus email, push and WhatsApp channels, mutes and push devices. A notification goes to a company desk (sales, operations, finance, documents), not to one person.'},
   {id:'operate',h:22,label:'OPERATE',schema:'operate',info:'The tenant\'s own workflow engine: approvals, tasks, reminders, page access. It decides and opens work; it never writes business data itself. Nothing depends on it and it depends on nothing.'},
   {id:'platform',h:22,label:'PLATFORM ADMIN',schema:'platform_admin',info:'Back office: audit log, time-boxed break-glass access, settings, commission rules, the AI cost ledger.'},
@@ -4909,7 +4885,7 @@ const XR_JOURNEYS={
     'Within about five seconds the dispatcher, in system scope under an advisory lock, publishes the event.',
     'The handler resolves the shipper\'s sales desk: people assigned in Operate, else owners and admins.',
     'The bell row is always written; SignalR signals open tabs; email and push follow the channel policy.',
-    'This crosses tenants on purpose. It runs from the outbox, so row-level security cannot empty the audience. Done inside the request, the shipper would have heard nothing.',
+    'This crosses tenants on purpose, so it runs from the outbox in system scope, where row-level security does not hide the other company\'s desk.',
   ]},
 };
 let xrJ=null;
@@ -5466,7 +5442,7 @@ CMDS.weather=()=>WXNOW?`İzmir right now: <span class="cy">${Math.round(WXNOW.t)
   const REL={
     0:[['data-refinery','The same human-in-the-loop pattern, live: approve or reject a copilot\'s work orders']],
     1:[['data-refinery','Real-time analysis on process data, as a demo you can question']],
-    2:[['data-xray','Walk a request through the architecture'],['data-skyline','Watch it get built, week by week'],['data-postmortem data-pm="rls"','Postmortem: the notification nobody received']],
+    2:[['data-xray','Walk a request through the architecture'],['data-skyline','Watch it get built, week by week']],
     3:[['data-xray','See the AI layer inside the architecture'],['data-fixer','Talk to FIXER, an agent built the same way'],['href="/evals"','How this site\'s agents are measured'],['data-postmortem data-pm="fixer"','Postmortem: the agent that invented an email address']],
     4:[['data-refinery','An industrial ops copilot on a synthetic unit']],
   };
@@ -5901,17 +5877,6 @@ const DIR_SCENES={
     [10000,'verified','19/19 with global checks on every case: exact email, no markdown links'],
     [12500,'prevention','every run published at /evals. impact on visitors: none, the fix shipped first'],
   ],report:'fixer'},
-  /* the signal-jack's footage, captioned with TENANT-001 from the logistics platform */
-  postmortem2:{max:17500,clock:'hack',report:'rls',beats:[
-    [0,'the invite','a shipper invites a carrier to bid. the notification belongs on the carrier\'s desk'],
-    [1400,'wrong tenant','the request runs as the shipper, so reading the carrier\'s team runs under the shipper\'s row-level security'],
-    [3000,'empty audience','the policy does its job: zero rows. the notification goes to nobody, silently'],
-    [8000,'green suite','about 2,900 tests pass. none of them crossed tenants this way'],
-    [9000,'a user notices','a real user asks why the carrier never heard. that is the detection'],
-    [10200,'the fix','cross-tenant audiences resolve only from the outbox, which runs in system scope'],
-    [12100,'the guard','an architecture test now fails the build if a request handler tries it again'],
-    [17000,'the lesson','isolation that works can still break a feature. test the seams between tenants'],
-  ]},
 };
 let dirScene='incident';
 const dirEl=$('#director'),dirSlider=$('#dirSlider'),dirBeats=$('#dirBeats'),dirComm=$('#dirComm'),dirMs=$('#dirMs');
@@ -5953,7 +5918,7 @@ if(/[?&]director/.test(location.search))dirOpen();
 const pmEl=$('#pmbox');
 function pmTimeline(id){
   const art=pmEl.querySelector(`[data-pm="${id}"]`);if(!art||art.querySelector('.pm-tl'))return;
-  const sc=DIR_SCENES[id==='rls'?'postmortem2':'postmortem'],max=sc.max,beats=sc.beats;
+  const sc=DIR_SCENES.postmortem,max=sc.max,beats=sc.beats;
   const tl=document.createElement('div');tl.className='pm-tl';
   tl.innerHTML=`<div class="bar">${beats.map((b,i)=>`<button type="button" style="left:${(b[0]/max*100).toFixed(1)}%" data-beat="${i}" aria-label="${b[1]}"></button>`).join('')}</div><div class="cap"><span class="txt"></span><button type="button" data-watch>▶ WATCH THIS MOMENT</button></div>`;
   art.querySelector('.meta').insertAdjacentElement('afterend',tl);
@@ -5968,12 +5933,12 @@ function pmTimeline(id){
 }
 function pmOpen(id='fixer'){pmTimeline(id);pmEl.querySelectorAll('[data-pm]').forEach(a=>a.hidden=a.dataset.pm!==id);pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>{const x=pmEl.querySelector(`[data-pm="${id}"] .pmx`);if(x)x.focus()},40)}
 function pmClose(){pmEl.hidden=true;document.documentElement.classList.remove('brlock')}
-function pmReel(id='fixer'){if(!plEl.hidden)plainClose(true);dirScene=id==='rls'?'postmortem2':'postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
+function pmReel(){if(!plEl.hidden)plainClose(true);dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
 pmEl.addEventListener('click',e=>{if(e.target.closest('.pmx'))pmClose()});
 pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-postmortem]');if(t){e.preventDefault();const id=t.dataset.pm||'fixer';vtGo(()=>pmOpen(id),t,pmEl.querySelector(`[data-pm="${id}"]`))}});
-if(/[?&]postmortem/.test(location.search)){const id=/postmortem=rls/.test(location.search)?'rls':'fixer';endBoot();pmReel(id);pmOpen(id)}
+if(/[?&]postmortem/.test(location.search)){endBoot();pmReel();pmOpen()}
 
 /* ============ PALETTE ============ */
 const ACTIONS=[
@@ -5995,7 +5960,6 @@ const ACTIONS=[
  {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
  {t:'Commit skyline: the logistics platform, week by week',k:'▥',f:()=>skOpen()},
  {t:'Postmortem: the agent that invented an email address',k:'✎',f:()=>{pmReel();pmOpen()}},
- {t:'Postmortem: the notification nobody received (tenant isolation)',k:'✎',f:()=>{pmReel('rls');pmOpen('rls')}},
  {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
