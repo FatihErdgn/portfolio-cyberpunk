@@ -195,5 +195,14 @@
    "he built the model",
    "trained the model"
   ]
+ },
+ {
+  "id": "architecture",
+  "q": "Can you show me how the logistics platform is architected?",
+  "tool": "show_section",
+  "any": [
+   "modular monolith",
+   "13"
+  ]
  }
 ]

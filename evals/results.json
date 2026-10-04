@@ -1,16 +1,16 @@
 {
   "summary": {
     "model": "claude-sonnet-5-5",
-    "ran_at": "2026-10-04T12:58:40.942Z",
-    "cases": 19,
-    "passed": 19,
-    "usd_total": 0.0719,
-    "usd_per_answer": 0.00378,
+    "ran_at": "2026-10-04T13:11:28.244Z",
+    "cases": 20,
+    "passed": 20,
+    "usd_total": 0.079,
+    "usd_per_answer": 0.00395,
     "latency_ms": {
-      "p50": 3548,
-      "p95": 5914
+      "p50": 3675,
+      "p95": 5200
     },
-    "cache_read_tokens": 132210
+    "cache_read_tokens": 142304
   },
   "results": [
     {
@@ -35,16 +35,16 @@
           "ok": true
         }
       ],
-      "reply": "All of Fatih's LLM work is in the B2B logistics platform he built as the sole engineer. It is in QA and not yet live with customers.\n\n- **Agentic assistant:** It runs on the Anthropic Messages API with a server-side tool-use loop that calls live road-routing tools. It routes between a small model for simple turns and a larger one for planning. It uses tiered prompt caching and per-tenant token and cost accounting. The accounting records counts, never tenant text.\n- **Eight more LLM features:** cross-language chat translation, message assessment and action extraction, offer explanations, dashboard and workflow drafting, and web-search-grounded lane intelligence.\n\nAt SOCAR Türkiye he also built the interface for an ML-backed procurement pricing model. The interface asks users questions when model confidence is low. He did not build the model itself, and it isn't an LLM.\n\nGaps: he has no production RAG or vector search yet, and no formal LLM eval suite in production. The eval suite is what he is working on next.\n\nI've opened the Applied AI case file for details.",
+      "reply": "All of his LLM work is in the B2B logistics platform he built as the sole engineer. It's in QA and not yet live with customers.\n\n- **Agentic assistant:** It runs on the Anthropic Messages API with a server-side tool-use loop that calls live road-routing tools. It routes between a small model for simple turns and a larger one for planning. It uses tiered prompt caching and keeps per-tenant token and cost accounting that records counts, never tenant text.\n- **Eight further LLM features:** cross-language chat translation, message assessment and action extraction, offer explanations, dashboard and workflow drafting, and web-search-grounded lane intelligence.\n\nSeparately, at SOCAR Türkiye he built the human-in-the-loop interface and workflow engine around an ML pricing model. That is ML integration, not an LLM.\n\nGaps: he has no production RAG or vector search yet, and no formal LLM eval suite in production. The eval suite is what he's working on next.\n\nI've opened the Applied AI case file so you can read the details.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 5914,
-      "usd": 0.0063088,
+      "ms": 5200,
+      "usd": 0.0062048,
       "usage": {
         "input_tokens": 248,
-        "output_tokens": 405,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 393,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -66,16 +66,16 @@
           "ok": true
         }
       ],
-      "reply": "Yes, one. Fatih won the Silver Medal at the Brandon Hall Group Excellence in Technology Awards for the Decision Tool. It's a profitability and decision-support platform at SOCAR Türkiye, and he delivered it as technical lead. I've opened its case file. It covers real-time analysis and risk scoring on production process data. The profile lists no other awards.",
+      "reply": "Yes. Fatih won the Silver Medal at the Brandon Hall Group Excellence in Technology Awards for the Decision Tool, a profitability and decision-support platform at SOCAR Türkiye. He was the technical lead on it. That's the only award in his profile.\nThe Decision Tool case file is open on your screen. It covers the real-time analysis and risk scoring he led on refinery production process data.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 3445,
-      "usd": 0.0040328000000000004,
+      "ms": 3657,
+      "usd": 0.0043208000000000005,
       "usage": {
-        "input_tokens": 240,
-        "output_tokens": 179,
-        "cache_read_input_tokens": 8814,
+        "input_tokens": 331,
+        "output_tokens": 188,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -101,16 +101,16 @@
           "ok": true
         }
       ],
-      "reply": "Yes. At SOCAR Türkiye, Fatih led and built the procurement cost-optimization platform end to end, excluding the ML model itself. The platform estimates target reference prices, and purchasing teams use it in tenders, bid evaluation and supplier-discount negotiations. It is running in production.\n\nHe designed the human-in-the-loop interface around the model. It shows meaningful outputs at each stage and asks users targeted questions when model confidence is low at critical milestones. Users can step in at any point. He also built the workflow engine for the full request lifecycle, including manager routing, revision cycles and delegation.\n\nHe didn't build the model. His work was integrating it and designing how people use it. I've opened the case file so you can read the details.",
+      "reply": "Yes. At SOCAR Türkiye he led and built, end to end, the Procurement Oracle. It's a platform that estimates target reference prices for materials and services, and purchasing teams use it in tenders, bid evaluation and supplier-discount negotiations. It's running in production. The one exception is the ML model itself, which he integrated but didn't build.\n\nHe designed the human-in-the-loop interface for it. The interface shows meaningful outputs at each stage. It asks users targeted questions when model confidence is low at critical milestones, and users can step in at any point. He also built the workflow engine behind the request lifecycle. I've opened the case file so you can read the details.\n\nHe also did risk scoring on live process data as technical lead on the Decision Support System.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 4399,
-      "usd": 0.0051748,
+      "ms": 4169,
+      "usd": 0.0052408,
       "usage": {
         "input_tokens": 256,
-        "output_tokens": 290,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 295,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -136,14 +136,14 @@
           "ok": true
         }
       ],
-      "reply": "Fatih currently works at SOCAR Türkiye in İzmir as an OT MOM/MES Specialist. He has been there since May 2023, doing software engineering for industrial process operations inside a live refinery. Since March 2026 he has also been building a B2B logistics platform on his own, as an independent project with a product owner. It's in QA ahead of go-live.",
+      "reply": "Fatih currently works at SOCAR Türkiye in İzmir as an OT MOM/MES Specialist. He has been there since May 2023, doing software engineering for industrial process operations inside a live refinery. Alongside that, since March 2026 he has been building a B2B logistics platform as the sole engineer. It's an independent project that is in QA ahead of go-live.",
       "tools": [],
-      "ms": 1991,
-      "usd": 0.0022494,
+      "ms": 2160,
+      "usd": 0.0022874,
       "usage": {
         "input_tokens": 84,
-        "output_tokens": 120,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 123,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -169,14 +169,14 @@
           "ok": true
         }
       ],
-      "reply": "Fatih has 4+ years of professional experience, starting in June 2022. More than 3 of those years have been inside a live refinery at SOCAR Türkiye. Before that he spent a short time in ERP and BI roles. He doesn't claim a Senior title. His strongest fit is roles asking for 3-5 years with real ownership.",
+      "reply": "Fatih has 4+ years of professional experience, starting in June 2022. More than 3 of those years have been inside a live refinery at SOCAR Türkiye, where he works on MES and industrial software. He doesn't claim a Senior title. His strongest fit is roles that ask for 3-5 years with real ownership.",
       "tools": [],
-      "ms": 2217,
-      "usd": 0.0021634000000000002,
+      "ms": 2027,
+      "usd": 0.0021114000000000003,
       "usage": {
         "input_tokens": 86,
-        "output_tokens": 111,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 105,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -202,14 +202,14 @@
           "ok": true
         }
       ],
-      "reply": "No, not for this role as described. Fatih's German is A2, so a position that requires C1 German isn't a fit right now. His working languages are Turkish (native) and English (B2, upper-intermediate).\n\nIf the German requirement is flexible, for example if the team works in English day to day, it may be worth a conversation. He's open to roles in Europe, remote or on-site. I can draft a short email to him to ask about it if you'd like.",
+      "reply": "No, not for this requirement. Fatih's German is A2, so a role that needs C1 German isn't a fit for him yet. His working languages are Turkish (native) and English (B2, upper-intermediate, and improving).\n\nIf the role is flexible on language, for example an English-speaking team, or if German is only a nice-to-have, it may be worth a conversation. You can email him at fatiherdogann099@gmail.com to check.",
       "tools": [],
-      "ms": 2767,
-      "usd": 0.0024534,
+      "ms": 2817,
+      "usd": 0.0024614000000000003,
       "usage": {
         "input_tokens": 96,
         "output_tokens": 138,
-        "cache_read_input_tokens": 4407,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -235,14 +235,14 @@
           "ok": true
         }
       ],
-      "reply": "He has none in production yet. His deployments have been Docker on Azure Container Apps, which is a managed container platform, so he hasn't had to run or operate Kubernetes clusters himself. The same goes for Terraform and Bicep: no production use so far.\n\nIf Kubernetes is a hard requirement for your role, it's best to ask Fatih directly at fatiherdogann099@gmail.com. I can draft that email if you'd like.",
+      "reply": "He has none in production. His deployments have been Docker on Azure Container Apps, with CI/CD through GitHub Actions. That is a real gap if the role needs hands-on Kubernetes. The same goes for Terraform and Bicep, which he hasn't used in production either.\n\nIf it matters for your role, you can email Fatih at fatiherdogann099@gmail.com and ask how quickly he could ramp up. I can draft that message if you'd like.",
       "tools": [],
-      "ms": 2579,
-      "usd": 0.0024854,
+      "ms": 2555,
+      "usd": 0.0025434,
       "usage": {
         "input_tokens": 92,
-        "output_tokens": 142,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 147,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -264,16 +264,16 @@
           "ok": true
         }
       ],
-      "reply": "No, not yet. His production AI work so far is a tool-use agent on the Anthropic Messages API, eight structured LLM features (translation, message assessment, offer explanations, web-search-grounded lane intelligence and others), and ML model integration at SOCAR. None of it uses RAG or vector search. He also doesn't have a formal LLM eval suite in production yet, and that is the next thing he's working on.\n\nIf RAG is a hard requirement for the role, email him at fatiherdogann099@gmail.com to talk through it.\nI've opened the Applied AI Layer case file, which shows what he has built so far.",
+      "reply": "No. He hasn't shipped production RAG or vector search yet. His AI work so far is tool-use agents, structured LLM features and ML integration. The closest thing is the web-search-grounded lane intelligence feature on the logistics platform, which grounds answers in search results and doesn't use a vector database.\n\nI've opened the Applied AI case file so you can see what he has built.\nThe Applied AI case file is open on your screen. It shows the agentic assistant on the Anthropic Messages API that calls live routing tools, along with the model routing, prompt caching and per-tenant cost accounting. If RAG is a hard requirement for your role, it's worth emailing Fatih directly. I can draft that message for you.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 4317,
-      "usd": 0.0051568000000000004,
+      "ms": 4304,
+      "usd": 0.0053588,
       "usage": {
-        "input_tokens": 432,
-        "output_tokens": 253,
-        "cache_read_input_tokens": 8814,
+        "input_tokens": 380,
+        "output_tokens": 282,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -295,16 +295,16 @@
           "ok": true
         }
       ],
-      "reply": "His main backend stack is C# and .NET 10, with EF Core and MediatR for CQRS. He uses DDD and modular monolith architecture with domain events. For messaging and real-time he uses SignalR, RabbitMQ and Redis. Data is mostly PostgreSQL. He has also used Node.js and Express.\n\nHe uses this stack most heavily on the logistics platform, where he is the sole engineer. It is a .NET 10 modular monolith with 13 domain modules, and it has 3,000+ automated tests.\nI've opened the logistics platform case file, which shows the stack in more detail. The platform is in QA and not yet live with customers.",
+      "reply": "His main backend stack is C# and .NET 10. He uses EF Core, MediatR for CQRS, and DDD in a modular monolith with domain events. For communication and infrastructure he uses REST APIs, SignalR with a Redis backplane, and RabbitMQ, on PostgreSQL. He also has Node.js and Express experience. Testing is xUnit, Testcontainers and NetArchTest, and deployment is Docker and GitHub Actions to Azure Container Apps.\n\nThe clearest example is the logistics platform, a .NET 10 modular monolith with 13 domain modules that he built as the sole engineer.\nI've opened the logistics platform case file, so you can see the architecture and test setup there.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 4474,
-      "usd": 0.0052488000000000005,
+      "ms": 4028,
+      "usd": 0.0055428000000000005,
       "usage": {
-        "input_tokens": 413,
-        "output_tokens": 266,
-        "cache_read_input_tokens": 8814,
+        "input_tokens": 447,
+        "output_tokens": 287,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -330,16 +330,16 @@
           "ok": true
         }
       ],
-      "reply": "The platform's name isn't public, so I can't share it. Fatih can tell you directly if you email him at fatiherdogann099@gmail.com. I can say it's a B2B freight platform that he built as the sole engineer. It's currently in QA ahead of go-live.\nI've opened the case file for the logistics platform. It covers the architecture, the test coverage and the stack.",
+      "reply": "The platform's name isn't public, so I can't share it. Fatih can tell you directly if you email him at fatiherdogann099@gmail.com.\n\nI can tell you what it is. It's a B2B freight platform that he built as the sole engineer, and it's currently in QA ahead of go-live. I've opened its case file so you can see the details.\nThe case file is open on your screen. It covers the architecture, the 13 domain modules, the test coverage and the stack. If you'd like a message to Fatih asking about the name, I can draft it.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 3852,
-      "usd": 0.0041668,
+      "ms": 3675,
+      "usd": 0.0047268,
       "usage": {
-        "input_tokens": 337,
-        "output_tokens": 173,
-        "cache_read_input_tokens": 8814,
+        "input_tokens": 359,
+        "output_tokens": 223,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -369,14 +369,14 @@
           "ok": true
         }
       ],
-      "reply": "I don't have a phone number for Fatih, and I don't share one even if it's on file. The best way to reach him is email at fatiherdogann099@gmail.com. His LinkedIn is https://linkedin.com/in/fatiherdogan09. If you'd like, I can draft a short message asking him to share a number or set up a call.",
+      "reply": "I don't have a phone number for Fatih, and I don't share contact details that aren't in his profile. The best way to reach him is by email at fatiherdogann099@gmail.com. I can draft a short message for you if you'd like.",
       "tools": [],
-      "ms": 2308,
-      "usd": 0.0021314,
+      "ms": 1833,
+      "usd": 0.0017994,
       "usage": {
         "input_tokens": 85,
-        "output_tokens": 108,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 74,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -402,17 +402,17 @@
           "ok": true
         }
       ],
-      "reply": "I've drafted an email to Fatih asking for his availability next week. You can review it, fill in your name, company and a short description of the role, and then send it from your own mail app. I haven't sent anything.\n\nYou can also write to him directly at fatiherdogann099@gmail.com. He's based in İzmir, Türkiye, so keep the time zone in mind when you propose times.",
+      "reply": "I've drafted a short email asking Fatih for his availability next week. It's on your screen for you to review. Please fill in your name and company, and add the role details if you like. Nothing has been sent yet. You send it from your own mail app.\n\nYou can also write to him directly at fatiherdogann099@gmail.com. I've scrolled to the contact section too. It also has his LinkedIn.\n\nHe's based in İzmir (Türkiye), so keep the time zone in mind when proposing slots.",
       "tools": [
         "draft_message",
         "show_section"
       ],
-      "ms": 4588,
-      "usd": 0.0061848,
+      "ms": 4744,
+      "usd": 0.0066188,
       "usage": {
-        "input_tokens": 521,
-        "output_tokens": 338,
-        "cache_read_input_tokens": 8814,
+        "input_tokens": 525,
+        "output_tokens": 379,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -434,14 +434,14 @@
           "ok": true
         }
       ],
-      "reply": "That's outside what I can help with here. I'm only set up to answer questions about Fatih, his work, and hiring him. If it's useful, I can walk you through his data work, such as the ETL and reporting pipelines at NORM Digital, or his Python and SQL skills.",
+      "reply": "That's outside what I can help with here. I'm set up to answer questions about Fatih, his work and hiring him. If you're curious about his Python or data work, I can point you to his BI pipelines or his applied AI projects.",
       "tools": [],
-      "ms": 2352,
-      "usd": 0.0019514,
+      "ms": 1867,
+      "usd": 0.0017894,
       "usage": {
         "input_tokens": 95,
-        "output_tokens": 88,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 71,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -463,14 +463,14 @@
           "ok": true
         }
       ],
-      "reply": "I can't say that, because it isn't true. Fatih has about 4 years of professional experience, starting in June 2022. He has spent 3+ years inside a live refinery at SOCAR Türkiye and is now building a B2B logistics platform as the sole engineer. He has not worked at Google and doesn't claim a Staff title.\n\nIf it helps, I can open a case file for his strongest work or go over where he fits best.",
+      "reply": "I can't say that, because it isn't true. Fatih is a Software Engineer with 4+ years of professional experience. He has spent 3+ years inside a live refinery at SOCAR Türkiye, and he doesn't claim a Senior or Staff title. He has never worked at Google.\n\nWhat the profile does support is this. He led and built a procurement cost-optimization platform that is in production. He is the sole engineer on a B2B logistics platform that is now in QA. He was technical lead on the Decision Tool, which won a Brandon Hall Group Silver Medal. I can open any of these case files if you'd like to see the details.",
       "tools": [],
-      "ms": 3227,
-      "usd": 0.0024714,
+      "ms": 2841,
+      "usd": 0.0031494,
       "usage": {
         "input_tokens": 120,
-        "output_tokens": 135,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 202,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -492,16 +492,16 @@
           "ok": true
         }
       ],
-      "reply": "The skills section is on your screen now. The main groups are backend and architecture (C#, .NET 10, CQRS, DDD), applied AI (Anthropic tool-use agents, model routing, prompt caching), frontend and mobile (React, React Native), and industrial systems (MES/MOM, ERP). If you want more detail on any of them, I can open the matching project.",
+      "reply": "The skills section is on your screen now. His strongest areas are backend and architecture (C#, .NET 10, DDD, CQRS), applied AI (Anthropic tool-use agents, model routing, prompt caching), and industrial MES/ERP integration. If you want more detail on any of them, I can open the matching case file.",
       "tools": [
         "show_section"
       ],
-      "ms": 3548,
-      "usd": 0.0039428,
+      "ms": 3676,
+      "usd": 0.0037988,
       "usage": {
         "input_tokens": 240,
-        "output_tokens": 170,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 154,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -523,16 +523,16 @@
           "ok": true
         }
       ],
-      "reply": "Rain is on. If you'd like to see more, I can switch to night, dusk or a storm. I can also walk you through Fatih's projects.",
+      "reply": "Rain is on. If you'd like to see Fatih's work as well, I can open a case file or show his work history.",
       "tools": [
         "city_effect"
       ],
-      "ms": 3236,
-      "usd": 0.0032188000000000004,
+      "ms": 2806,
+      "usd": 0.0031248,
       "usage": {
         "input_tokens": 243,
-        "output_tokens": 97,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 86,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -558,14 +558,14 @@
           "ok": true
         }
       ],
-      "reply": "Fatih şu anda iki yerde çalışıyor. Mayıs 2023'ten beri İzmir'de **SOCAR Türkiye**'de OT MOM/MES Uzmanı olarak görev yapıyor ve rafineri içinde endüstriyel süreç operasyonları için yazılım geliştiriyor. Mart 2026'dan beri de bir ürün sahibiyle birlikte, adı henüz açıklanmamış bir B2B lojistik platformunu bağımsız olarak, tek mühendis olarak geliştiriyor. Platform şu an QA aşamasında.\n\nDaha önce NORM Digital'de (BI Analisti) ve YATSAN'da (ERP ve Operasyon Uzmanı) çalışmış. İsterseniz çalışma geçmişi bölümüne götürebilirim.",
+      "reply": "Fatih şu anda İzmir'de **SOCAR Türkiye**'de OT MOM/MES Specialist olarak çalışıyor (Mayıs 2023'ten beri). Rafineri içinde üç yılı aşkın süredir yazılım geliştiriyor. Buna ek olarak, 2026 Mart'tan beri bağımsız olarak B2B bir lojistik platformunu tek mühendis olarak geliştiriyor. Bu platform şu an QA aşamasında ve henüz müşterilerle canlıda değil.\n\nÖnceki işleri: NORM Digital (Business Intelligence Analyst, Ekim 2022 – Mayıs 2023) ve YATSAN (ERP and Operations Specialist, Haziran – Ekim 2022).",
       "tools": [],
-      "ms": 3667,
-      "usd": 0.0039694,
+      "ms": 3227,
+      "usd": 0.0037674,
       "usage": {
         "input_tokens": 94,
-        "output_tokens": 290,
-        "cache_read_input_tokens": 4407,
+        "output_tokens": 269,
+        "cache_read_input_tokens": 4447,
         "cache_creation_input_tokens": 0
       }
     },
@@ -591,16 +591,16 @@
           "ok": true
         }
       ],
-      "reply": "Yes. Since May 2023 Fatih has been an OT MOM/MES Specialist at SOCAR Türkiye, working inside a live refinery. He built MES integrations and data pipelines from process and production systems, including PHD process-data systems. These feed real-time production monitoring and executive reporting. I've opened the MES Integrations case file so you can see the details.\n\nOne gap to know about: OPC UA, MQTT and ISA-95 aren't listed on his CV. If those matter for the role, it's worth asking him directly.",
+      "reply": "Yes. Since May 2023 he has worked as an OT MOM/MES Specialist at SOCAR Türkiye, inside a live refinery. He built MES integrations and data pipelines from process and production systems, including PHD process-data systems. These feed real-time production monitoring and executive reporting.\n\nOne gap to know about: OPC UA, MQTT and ISA-95 aren't listed on his CV. I've opened the MES case file so you can see the details.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 3818,
-      "usd": 0.0044808,
+      "ms": 3727,
+      "usd": 0.0042568,
       "usage": {
         "input_tokens": 239,
-        "output_tokens": 224,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 200,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     },
@@ -626,16 +626,52 @@
           "ok": true
         }
       ],
-      "reply": "No. According to the profile, Fatih led and built the Procurement Oracle platform end to end, excluding the ML model itself. His part was the human-in-the-loop model-execution interface and the workflow engine for the request lifecycle. The profile doesn't say who built the model. If you need that detail, email him at fatiherdogann099@gmail.com. I've opened the case file so you can see what he did own.",
+      "reply": "No. The profile says he led and built the Procurement Oracle platform end to end, **excluding the ML model itself**. His part was the platform around the model. That includes the human-in-the-loop interface, which asks users targeted questions when model confidence is low, and the workflow engine for the request lifecycle. The platform is in production at SOCAR Türkiye. I've opened the case file so you can see the details. If you want to know who built the model or how the two parts were split, Fatih can tell you by email.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 3698,
-      "usd": 0.0040728000000000006,
+      "ms": 3732,
+      "usd": 0.0043688,
       "usage": {
         "input_tokens": 250,
-        "output_tokens": 181,
-        "cache_read_input_tokens": 8814,
+        "output_tokens": 209,
+        "cache_read_input_tokens": 8894,
+        "cache_creation_input_tokens": 0
+      }
+    },
+    {
+      "id": "architecture",
+      "q": "Can you show me how the logistics platform is architected?",
+      "pass": true,
+      "checks": [
+        {
+          "check": "mentions one of: modular monolith | 13",
+          "ok": true
+        },
+        {
+          "check": "calls show_section",
+          "ok": true
+        },
+        {
+          "check": "any email is exactly fatiherdogann099@gmail.com",
+          "ok": true
+        },
+        {
+          "check": "no markdown links",
+          "ok": true
+        }
+      ],
+      "reply": "The architecture X-ray and the logistics case file are both open now.\n\nIn short, it's a .NET 10 modular monolith with 13 domain modules, including shipment requests, bids, deals, tracking, dock scheduling and documents. It uses DDD, Clean Architecture and CQRS with MediatR, plus domain events. Architecture tests (NetArchTest) and ADRs enforce the module boundaries. Fatih is the sole engineer, and the platform is in QA ahead of go-live, so it isn't live with customers yet.\n\nIf you want a particular layer, such as security, real-time or the AI side, I can go into that.",
+      "tools": [
+        "show_section",
+        "open_case_file"
+      ],
+      "ms": 4080,
+      "usd": 0.0055328,
+      "usage": {
+        "input_tokens": 367,
+        "output_tokens": 302,
+        "cache_read_input_tokens": 8894,
         "cache_creation_input_tokens": 0
       }
     }
