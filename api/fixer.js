@@ -5,6 +5,9 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { PROFILE, profileText } from './_lib/profile.js';
 import { admit, book, priceUsage, readJson } from './_lib/guard.js';
+import { ndjson } from './_lib/ndjson.js';
+
+export const config = { supportsResponseStreaming: true };
 
 const MODEL = process.env.FIXER_MODEL ?? 'claude-sonnet-5-5';
 const MAX_TURNS = 12;
@@ -108,7 +111,7 @@ function cleanMessages(raw) {
 }
 
 let client;
-export async function runFixer(messages) {
+export async function runFixer(messages, emit = () => {}) {
   client ??= new Anthropic({ apiKey: process.env.PORTFOLIO_ANTHROPIC_KEY });
   const convo = [...messages];
   const actions = [];
@@ -116,7 +119,8 @@ export async function runFixer(messages) {
   let reply = '';
 
   for (let i = 0; i < MAX_LOOPS; i++) {
-    const res = await client.beta.messages.create({
+    /* streamed: text deltas go to the page as they are written */
+    const stream = client.beta.messages.stream({
       model: MODEL,
       max_tokens: 1500,
       ...(MODEL.startsWith('claude-sonnet') ? { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default', output_config: { effort: 'low' } } : {}),
@@ -124,6 +128,8 @@ export async function runFixer(messages) {
       tools: TOOLS,
       messages: convo,
     });
+    stream.on('text', delta => emit({ type: 'text', delta }));
+    const res = await stream.finalMessage();
     for (const k of Object.keys(usage)) usage[k] += res.usage?.[k] ?? 0;
     reply += res.content.filter(b => b.type === 'text').map(b => b.text).join('');
     if (res.stop_reason === 'refusal') break;
@@ -135,10 +141,11 @@ export async function runFixer(messages) {
       role: 'user',
       content: uses.map(u => {
         actions.push({ tool: u.name, ...u.input });
+        emit({ type: 'action', tool: u.name, ...u.input });
         return { type: 'tool_result', tool_use_id: u.id, content: TOOL_RESULT[u.name] ?? 'Done, it is on the visitor\'s screen.' };
       }),
     });
-    if (reply && !reply.endsWith('\n')) reply += '\n';
+    if (reply && !reply.endsWith('\n')) { reply += '\n'; emit({ type: 'text', delta: '\n' }); }
   }
   return { reply: reply.trim(), actions, usage, model: MODEL, usd: priceUsage(MODEL, usage) };
 }
@@ -154,6 +161,18 @@ export default async function handler(req, res) {
   const blocked = await admit(req);
   if (blocked) return res.status(200).json({ offline: blocked });
 
+  if (body.stream) {
+    const emit = ndjson(res);
+    try {
+      const out = await runFixer(messages, emit);
+      await book(out.usd);
+      emit({ type: 'done', usage: out.usage, usd: out.usd, model: out.model, reply: out.reply });
+    } catch (err) {
+      console.error('[fixer] stream', err?.status, err?.message);
+      emit({ type: 'error', offline: err instanceof Anthropic.RateLimitError ? 'upstream-busy' : 'upstream-error' });
+    }
+    return res.end();
+  }
   try {
     const out = await runFixer(messages);
     await book(out.usd);

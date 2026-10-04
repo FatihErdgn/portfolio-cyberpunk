@@ -5,6 +5,9 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { UNIT, EQUIPMENT, TAGS, summarize, alarms, workOrders } from '../lib/refinery-sim.js';
 import { admit, book, priceUsage, readJson } from './_lib/guard.js';
+import { ndjson } from './_lib/ndjson.js';
+
+export const config = { supportsResponseStreaming: true };
 
 const MODEL = process.env.REFINERY_MODEL ?? 'claude-sonnet-5-5';
 const MAX_LOOPS = 8;
@@ -136,14 +139,14 @@ function cleanMessages(raw) {
 }
 
 let client;
-export async function runRefinery(messages) {
+export async function runRefinery(messages, emit = () => {}) {
   client ??= new Anthropic({ apiKey: process.env.PORTFOLIO_ANTHROPIC_KEY });
   const convo = [...messages];
   const trace = [], actions = [];
   const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
   let reply = '';
   for (let i = 0; i < MAX_LOOPS; i++) {
-    const res = await client.beta.messages.create({
+    const stream = client.beta.messages.stream({
       model: MODEL,
       max_tokens: 2000,
       betas: ['server-side-fallback-2026-07-01'],
@@ -154,6 +157,13 @@ export async function runRefinery(messages) {
       cache_control: { type: 'ephemeral' },
       messages: convo,
     });
+    let firstDelta = true;
+    stream.on('text', delta => {
+      if (firstDelta && reply) emit({ type: 'text', delta: '\n\n' });   // separate this turn from the last
+      firstDelta = false;
+      emit({ type: 'text', delta });
+    });
+    const res = await stream.finalMessage();
     for (const k of Object.keys(usage)) usage[k] += res.usage?.[k] ?? 0;
     /* text written alongside tool calls is part of the answer too: keep every turn's text */
     const text = res.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
@@ -165,8 +175,10 @@ export async function runRefinery(messages) {
       role: 'user',
       content: uses.map(u => {
         const out = runTool(u.name, u.input);
-        trace.push({ tool: u.name, line: traceLine(u.name, u.input, out) });
-        if (u.name === 'highlight_equipment' || u.name === 'propose_work_order') actions.push({ tool: u.name, ...u.input });
+        const line = traceLine(u.name, u.input, out);
+        trace.push({ tool: u.name, line });
+        emit({ type: 'tool', tool: u.name, input: u.input, line });
+        if (u.name === 'highlight_equipment' || u.name === 'propose_work_order') { actions.push({ tool: u.name, ...u.input }); emit({ type: 'action', tool: u.name, ...u.input }); }
         return { type: 'tool_result', tool_use_id: u.id, content: JSON.stringify(out) };
       }),
     });
@@ -183,6 +195,18 @@ export default async function handler(req, res) {
   if (!messages) return res.status(400).json({ error: 'bad messages' });
   const blocked = await admit(req);
   if (blocked) return res.status(200).json({ offline: blocked });
+  if (body.stream) {
+    const emit = ndjson(res);
+    try {
+      const out = await runRefinery(messages, emit);
+      await book(out.usd);
+      emit({ type: 'done', usage: out.usage, usd: out.usd, model: out.model, reply: out.reply });
+    } catch (err) {
+      console.error('[refinery] stream', err?.status, err?.message);
+      emit({ type: 'error', offline: err instanceof Anthropic.RateLimitError ? 'upstream-busy' : 'upstream-error' });
+    }
+    return res.end();
+  }
   try {
     const out = await runRefinery(messages);
     await book(out.usd);

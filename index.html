@@ -1249,6 +1249,40 @@ html.plainlock #matchbox{z-index:9700}
   .pl-foot{border-color:#ccc}
   #plain a{color:#111;text-decoration:none}
 }
+
+/* ---- streaming ---- */
+.fxcaret{display:inline-block;width:7px;height:12px;background:var(--cyan);margin-left:2px;vertical-align:-1px;animation:fxBlink 1s steps(2) infinite}
+@keyframes fxBlink{50%{opacity:0}}
+.rf-trace div.new{animation:rfIn .45s ease-out}
+@keyframes rfIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+#rfSvg g[data-tag].reading .tagbg{stroke:#FF8A3D;fill:rgba(255,138,61,.14);animation:rfRead .4s ease-in-out 4 alternate}
+.rf-tr.reading,.rf-alarms.reading,.rf-wol.reading{border-color:#FF8A3D!important;box-shadow:0 0 0 1px rgba(255,138,61,.5),0 0 14px rgba(255,138,61,.25)}
+@keyframes rfRead{to{fill:rgba(255,138,61,.32)}}
+/* ---- ISA-18.2-style alarm banner ---- */
+.rf-alarms{border:1px solid var(--line);background:#05070D;margin-bottom:10px;font-size:11.5px;transition:box-shadow .3s}
+.rf-alarms .ah{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);color:var(--dim);font-size:10px;letter-spacing:.14em}
+.rf-alarms .ah button,.rf-al button{font:10px 'Share Tech Mono',monospace;letter-spacing:.1em;padding:3px 8px;background:transparent;color:#FF3B3B;border:1px solid rgba(255,59,59,.6);cursor:pointer}
+.rf-alarms .ah button:hover,.rf-al button:hover{background:rgba(255,59,59,.12)}
+.rf-al{display:grid;grid-template-columns:34px 74px 1fr auto auto;gap:10px;align-items:center;padding:5px 10px;border-bottom:1px dashed var(--line)}
+.rf-al:last-child{border-bottom:0}
+.rf-al .p{font-size:10px;color:#05070D;background:#FF3B3B;text-align:center;padding:1px 0}
+.rf-al .p.p2{background:#FF8A3D}.rf-al .p.p3{background:#F5D90A}
+.rf-al b{color:var(--fg);font-weight:400}
+.rf-al .d{color:var(--dim)}
+.rf-al .st{font-size:10px;letter-spacing:.12em;color:var(--dim)}
+.rf-al.unack{animation:rfAlBlink 1s steps(2) infinite}
+.rf-al.unack .st{color:#FF3B3B}
+@keyframes rfAlBlink{50%{background:rgba(255,59,59,.12)}}
+.rf-al.hist .st{color:#9D4EDD}
+.rf-alarms .none{padding:8px 10px;color:var(--dim)}
+#rfSvg g.alarm-ack .eq{stroke:#FF3B3B}
+/* ---- historian scrub ---- */
+.rf-scrub{display:flex;align-items:center;gap:10px;margin:8px 0 2px;font-size:11px;color:var(--dim)}
+.rf-scrub input{flex:1;accent-color:#9D4EDD}
+.rf-scrub b{color:#9D4EDD;font-weight:400;min-width:74px;text-align:right}
+.rf-scrub button{font:10px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:3px 8px;background:transparent;color:var(--dim);border:1px solid var(--line);cursor:pointer}
+.rf-scrub button.on{color:#00FF9C;border-color:#00FF9C}
+.rf-tr .curl{stroke:#9D4EDD;stroke-width:1;vector-effect:non-scaling-stroke}
 </style>
 </head>
 <body class="crt">
@@ -1733,7 +1767,9 @@ html.plainlock #matchbox{z-index:9700}
     </div>
     <div class="rf-panel">
       <h4>PROCESS · LIVE</h4>
+      <div class="rf-alarms" id="rfAl" aria-live="polite"></div>
       <svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg>
+      <div class="rf-scrub"><span>HISTORIAN</span><input type="range" id="rfT" min="-24" max="0" step="0.1" value="0" aria-label="rewind the unit up to 24 hours"><b id="rfTl">LIVE</b><button type="button" id="rfLive" class="on">LIVE</button></div>
       <div class="rf-trends" id="rfTrends"></div>
       <div class="rf-wol" id="rfWol"></div>
     </div>
@@ -4541,36 +4577,48 @@ function fxAct(a){
   if(a.tool==='draft_message'){fxDraft(a);return null}
   return null;
 }
+/* reads the agents' NDJSON stream; a buffered or non-streamed reply arrives as one 'json' event */
+async function ndPost(url,body,on){
+  let r;
+  try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,stream:true})})}
+  catch(_){on({type:'error',offline:'upstream-error'});return}
+  if(!(r.headers.get('content-type')||'').includes('ndjson')||!r.body){
+    const d=await r.json().catch(()=>({}));on({type:'json',data:(!r.ok&&!d.offline&&!d.error)?{offline:'upstream-error'}:d});return;
+  }
+  const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+  const flush=last=>{let i;while((i=buf.indexOf('\n'))>=0){const l=buf.slice(0,i).trim();buf=buf.slice(i+1);if(l)try{on(JSON.parse(l))}catch(_){}}if(last&&buf.trim())try{on(JSON.parse(buf))}catch(_){}};
+  try{for(;;){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});flush(false)}}
+  catch(_){on({type:'error',offline:'upstream-error'})}
+  flush(true);
+}
 async function askFixer(q){
   if(FX.busy){tprint('<span class="err">FIXER is still answering, one moment.</span>');return}
   FX.busy=true;FX.hist.push({role:'user',content:q.slice(0,1200)});
   const line=document.createElement('div');line.className='fx wait';
   line.innerHTML='<span class="fxn">FIXER</span><span class="fxdots">on the line</span>';
   tout.appendChild(line);tout.scrollTop=tout.scrollHeight;
-  let data;
-  try{
-    const r=await fetch('/api/fixer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:FX.hist.slice(-12)})});
-    data=await r.json().catch(()=>({}));
-    if(!r.ok&&!data.offline)data={offline:'upstream-error'};
-  }catch(_){data={offline:'upstream-error'}}
+  let text='',done=null,off=null,acts=0;
+  const paint=caret=>{line.innerHTML=`<span class="fxn">FIXER</span>${fxMd(text.trimStart())}${caret?'<span class="fxcaret"></span>':''}`;tout.scrollTop=tout.scrollHeight};
+  const act=a=>{acts++;const note=fxAct(a);if(note){const d=document.createElement('div');d.innerHTML=`<span class="fxact">▸ ${note}</span>`;tout.appendChild(d);tout.scrollTop=tout.scrollHeight}};
+  await ndPost('/api/fixer',{messages:FX.hist.slice(-12)},ev=>{
+    if(ev.type==='text'){line.classList.remove('wait');text+=ev.delta;paint(true)}
+    else if(ev.type==='action')act(ev);
+    else if(ev.type==='done')done=ev;
+    else if(ev.type==='error')off=ev.offline;
+    else if(ev.type==='json'){const d=ev.data;if(d.offline||d.reply===undefined)off=d.offline||'upstream-error';else{text=d.reply;done=d;(d.actions||[]).forEach(act)}}
+  });
   line.classList.remove('wait');
-  const acts=data.actions||[];
-  if(data.offline||(!data.reply&&!acts.length)){
+  if(!text.trim()&&!acts){
     FX.hist.pop();
-    line.innerHTML=`<span class="fxn off">FIXER</span><span style="color:var(--dim)">offline: ${FX_OFF[data.offline]||'no answer came back'}. From the files:</span><br>${fxLocal(q)}`;
+    line.innerHTML=`<span class="fxn off">FIXER</span><span style="color:var(--dim)">offline: ${FX_OFF[off]||'no answer came back'}. From the files:</span><br>${fxLocal(q)}`;
     FX.busy=false;tout.scrollTop=tout.scrollHeight;return;
   }
-  FX.hist.push({role:'assistant',content:data.reply||'(shown on screen)'});
-  fxMeter(data.usage,data.usd);
-  line.innerHTML=`<span class="fxn">FIXER</span>${fxMd(data.reply)}`;
-  tout.scrollTop=tout.scrollHeight;
-  for(const a of acts){
-    await new Promise(r=>setTimeout(r,650));
-    const note=fxAct(a);if(note)tprint(`<span class="fxact">▸ ${note}</span>`);
-  }
+  paint(false);
+  if(off)line.insertAdjacentHTML('beforeend','<br><span class="fxact">▸ the line dropped before the end of this answer.</span>');
+  FX.hist.push({role:'assistant',content:(done&&done.reply)||text||'(shown on screen)'});
+  if(done)fxMeter(done.usage,done.usd);
   FX.busy=false;
 }
-
 
 /* a file opened while the terminal is up keeps the conversation readable beside it */
 (function(){
@@ -4741,7 +4789,7 @@ function rfBuild(){
   const sv2=(tag,a,p=rfSvg)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
   /* pipes first, under the equipment */
   [['M88 230 H125'],['M155 212 V190 H220'],['M151 268 H170 V190'],['M294 140 H330 V250 H356'],['M377 22 V8 H483 V30'],['M483 60 V127 H520'],['M568 144 V212 H650'],['M520 120 H398']]
-    .forEach(([d])=>{sv2('path',{d,class:'pipe'});sv2('path',{d,class:'flow'})});
+    .forEach(([d],i)=>{sv2('path',{d,class:'pipe'});sv2('path',{d,class:'flow','data-flow':i<4?'FI-301':'FI-320'})});
   for(const [id,g] of Object.entries(RF_EQ)){
     const grp=sv2('g',{'data-eq':id,tabindex:0,role:'button','aria-label':`${id}: ${SIM.EQUIPMENT[id]}. Ask about it.`});
     if(g.shape==='pump'){sv2('circle',{cx:g.x,cy:g.y,r:g.r,class:'eq'},grp);sv2('path',{d:`M${g.x-g.r*.5} ${g.y-g.r*.6} L${g.x+g.r*.7} ${g.y} L${g.x-g.r*.5} ${g.y+g.r*.6}z`,fill:'none',stroke:'rgba(0,240,255,.5)'},grp)}
@@ -4772,6 +4820,7 @@ function rfBuild(){
     const svg=el.querySelector('svg');
     if(lim!==undefined)sv2('line',{x1:0,x2:200,y1:Y(lim),y2:Y(lim),stroke:'rgba(255,59,59,.55)','stroke-dasharray':'3 3','vector-effect':'non-scaling-stroke'},svg);
     sv2('polyline',{points:pts.map((p,i)=>`${X(i)},${Y(p.v)}`).join(' '),fill:'none',stroke:t==='TI-312'?'#9D4EDD':'#00F0FF','stroke-width':1.5,'vector-effect':'non-scaling-stroke'},svg);
+    sv2('line',{x1:200,x2:200,y1:0,y2:54,class:'curl'},svg);
   });
   rfRenderWos();
 }
@@ -4781,16 +4830,47 @@ function rfRenderWos(extra){
   w.innerHTML='<div style="border:0;color:var(--dim);letter-spacing:.14em;font-size:10px">WORK ORDERS</div>'+rfWos.map(o=>`<div><span class="id ${o.isNew?'new':''}">${o.id}</span><span>${o.eq}</span><span>${fxEsc(o.title)}</span><span style="margin-left:auto">${o.status}</span></div>`).join('');
 }
 let rfWos=[];
+/* time shown by the control room: 0 is live, negative hours rewind the historian */
+let rfT=0;const rfAck=new Set();
+const RF_PRIO={'VI-301A:HI':1,'FI-301:LO':1,'PI-301:LO':2,'II-301A:HI':2};
+function rfActiveAt(t){
+  const out=[];
+  for(const [tag,m] of Object.entries(SIM.TAGS))for(const [kind,lim] of [['HI',m.hi],['LO',m.lo]]){
+    if(lim===undefined)continue;const v=SIM.value(tag,t);
+    if(kind==='HI'?v>lim:v<lim)out.push({tag,kind,lim,eq:m.eq,unit:m.unit,key:`${tag}:${kind}`});
+  }
+  return out;
+}
+function rfAlarmsRender(act){
+  const live=rfT===0,raised=live?Object.fromEntries(SIM.alarms(24).filter(a=>a.active).map(a=>[`${a.tag}:${a.kind}`,a.raised_h])):{};
+  const unack=act.filter(a=>live&&!rfAck.has(a.key));
+  const rows=act.map(a=>{const p=RF_PRIO[a.key]||3,ua=live&&!rfAck.has(a.key);
+    return `<div class="rf-al ${live?(ua?'unack':''):'hist'}"><span class="p p${p}">P${p}</span><b>${a.tag} ${a.kind}</b><span class="d">${fxEsc(SIM.TAGS[a.tag].desc)} · limit ${a.lim} ${a.unit}${live&&raised[a.key]!==undefined?` · since T${raised[a.key]} h`:''}</span><span class="st">${live?(ua?'UNACK':'ACK'):'HIST'}</span>${ua?`<button type="button" data-ack="${a.key}">ACK</button>`:'<span></span>'}</div>`}).join('');
+  $('#rfAl').innerHTML=`<div class="ah"><span>${live?'ALARMS · LIVE':`ALARMS · HISTORIAN T${rfT.toFixed(1)} h`} · ${act.length} ACTIVE${unack.length?` · ${unack.length} UNACKNOWLEDGED`:''}</span>${unack.length>1?'<button type="button" data-ack="*">ACK ALL</button>':''}</div>`+(rows||'<div class="none">No active alarms at this time.</div>');
+  return unack;
+}
 function rfTick(){
-  const active=new Set(SIM.alarms(1).filter(a=>a.active).map(a=>a.tag));
+  const t=rfT,act=rfActiveAt(t),alTags=new Set(act.map(a=>a.tag));
   for(const [tag,m] of Object.entries(SIM.TAGS)){
-    const v=SIM.value(tag,-Math.random()*0.03),g=rfSvg.querySelector(`[data-tag="${tag}"]`),al=active.has(tag);
+    const v=SIM.value(tag,t===0?-Math.random()*0.03:t),g=rfSvg.querySelector(`[data-tag="${tag}"]`),al=alTags.has(tag);
     if(g){g.querySelector('.val').textContent=`${v.toFixed(v>100?0:1)} ${m.unit}`;g.querySelectorAll('.tagv').forEach(n=>n.classList.toggle('alarm',al));g.querySelector('.tagbg').classList.toggle('alarm',al)}
     const tr=document.querySelector(`[data-tr="${tag}"] .cur`);if(tr)tr.innerHTML=`<span class="${al?'al':''}">${v.toFixed(1)} ${m.unit}</span>`;
   }
-  const alEq=new Set(SIM.alarms(1).filter(a=>a.active).map(a=>a.eq));
-  rfSvg.querySelectorAll('g[data-eq]').forEach(g=>g.classList.toggle('alarming',alEq.has(g.dataset.eq)&&!g.classList.contains('hl')));
+  /* the process moves at the speed the data says it does */
+  rfSvg.querySelectorAll('.flow').forEach(f=>{const src=f.dataset.flow,nom=src==='FI-301'?420:96,v=SIM.value(src,t);f.style.animationDuration=`${(1.4*nom/Math.max(v,1)).toFixed(2)}s`});
+  document.querySelectorAll('.rf-tr .curl').forEach(l=>{const x=((t+24)/24*200).toFixed(1);l.setAttribute('x1',x);l.setAttribute('x2',x)});
+  const unack=rfAlarmsRender(act),unEq=new Set(unack.map(a=>a.eq)),acEq=new Set(act.map(a=>a.eq));
+  rfSvg.querySelectorAll('g[data-eq]').forEach(g=>{const hl=g.classList.contains('hl');g.classList.toggle('alarming',unEq.has(g.dataset.eq)&&!hl);g.classList.toggle('alarm-ack',acEq.has(g.dataset.eq)&&!unEq.has(g.dataset.eq)&&!hl)});
 }
+/* annunciator: a soft beep while live alarms are unacknowledged (only with the ambient feed on) */
+setInterval(()=>{if(!rfEl.hidden&&SIM&&rfT===0&&rfActiveAt(0).some(a=>!rfAck.has(a.key)))sfx.blip(988,.11,'square',.014)},1700);
+$('#rfAl').addEventListener('click',e=>{const b=e.target.closest('[data-ack]');if(!b)return;
+  if(b.dataset.ack==='*')rfActiveAt(0).forEach(a=>rfAck.add(a.key));else rfAck.add(b.dataset.ack);
+  sfx.blip(523,.06,'sine',.02);rfTick()});
+const rfTin=$('#rfT');
+const rfSetT=t=>{rfT=Math.round(t*10)/10;rfTin.value=rfT;$('#rfTl').textContent=rfT===0?'LIVE':`T${rfT.toFixed(1)} h`;$('#rfLive').classList.toggle('on',rfT===0);rfTick()};
+rfTin.addEventListener('input',()=>rfSetT(+rfTin.value));
+$('#rfLive').addEventListener('click',()=>rfSetT(0));
 async function rfOpen(){
   if(!rfEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
@@ -4798,7 +4878,7 @@ async function rfOpen(){
   if(!xrEl.hidden)xrClose();
   rfEl.hidden=false;document.documentElement.classList.add('brlock');
   if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
-  rfBuild();rfTick();clearInterval(rfTimer);rfTimer=setInterval(rfTick,2000);
+  rfBuild();rfSetT(0);clearInterval(rfTimer);rfTimer=setInterval(()=>{if(rfT===0)rfTick()},2000);
   setTimeout(()=>rfIn.focus(),60);
 }
 function rfClose(){if(rfEl.hidden)return;clearInterval(rfTimer);rfEl.hidden=true;document.documentElement.classList.remove('brlock')}
@@ -4822,23 +4902,40 @@ function rfRender(o,recorded){
     if(a.tool==='propose_work_order')rfProposal(a);
   }
 }
+/* when the copilot reads something, that thing lights up */
+function rfFlash(el){if(!el)return;el.classList.remove('reading');void el.getBoundingClientRect();el.classList.add('reading');setTimeout(()=>el.classList.remove('reading'),1700)}
+function rfPulse(ev){
+  if(ev.tool==='query_timeseries')(ev.input.tags||[]).forEach(t=>{rfFlash(rfSvg.querySelector(`[data-tag="${t}"]`));rfFlash(document.querySelector(`[data-tr="${t}"]`))});
+  else if(ev.tool==='list_alarms')rfFlash($('#rfAl'));
+  else if(ev.tool==='list_work_orders')rfFlash($('#rfWol'));
+  sfx.blip(1320,.035,'square',.012);
+}
 async function rfAsk(q){
   q=q.trim();if(!q||rfBusy)return;
   rfBusy=true;rfAdd('rf-msg u',fxEsc(q));rfHist.push({role:'user',content:q.slice(0,1200)});
-  const w=rfAdd('rf-msg sys rf-wait','copilot is investigating with plant tools');
-  let data;
-  try{const r=await fetch('/api/refinery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:rfHist.slice(-8)})});data=await r.json().catch(()=>({}));if(!r.ok&&!data.offline)data={offline:'upstream-error'}}
-  catch(_){data={offline:'upstream-error'}}
-  w.remove();
-  if(data.offline||!data.reply){
-    rfHist.pop();
-    rfAdd('rf-msg sys',`Copilot offline: ${FX_OFF[data.offline]||'no answer came back'}.`);
-    if(!rfLog.querySelector('[data-rec]')){rfAdd('rf-msg u',fxEsc(RF_RECORDED.q)).dataset.rec=1;rfRender(RF_RECORDED,true)}
+  let w=rfAdd('rf-msg sys rf-wait','copilot is investigating with plant tools');
+  let trace=null,msg=null,text='',done=null,off=null,json=null,got=false;
+  const first=()=>{if(w){w.remove();w=null}got=true};
+  await ndPost('/api/refinery',{messages:rfHist.slice(-8)},ev=>{
+    if(ev.type==='tool'){first();if(!trace)trace=rfAdd('rf-trace','');const d=document.createElement('div');d.className='new';d.innerHTML=`<b>${ev.tool}</b> ${fxEsc(ev.line)}`;trace.appendChild(d);msg=null;rfPulse(ev);rfLog.scrollTop=rfLog.scrollHeight}
+    else if(ev.type==='text'){first();if(!msg){msg=rfAdd('rf-msg a','');text='';trace=null}text+=ev.delta;msg.textContent=text.trimStart();rfLog.scrollTop=rfLog.scrollHeight}
+    else if(ev.type==='action'){first();if(ev.tool==='highlight_equipment')rfHighlight(ev.ids);if(ev.tool==='propose_work_order')rfProposal(ev)}
+    else if(ev.type==='done')done=ev;
+    else if(ev.type==='error')off=ev.offline;
+    else if(ev.type==='json')json=ev.data;
+  });
+  if(w)w.remove();
+  if(json&&json.reply){first();rfRender(json,false);done=json}
+  if(!done||!(done.reply||'').trim()){
+    if(!got){
+      rfHist.pop();
+      rfAdd('rf-msg sys',`Copilot offline: ${FX_OFF[off||(json&&json.offline)]||'no answer came back'}.`);
+      if(!rfLog.querySelector('[data-rec]')){rfAdd('rf-msg u',fxEsc(RF_RECORDED.q)).dataset.rec=1;rfRender(RF_RECORDED,true)}
+    }else rfAdd('rf-msg sys','The line dropped before the end of this answer.');
     rfBusy=false;return;
   }
-  rfHist.push({role:'assistant',content:data.reply});
-  fxMeter(data.usage,data.usd);
-  rfRender(data,false);rfBusy=false;
+  rfHist.push({role:'assistant',content:done.reply});
+  fxMeter(done.usage,done.usd);rfBusy=false;
 }
 $('#rfForm').addEventListener('submit',e=>{e.preventDefault();const q=rfIn.value;rfIn.value='';rfAsk(q)});
 $('#rfChips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)rfAsk(b.textContent)});
