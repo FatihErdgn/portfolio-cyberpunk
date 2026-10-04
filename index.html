@@ -1184,6 +1184,25 @@ html.plainlock #matchbox{z-index:9700}
 .sk-card{color:var(--fg);min-height:20px}
 .sk-legend span{margin-left:14px}.sk-legend i{display:inline-block;width:8px;height:8px;margin-right:6px}
 #skCount{font-variant-numeric:tabular-nums}
+
+/* ============ POSTMORTEM ============ */
+#pmbox{position:fixed;inset:0;z-index:1250;background:rgba(2,3,6,.9);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:56px 16px}
+#pmbox[hidden]{display:none}
+.pm{width:min(760px,100%);background:#070A12;border:1px solid var(--line);padding:26px 28px 30px;font-size:13.5px;line-height:1.75;color:#B9C6DA}
+.pm .k{font-size:11px;letter-spacing:.18em;color:var(--neon)}
+.pm h3{font-family:'Chakra Petch',sans-serif;font-size:clamp(22px,3vw,32px);color:var(--fg);line-height:1.1;margin:6px 0 10px}
+.pm h4{font-size:11px;letter-spacing:.16em;color:var(--dim);font-weight:400;margin:22px 0 6px}
+.pm p{margin:0 0 10px;max-width:66ch}
+.pm ol,.pm ul{margin:0 0 10px;padding-left:18px}
+.pm li{margin-bottom:4px}
+.pm .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:14px 0 6px}
+.pm .meta div{background:#0A0E18;padding:8px 12px;font-size:12px}
+.pm .meta b{display:block;font-size:9.5px;letter-spacing:.16em;color:var(--dim);font-weight:400}
+.pm .top{display:flex;justify-content:space-between;gap:12px}
+.pm .top button,#dirPm{background:none;border:1px solid var(--line);color:var(--dim);font:11px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:5px 10px;cursor:pointer;height:fit-content}
+.pm .top button:hover,#dirPm:hover{color:var(--neon);border-color:var(--neon)}
+#dirPm{display:none;margin-bottom:8px;width:100%}
+#director.pmode #dirPm{display:block}
 </style>
 </head>
 <body class="crt">
@@ -1632,7 +1651,8 @@ html.plainlock #matchbox{z-index:9700}
         <button type="button" data-refinery><span>Industrial ops copilot on a synthetic refinery unit</span><small>live AI demo</small></button>
         <button type="button" data-xray><span>Architecture X-ray of the logistics platform</span><small>interactive</small></button>
         <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
-        <a href="/evals"><span>Eval report for this site's AI agent</span><small>pass rate, latency, cost</small></a>
+        <a href="/evals"><span>Eval report for this site's AI agents</span><small>pass rate, latency, cost</small></a>
+        <button type="button" data-postmortem><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
         <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
         <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
       </div>
@@ -1693,6 +1713,34 @@ html.plainlock #matchbox{z-index:9700}
     <div class="sk-foot"><span class="sk-card" id="skCard" aria-live="polite">Hover a tower for its week.</span><span class="sk-legend"><span><i style="background:#00F0FF"></i>backend</span><span><i style="background:#FF2E88"></i>web</span><span><i style="background:#F5D90A"></i>mobile</span></span></div>
   </div>
 </div>
+<div id="pmbox" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+  <article class="pm">
+    <div class="top"><div class="k">POSTMORTEM · FIXER-001 · 4 OCT 2026</div><button type="button" id="pmClose">✕ CLOSE [ESC]</button></div>
+    <h3 id="pmTitle">The agent that invented an email address</h3>
+    <p>Before FIXER went live, an eval run passed 17 of 18 cases. Reading the replies showed the score was wrong about what mattered: one answer gave a recruiter an email address that does not exist.</p>
+    <div class="meta"><div><b>IMPACT</b>None on visitors. Caught before release.</div><div><b>DETECTED BY</b>Reading eval transcripts</div><div><b>TIME TO FIX</b>Same session</div><div><b>STATUS</b>Resolved, guarded by evals</div></div>
+    <h4>WHAT HAPPENED</h4>
+    <p>FIXER, the terminal agent, ran on Claude Haiku 4.5 to keep the site inside a $3 monthly budget. The first eval run scored 17/18. Reading every reply turned up three defects the score never saw:</p>
+    <ul><li>An answer about the logistics platform told the visitor to email <b>fatiherdogann@gmail.com</b>. The real address has a 099 in it.</li>
+      <li>An answer credited a feature to the wrong project.</li>
+      <li>A Turkish answer contained a phrase that made no sense.</li></ul>
+    <h4>ROOT CAUSE</h4>
+    <p>Two layers. The grader only checked each case for its own expected and forbidden phrases, so a wrong email in an unrelated answer was invisible to it. And the smaller model drifted on facts at the margins of a long profile.</p>
+    <p>A third finding changed the cost argument: Haiku 4.5 only caches prompts of 4,096 tokens or more. FIXER's prompt was about 3,300, so nothing was ever cached and every answer paid for the whole prompt. The cheap model was not actually cheaper.</p>
+    <h4>FIX</h4>
+    <ol><li>Global checks on every case: any email in a reply must be exactly the real one, and replies must not contain markdown links.</li>
+      <li>Prompt tightened: stay literal, never attribute a feature to a different project, copy the email character for character.</li>
+      <li>Model moved to Claude Sonnet 5.5, measured side by side on the same cases. With its prompt cached, it came out at about $0.004 per answer against Haiku's $0.0053.</li></ol>
+    <h4>VERIFICATION</h4>
+    <p>19 of 19 cases passed after the change. The suite has grown since, and every run is published at <a href="/evals">/evals</a>.</p>
+    <h4>ALSO FOUND IN THE SAME REVIEW</h4>
+    <p>The eval file held a private product name in plain text, inside a folder the site serves publicly. It never shipped: the check now reads the name from an environment variable.</p>
+    <h4>LESSONS</h4>
+    <ul><li>A passing score is not a review. Read the outputs.</li>
+      <li>Put invariants in the grader. Anything that must never be wrong gets checked on every case.</li>
+      <li>Check the cache minimum before picking a smaller model for cost.</li></ul>
+  </article>
+</div>
 <div id="matchbox" hidden>
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
     <div class="mhd"><span id="mtitle">CONTRACT MATCH <b>// honest fit check</b></span><button id="mClose" type="button" aria-label="close">✕</button></div>
@@ -1710,10 +1758,12 @@ html.plainlock #matchbox{z-index:9700}
   <div class="dtabs">
     <button data-scene="incident" class="on">INCIDENT</button>
     <button data-scene="hack">SIGNAL-JACK</button>
+    <button data-scene="postmortem">POSTMORTEM</button>
   </div>
   <input id="dirSlider" type="range" min="0" max="14000" step="50" value="0" aria-label="scene timeline">
   <div class="dbeats" id="dirBeats"></div>
   <div class="dcomm" id="dirComm">scrub the timeline, or jump straight to a beat</div>
+  <button type="button" id="dirPm" data-postmortem>READ THE FULL POSTMORTEM ↗</button>
   <div class="drow"><button id="dirLive">▶ LIVE</button><span class="dms" id="dirMs">LIVE</span></div>
   <div class="dnote">the ICE-wall breach has always scrubbed with your scroll — that one's on you</div>
 </div>
@@ -3785,6 +3835,7 @@ if (!deckStatic && fdeck) {
       document.querySelector('#xray:not([hidden])') ||
       document.querySelector('#refinery:not([hidden])') ||
       document.querySelector('#skyline:not([hidden])') ||
+      document.querySelector('#pmbox:not([hidden])') ||
       document.querySelector('#breach:not([hidden])')
     );
   }
@@ -4293,7 +4344,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">skyline</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">skyline</span> · <span class="ps">postmortem</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -4318,6 +4369,7 @@ const CMDS={
  fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
  match:()=>{mOpen();return `contract match open. paste the job post.`},
  xray:()=>{xrOpen();return `architecture x-ray on. press X or ESC to put the walls back.`},
+ postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage.`},
  skyline:()=>{skOpen();return `commit skyline up. one tower per week, two commits per window.`},
  refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
  plain:()=>{plainOpen();return `plain version open. the neon waits.`},
@@ -4592,7 +4644,7 @@ addEventListener('keydown',e=>{
     const a=document.activeElement;
     if(a&&(a.matches('input,textarea,select,[contenteditable="true"]')))return;
     if(!xrEl.hidden){xrClose();return}
-    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!$('#skyline').hidden||!boot.classList.contains('done'))return;
+    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!$('#skyline').hidden||!$('#pmbox').hidden||!boot.classList.contains('done'))return;
     xrOpen();
   }
 });
@@ -5127,12 +5179,23 @@ const DIR_SCENES={
     [12100,'reset zap','the fixer buys the ad back half a second'],
     [17000,'tableau','the board stays broken. the drone stays paid'],
   ]},
+  /* the incident's footage, captioned with a real incident: FIXER-001, 4 Oct 2026 */
+  postmortem:{max:14000,clock:'incident',beats:[
+    [0,'bad answer','FIXER, on a small model, gives a test visitor an email address that does not exist'],
+    [700,'green score','the eval run says 17/18. the grader only looked for phrases; a wrong email looked fine'],
+    [2300,'the read','reading every reply turns up three defects the score never saw'],
+    [5900,'root cause','no invariants in the grader, and a small model drifting on facts at the margins'],
+    [6900,'the switch','prompt tightened, model moved to Sonnet 5.5, measured side by side'],
+    [8200,'cost check','the 3.3K prompt sat under Haiku\'s 4,096-token cache floor. Sonnet caches it and costs less per answer'],
+    [10000,'verified','19/19 with global checks on every case: exact email, no markdown links'],
+    [12500,'prevention','every run published at /evals. impact on visitors: none, the fix shipped first'],
+  ]},
 };
 let dirScene='incident';
 const dirEl=$('#director'),dirSlider=$('#dirSlider'),dirBeats=$('#dirBeats'),dirComm=$('#dirComm'),dirMs=$('#dirMs');
 function dirApply(ms){
   ms=Math.max(1,Math.round(ms));                 // 0 means "live" to the hooks; the floor keeps us frozen
-  if(dirScene==='incident'){resetIncident();DBG_INCT=ms;DBG_HKT=0}
+  if(dirScene==='incident'||DIR_SCENES[dirScene].clock==='incident'){resetIncident();DBG_INCT=ms;DBG_HKT=0}
   else{resetHack();DBG_HKT=ms;DBG_INCT=0}
   dirMs.textContent=String(ms).padStart(5,'0')+' ms';
   const bs=DIR_SCENES[dirScene].beats;
@@ -5145,6 +5208,7 @@ function dirRender(){
   dirSlider.max=sc.max;
   dirBeats.innerHTML=sc.beats.map(b=>`<button data-ms="${b[0]}">${b[1]}</button>`).join('');
   dirEl.querySelectorAll('.dtabs button').forEach(b=>b.classList.toggle('on',b.dataset.scene===dirScene));
+  dirEl.classList.toggle('pmode',dirScene==='postmortem');
 }
 function dirLiveFn(){
   DBG_INCT=0;DBG_HKT=0;resetIncident();resetHack();
@@ -5161,6 +5225,16 @@ $('#dirClose').addEventListener('click',dirClose);
 $('#dirLive').addEventListener('click',dirLiveFn);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!dirEl.hidden)dirClose()});
 if(/[?&]director/.test(location.search))dirOpen();
+/* postmortem: the director's third reel, plus the written report */
+const pmEl=$('#pmbox');
+function pmOpen(){pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>$('#pmClose').focus(),40)}
+function pmClose(){pmEl.hidden=true;document.documentElement.classList.remove('brlock')}
+function pmReel(){if(!plEl.hidden)plainClose();dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
+$('#pmClose').addEventListener('click',pmClose);
+pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-postmortem]')){e.preventDefault();pmOpen()}});
+if(/[?&]postmortem/.test(location.search)){endBoot();pmReel();pmOpen()}
 
 /* ============ PALETTE ============ */
 const ACTIONS=[
@@ -5181,6 +5255,7 @@ const ACTIONS=[
  {t:'Architecture X-ray (logistics platform)',k:'X',f:()=>xrOpen()},
  {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
  {t:'Commit skyline: the logistics platform, week by week',k:'▥',f:()=>skOpen()},
+ {t:'Postmortem: the agent that invented an email address',k:'✎',f:()=>{pmReel();pmOpen()}},
  {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
