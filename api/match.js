@@ -5,6 +5,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { PROFILE, profileText } from './_lib/profile.js';
 import { admit, book, priceUsage, readJson } from './_lib/guard.js';
+import { signBrief } from './_lib/sign.js';
 
 const MODEL = process.env.MATCH_MODEL ?? 'claude-sonnet-5-5';
 const MAX_JD = 9000;
@@ -69,7 +70,8 @@ export async function runMatch(jd) {
   const usd = priceUsage(MODEL, res.usage ?? {});
   if (res.stop_reason === 'refusal' || res.stop_reason === 'max_tokens') return { error: res.stop_reason, usd };
   const text = res.content.filter(b => b.type === 'text').map(b => b.text).join('');
-  return { brief: JSON.parse(text), usage: res.usage, model: res.model ?? MODEL, usd };
+  const brief = JSON.parse(text), at = new Date().toISOString().slice(0, 10);
+  return { brief, at, sig: signBrief(brief, at), usage: res.usage, model: res.model ?? MODEL, usd };
 }
 
 export default async function handler(req, res) {
