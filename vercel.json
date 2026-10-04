@@ -19,6 +19,9 @@
     },
     "api/match.js": {
       "maxDuration": 60
+    },
+    "api/refinery.js": {
+      "maxDuration": 60
     }
   }
 }
