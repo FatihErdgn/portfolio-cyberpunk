@@ -1386,6 +1386,31 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   .ddots button{width:22px;height:4px;padding:0;border:0;background:var(--line);cursor:pointer}
   .ddots button.on{background:var(--neon);box-shadow:0 0 8px var(--neon)}
 }
+
+/* ---- control room fits one screen on desktop: no page scroll, the log scrolls in its own box ---- */
+@media (min-width:980px) and (min-height:600px){
+  #refinery{overflow:hidden;padding:14px 20px 50px}
+  #refinery .rf-wrap{height:100%;grid-template-rows:auto minmax(0,1fr);gap:12px}
+  #refinery .rf-head h3{font-size:clamp(20px,2vw,26px)}
+  #refinery .rf-head p{font-size:11.5px;margin-top:4px;max-width:96ch}
+  #refinery .rf-panel{min-height:0;display:flex;flex-direction:column;padding:10px 12px}
+  #refinery .rf-panel h4{margin-bottom:6px}
+  #refinery .rf-alarms{flex:none;max-height:118px;overflow-y:auto;margin-bottom:6px;font-size:11px}
+  #refinery .rf-al{padding:3px 10px}
+  #refinery #rfSvg{flex:1 1 auto;min-height:120px;height:100%;width:100%}
+  #refinery .rf-scrub{flex:none;margin:4px 0 0}
+  #refinery .rf-trends{flex:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}
+  #refinery .rf-tr{padding:5px 8px}
+  #refinery .rf-tr .h{font-size:10px}
+  #refinery .rf-tr .h span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  #refinery .rf-tr .h{gap:8px}
+  #refinery .rf-tr .h .cur{flex:none}
+  #refinery .rf-tr svg{height:34px}
+  #refinery .rf-wol{flex:none;max-height:76px;overflow-y:auto;margin-top:6px;font-size:10.5px}
+  #refinery .rf-cop{min-height:0}
+  #refinery .rf-log{flex:1 1 auto;min-height:0;max-height:none}
+  #refinery .rf-chips{margin:8px 0}
+}
 </style>
 </head>
 <body class="crt">
@@ -1866,7 +1891,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   <div class="rf-wrap">
     <div class="rf-head">
       <div><div class="k">CONTROL ROOM // INDUSTRIAL OPS COPILOT</div><h3 id="rfTitle">Unit 300, crude distillation</h3>
-        <p>A copilot that investigates with historian, alarm and work-order tools, points at equipment, and proposes maintenance that an operator approves. The unit and its data are synthetic: a demo of the pattern, not any real plant.</p></div>
+        <p>A copilot that investigates with historian, alarm and work-order tools, points at equipment, and proposes maintenance an operator approves. Synthetic unit and data: a demo of the pattern, not a real plant.</p></div>
       <div style="display:flex;gap:10px;align-items:center"><span class="rf-badge">SYNTHETIC DATA</span><button type="button" class="rf-close" id="rfClose">✕ CLOSE [ESC]</button></div>
     </div>
     <div class="rf-panel">
