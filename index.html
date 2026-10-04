@@ -1277,7 +1277,8 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   #refinery .rf-panel h4{margin-bottom:6px}
   #refinery .rf-alarms{flex:none;max-height:118px;overflow-y:auto;margin-bottom:6px;font-size:11px}
   #refinery .rf-al{padding:3px 10px}
-  #refinery #rfSvg{flex:1 1 auto;min-height:120px;height:100%;width:100%}
+  #refinery .rf-schem{flex:1 1 auto;min-height:120px;display:flex}
+  #refinery #rfSvg{flex:1;min-height:0;height:100%;width:100%}
   #refinery .rf-scrub{flex:none;margin:4px 0 0}
   #refinery .rf-trends{flex:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}
   #refinery .rf-tr{padding:5px 8px}
@@ -1291,6 +1292,20 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   #refinery .rf-log{flex:1 1 auto;min-height:0;max-height:none}
   #refinery .rf-chips{margin:8px 0}
 }
+
+/* ---- control room: the last 24 hours as a broadcast ---- */
+.rf-panel{position:relative}
+.rf-h4{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.rf-h4 .live{color:#00FF9C}.rf-h4 .rep{color:#9D4EDD}
+.rf-kpi{font-size:10.5px;letter-spacing:.06em;color:var(--dim)}
+.rf-kpi b{color:var(--fg);font-weight:400}.rf-kpi .lost{color:#FF8A3D}
+.rf-schem{position:relative}
+.rf-ev{position:absolute;left:6px;top:6px;z-index:3;pointer-events:none;font-size:11px;letter-spacing:.06em;color:var(--fg);background:rgba(5,7,12,.9);border:1px solid rgba(157,78,221,.7);padding:5px 10px;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s;max-width:70%}
+.rf-ev.on{opacity:1;transform:none}
+.rf-ev b{color:#9D4EDD;font-weight:400;margin-right:6px}
+.rf-ev.alarm{border-color:rgba(255,59,59,.8)}.rf-ev.alarm b{color:#FF3B3B}
+#rfPlay,#rfSpd{font:11px 'Share Tech Mono',monospace;padding:3px 8px;background:transparent;color:#9D4EDD;border:1px solid rgba(157,78,221,.7);cursor:pointer;min-width:30px}
+#rfPlay:hover,#rfSpd:hover{background:rgba(157,78,221,.14)}
 </style>
 </head>
 <body class="crt">
@@ -1665,9 +1680,9 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
     </header>
 
     <section aria-labelledby="pl-shipped">
-      <h2 id="pl-shipped">What he has shipped</h2>
+      <h2 id="pl-shipped">What I have shipped</h2>
       <div class="pl-proof">
-        <div><b>In production</b><p>An executive-sponsored procurement platform around an ML pricing model at SOCAR Türkiye. He led and built it end to end, including a human-in-the-loop interface that asks users targeted questions when the model is unsure.</p></div>
+        <div><b>In production</b><p>An executive-sponsored procurement platform around an ML pricing model at SOCAR Türkiye. I led and built it end to end, including a human-in-the-loop interface that asks users targeted questions when the model is unsure.</p></div>
         <div><b>Silver Medal</b><p>Brandon Hall Group Excellence in Technology, as technical lead of a refinery decision-support platform.</p></div>
         <div><b>One engineer</b><p>A B2B logistics platform: 13 domain modules, 3,000+ tests, web and mobile apps, and an LLM assistant that calls live routing tools.</p></div>
       </div>
@@ -1716,7 +1731,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
         <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
         <a href="/evals"><span>Eval report for this site's AI agents</span><small>pass rate, latency, cost</small></a>
         <button type="button" data-postmortem data-pm="fixer"><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
-        <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
+        <button type="button" data-match><span>Run a job post against my record</span><small>honest fit check</small></button>
         <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
       </div>
     </section>
@@ -1730,11 +1745,11 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 <div id="xray" hidden role="dialog" aria-modal="true" aria-labelledby="xrTitle">
   <button type="button" class="xr-close" id="xrClose">✕ CLOSE X-RAY [X]</button>
   <div class="xr-info">
-    <div class="k">ARCHITECTURE X-RAY // LOGISTICS PLATFORM</div>
+    <div class="k">ARCHITECTURE X-RAY // THE LOGISTICS PLATFORM I DESIGNED AND BUILT</div>
     <h3 id="xrTitle">One tower, thirteen floors.</h3>
-    <p>The logistics platform is a .NET 10 modular monolith: one deployable, thirteen modules, each with its own schema and four layers. Modules never reach through the floor slabs; they talk through the shaft, and architecture tests turn anything that tries back.</p>
-    <p>Hover a floor for what it owns, or send a real request through the building:</p>
-    <div class="xr-jbtns"><button type="button" data-journey="accept">▶ ACCEPT A BID</button><button type="button" data-journey="arrive">▶ A BID ARRIVES</button></div>
+    <p>I designed the logistics platform as a .NET 10 modular monolith: one deployable, thirteen modules, each owning its data. Modules never reach through the floor slabs; they talk through the shaft, and architecture tests turn anything that tries back.</p>
+    <p>Hover a floor for what it owns, send a request through the building, or read why it is built this way:</p>
+    <div class="xr-jbtns"><button type="button" data-journey="accept">▶ ACCEPT A BID</button><button type="button" data-journey="arrive">▶ A BID ARRIVES</button><button type="button" data-xrwhy>? WHY THIS WAY</button></div>
     <div class="xr-card" id="xrCard" aria-live="polite"><b>SHIPMENT LIFECYCLE</b><span>Pulses climb the shaft as a shipment moves from request to bids, deal, tracking and documents. The red flash is a cross-module shortcut being stopped by an architecture test.</span></div>
     <div class="xr-legend"><span><i style="background:#00FF9C"></i>edge</span><span><i style="background:#00F0FF"></i>domain modules</span><span><i style="background:#FF8A3D"></i>AI layer</span><span><i style="background:#9D4EDD"></i>data</span><span><i style="background:#FF2E88"></i>boundaries</span></div>
   </div>
@@ -1748,10 +1763,10 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
       <div style="display:flex;gap:10px;align-items:center"><span class="rf-badge">SYNTHETIC DATA</span><button type="button" class="rf-close" id="rfClose">✕ CLOSE [ESC]</button></div>
     </div>
     <div class="rf-panel">
-      <h4>PROCESS · LIVE</h4>
+      <h4 class="rf-h4"><span id="rfMode"><span class="live">PROCESS · LIVE</span></span><span class="rf-kpi" id="rfKpi"></span></h4>
       <div class="rf-alarms" id="rfAl" aria-live="polite"></div>
-      <svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg>
-      <div class="rf-scrub"><span>HISTORIAN</span><input type="range" id="rfT" min="-24" max="0" step="0.1" value="0" aria-label="rewind the unit up to 24 hours"><b id="rfTl">LIVE</b><button type="button" id="rfLive" class="on">LIVE</button></div>
+      <div class="rf-schem"><svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg><div class="rf-ev" id="rfEv" aria-live="polite"></div></div>
+      <div class="rf-scrub"><button type="button" id="rfPlay" aria-label="replay the last 24 hours">▶</button><span>HISTORIAN</span><input type="range" id="rfT" min="-24" max="0" step="0.1" value="0" aria-label="rewind the unit up to 24 hours"><b id="rfTl">LIVE</b><button type="button" id="rfSpd" title="replay speed">x1</button><button type="button" id="rfLive" class="on">LIVE</button></div>
       <div class="rf-trends" id="rfTrends"></div>
       <div class="rf-wol" id="rfWol"></div>
     </div>
@@ -1771,7 +1786,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   <div class="sk-wrap">
     <div class="sk-head">
       <div><div class="k">COMMIT SKYLINE // LOGISTICS PLATFORM</div><h3 id="skTitle">Built from <span id="skCount">0</span> commits.</h3>
-        <p>Each tower is one week of work on the logistics platform, from the first commit in March 2026 to this week. One lit window is <span id="skPer">two commits</span>: cyan for backend, pink for web, yellow for mobile. Counted: non-merge commits by Fatih on the main development branches. Only weekly totals are published.</p></div>
+        <p>Each tower is one week of work on the logistics platform, from the first commit in March 2026 to this week. One lit window is <span id="skPer">two commits</span>: cyan for backend, pink for web, yellow for mobile. Counted: my non-merge commits on the main development branches. Only weekly totals are published.</p></div>
       <div class="sk-btns"><button type="button" id="skReplay">↻ REPLAY</button><button type="button" id="skClose">✕ CLOSE [ESC]</button></div>
     </div>
     <div class="sk-stats" id="skStats"></div>
@@ -4929,26 +4944,35 @@ if(/[?&]plain/.test(location.search)){endBoot();plainOpen()}
    shown as a block rather than invented. */
 const xrEl=$('#xray'),xrSvg=$('#xrSvg'),xrCard=$('#xrCard');
 const XR_FLOORS=[
-  {id:'ai',kind:'ai',h:28,label:'AI LAYER',sub:'ANTHROPIC API',info:'The Anthropic Messages API, called over plain HTTP. A small model (Haiku 4.5) answers by default; the moment a question is about planning or the model reaches for a tool, a larger one takes over. Grounded and read-only: the handler reads the tenant\'s own operations and hands them over as the only source, and every tool (live location, history, reports, lane intelligence, road routing) runs inside the tenant. Each call is logged with tokens, cache use and dollar cost, never the prompt text. Prompt caching in three tiers.'},
-  {id:'edge',kind:'edge',h:28,label:'EDGE',sub:'KEYCLOAK · 17-STEP PIPELINE',info:'Keycloak (OIDC) issues the token; the API checks it, maps it to its own internal user id, stamps the tenant on the database session, then guards in a deliberate order: suspended company, read-only Viewer role, page access, workflow locks, idempotency keys, rate limits. Seventeen middleware steps, each placed after the one that produces what it needs.'},
-  {id:'identity',h:22,label:'IDENTITY',schema:'identity',info:'Internal user records behind Keycloak, the /me profile, two-factor, new-device alerts, personal-data deletion.'},
-  {id:'companies',h:22,label:'COMPANIES',schema:'companies',info:'Companies, members and roles, invitations with one-time codes, carrier lanes, the provider network, plans and entitlements.'},
-  {id:'requests',h:22,label:'SHIPMENT REQUESTS',schema:'shipment_requests',info:'Requests (the marketplace listings), invitations, bidding windows, revisions, awards and match suggestions.'},
-  {id:'bids',h:22,label:'BIDS',schema:'bids',info:'Bids, negotiation and contracted lane prices.'},
-  {id:'deals',h:22,label:'DEALS',schema:'deals',info:'The closing room, deal chat with in-chat AI, commission, PDF invoices and statements, ratings.'},
-  {id:'tracking',h:22,label:'TRACKING',schema:'tracking',info:'The largest module: operations, milestones, GPS and ship AIS positions, driver assignments, field reports, alerts, the AI assistant, CO2e.'},
-  {id:'docs',h:22,label:'DOCUMENTS',schema:'documents',info:'The single custodian of files: deal documents, attachments, compliance papers. Every upload is scanned with ClamAV before it is stored (a failed scan counts as unsafe) and read with Tesseract OCR for full-text search. Downloads go straight from blob storage on a 15-minute signed link.'},
-  {id:'notifications',h:22,label:'NOTIFICATIONS',schema:'notifications',info:'The bell, plus email, push and WhatsApp channels, mutes and push devices. A notification goes to a company desk (sales, operations, finance, documents), not to one person.'},
-  {id:'operate',h:22,label:'OPERATE',schema:'operate',info:'The tenant\'s own workflow engine: approvals, tasks, reminders, page access. It decides and opens work; it never writes business data itself. Nothing depends on it and it depends on nothing.'},
-  {id:'platform',h:22,label:'PLATFORM ADMIN',schema:'platform_admin',info:'Back office: audit log, time-boxed break-glass access, settings, commission rules, the AI cost ledger.'},
-  {id:'dock',h:22,label:'DOCK SCHEDULING',schema:'dockscheduling',info:'Facilities, ramps and appointments.'},
-  {id:'changelog',h:22,label:'CHANGELOG',schema:'changelog',info:'Release-note reactions and user feedback.'},
-  {id:'reference',h:22,label:'REFERENCE',schema:'reference',info:'Countries, cities, places, UN/LOCODE terminals, emission factors, central-bank exchange rates, weather.'},
-  {id:'lobby',kind:'edge',h:30,label:'CLIENTS',sub:'REACT WEB · REACT NATIVE · SIGNALR',info:'A React SPA (Vite, feature-sliced) and an Expo React Native app call one API. The SignalR hub carries signals, never data: a client that hears "this deal changed" re-reads through the same authorised REST endpoints, so permissions live in one place.'},
-  {id:'data',kind:'data',h:34,label:'DATA',sub:'POSTGRESQL · ROW-LEVEL SECURITY · BLOB',info:'One PostgreSQL database, one schema and one DbContext per module. Every tenant table carries a row-level security policy, forced even for the owner role, and the app connects with a role that cannot bypass it (checked at startup, or the app refuses to start). Optimistic concurrency on xmin. Files live in blob storage, never in the database.'},
-  {id:'found',kind:'data',h:26,label:'FOUNDATION',sub:'3,000+ TESTS · CI/CD',info:'Behaviour tests, integration tests on real PostgreSQL under the restricted role (an admin role would pass every isolation test for the wrong reason), and architecture tests as fitness functions: module isolation, layer direction, an RLS-coverage ratchet, cross-tenant notification rules. Docker and GitHub Actions to Azure Container Apps.'},
+  {id:'ai',kind:'ai',h:28,label:'AI LAYER',sub:'ANTHROPIC API · TOOL USE',info:'I designed the assistant to be grounded and read-only: it answers from the tenant\'s own data and calls tools that run inside the tenant, never reaching data on its own. A small model takes the simple turns and a larger one steps in for planning; prompt caching and a per-call cost ledger keep the bill visible without storing anyone\'s text.'},
+  {id:'edge',kind:'edge',h:28,label:'EDGE',sub:'KEYCLOAK · LAYERED AUTHORIZATION',info:'Identity lives in Keycloak (OpenID Connect) rather than a home-made login, because identity is the most expensive place to get wrong. The API verifies every token, then authorizes in layers: who you are, which company you act for, and what your role allows.'},
+  {id:'identity',h:22,label:'IDENTITY',info:'Users, profiles and sign-in security.'},
+  {id:'companies',h:22,label:'COMPANIES',info:'Companies, teams, roles and invitations.'},
+  {id:'requests',h:22,label:'SHIPMENT REQUESTS',info:'The marketplace listings carriers bid on, across road, sea, air and rail.'},
+  {id:'bids',h:22,label:'BIDS',info:'Bids and negotiation.'},
+  {id:'deals',h:22,label:'DEALS',info:'The closing room where both sides finalize a deal.'},
+  {id:'tracking',h:22,label:'TRACKING',info:'Live operations after the deal: milestones, positions and alerts. The largest module.'},
+  {id:'docs',h:22,label:'DOCUMENTS',info:'One custodian for every file. Each upload is virus-scanned and read with OCR before it is stored.'},
+  {id:'notifications',h:22,label:'NOTIFICATIONS',info:'In-app, email and push, addressed to a company desk rather than a single person.'},
+  {id:'operate',h:22,label:'OPERATE',info:'A workflow engine the customer configures: approvals, tasks, reminders. It opens work; it never edits business data itself.'},
+  {id:'platform',h:22,label:'PLATFORM ADMIN',info:'Back office and audit.'},
+  {id:'dock',h:22,label:'DOCK SCHEDULING',info:'Dock appointments.'},
+  {id:'changelog',h:22,label:'CHANGELOG',info:'Release notes and user feedback.'},
+  {id:'reference',h:22,label:'REFERENCE',info:'Shared reference data: places, ports, rates, weather.'},
+  {id:'lobby',kind:'edge',h:30,label:'CLIENTS',sub:'REACT WEB · REACT NATIVE · SIGNALR',info:'A React web app and a React Native app share one API. Real-time updates carry signals, never data: a screen that hears "this changed" re-reads through the same authorized endpoints, so permissions live in one place.'},
+  {id:'data',kind:'data',h:34,label:'DATA',sub:'POSTGRESQL · ROW-LEVEL SECURITY',info:'One PostgreSQL database with a schema per module. Tenant isolation is enforced by the database itself with row-level security, so a filter forgotten in application code still cannot show one company\'s data to another.'},
+  {id:'found',kind:'data',h:26,label:'FOUNDATION',sub:'3,000+ TESTS · CI/CD',info:'More than 3,000 automated tests, integration tests on real PostgreSQL, and architecture tests that fail the build when a module crosses a boundary or a table ships without tenant isolation. Docker and GitHub Actions to Azure.'},
 ];
-const XR_SHAFT={info:'Modules never reference each other; an architecture test fails the build if one tries. They talk two ways. Synchronously through contracts in a shared kernel: read snapshots, and write contracts that run in the target module\'s own transaction and are idempotent. Asynchronously through domain events written to the module\'s outbox in the same transaction, dispatched every five seconds under a PostgreSQL advisory lock, at least once, to idempotent handlers. No distributed transactions.'};
+const XR_SHAFT={info:'Modules never reference each other; a test fails the build if one tries. They talk through small contracts for synchronous work, and through domain events written to an outbox in the same transaction as the change, so an event is never lost and never sent for a change that did not happen. Handlers are idempotent, and there are no distributed transactions.'};
+/* the reasoning, in my own words: what I chose, why, and what it costs */
+const XR_WHY=[
+  ['A modular monolith, not microservices','Microservice-grade boundaries at monolith cost, which suits a small team before go-live. Cost: modules cannot scale separately.'],
+  ['Tenant isolation in the database','In a B2B marketplace one forgotten filter shows a company\'s bids to its rival. Row-level security makes the database refuse. Cost: legitimate cross-company work has to run explicitly as a system task.'],
+  ['Keycloak, not a home-made login','Identity is the costliest place to be wrong; an open standard serves web and mobile alike.'],
+  ['An outbox, not a message broker','The change and its event commit together, and there is one less service to run. Cost: at-least-once delivery, so every handler is idempotent.'],
+  ['Container Apps, not Kubernetes','Managed containers, HTTPS and scaling fit the size of the team and the budget.'],
+  ['One codebase for iOS and Android','Expo and React Native, in the same language and mental model as the web app.'],
+];
 let xrBuilt=false,xrRaf=0,xrY={};
 const NS='http://www.w3.org/2000/svg';
 const sv=(tag,attrs,parent=xrSvg)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
@@ -4968,12 +4992,11 @@ function xrBuild(){
       sv('text',{x:SH+20,y:y+f.h/2+10,class:'xsub'},g).textContent=f.sub;
     }else{
       sv('text',{x:SH+20,y:y+f.h/2+4,class:'xlabel'},g).textContent=f.label;
-      sv('text',{x:X1-8,y:y+f.h/2+3,class:'xsub','text-anchor':'end'},g).textContent=f.schema;
       sv('line',{x1:SH,x2:X1,y1:y,y2:y,class:'slab'});
     }
-    const show=()=>{if(!xrJ)xrShow(r,f.label+(f.schema?` · schema ${f.schema}`:''),f.info)};
+    const show=()=>{if(!xrJ)xrShow(r,f.label,f.info)};
     g.addEventListener('mouseenter',show);g.addEventListener('focus',show);
-    g.addEventListener('click',()=>{xrJ=null;xrShow(r,f.label+(f.schema?` · schema ${f.schema}`:''),f.info)});
+    g.addEventListener('click',()=>{xrJ=null;xrShow(r,f.label,f.info)});
     xrY[f.id]=y+f.h/2;
     y+=f.h+3;
     if(f.id==='lobby'){sv('line',{x1:60,x2:460,y1:y-1,y2:y-1,stroke:'#57647E','stroke-dasharray':'2 4'});y+=6}
@@ -4994,23 +5017,23 @@ const XR_ROUTE=['requests','bids','deals','tracking','docs'];
 /* two real request journeys, step for step from the platform's architecture guide */
 const XR_JOURNEYS={
   accept:{title:'ACCEPT A BID',steps:[
-    'The shipper clicks accept. The browser sends the request with its Keycloak token and a correlation id; the web server proxies it to the API.',
-    'The pipeline checks the token, maps the internal user, stamps the tenant on the database session, and runs the guards (suspended company, Viewer, page access).',
-    'The endpoint turns it into an AcceptBid command; validation runs first, then MediatR hands it to the Bids handler.',
-    'Bids checks its own rules: is the bid still pending, does this request really belong to the caller?',
-    'Through contracts, not tables: Shipment requests marks the request awarded, Deals opens the deal. Each writes in its own transaction and is idempotent.',
-    'Bids saves last, so a failure earlier leaves nothing half done. Row-level security limits every query to the tenant; the domain events land in the outbox in the same transaction.',
-    'Within about five seconds the outbox dispatcher fans out: losing bidders are told, the winner\'s desk is notified, commission and invoice are created.',
-    'SignalR tells open tabs that the deal changed; they re-read it. Phones get a push.',
+    'The shipper accepts a bid in the web app; the request carries their identity token.',
+    'The API checks who they are and which company they act for, then applies the authorization layers.',
+    'A command goes down the shaft to the Bids module.',
+    'Bids checks its own rules: is the bid still open, and does the request belong to this shipper?',
+    'Through contracts, not shared tables, the request is marked awarded and a deal is opened, each by the module that owns it.',
+    'Bids saves last, so an earlier failure leaves nothing half done. The events are written in the same transaction.',
+    'From the outbox, the other bidders and the winner are told.',
+    'Open screens get a signal and refresh; phones get a push.',
   ]},
   arrive:{title:'A BID ARRIVES',steps:[
-    'A carrier places a bid from the web or the mobile app; the pipeline checks the token and stamps the carrier\'s tenant.',
-    'The Bids handler saves the bid; the bid raises BidPlaced.',
-    'The bid and its outbox row are written in one transaction.',
-    'Within about five seconds the dispatcher, in system scope under an advisory lock, publishes the event.',
-    'The handler resolves the shipper\'s sales desk: people assigned in Operate, else owners and admins.',
-    'The bell row is always written; SignalR signals open tabs; email and push follow the channel policy.',
-    'This crosses tenants on purpose, so it runs from the outbox in system scope, where row-level security does not hide the other company\'s desk.',
+    'A carrier places a bid from the web or the mobile app.',
+    'The Bids module saves it and raises an event.',
+    'The bid and its event are written in one transaction.',
+    'Moments later the event is picked up from the outbox.',
+    'The shipper\'s team is found and notified.',
+    'In-app, email and push follow each person\'s preferences; open screens refresh.',
+    'This crosses companies on purpose, so it runs as a system task. Inside one tenant\'s request, the database\'s isolation would rightly hide the other company.',
   ]},
 };
 let xrJ=null;
@@ -5109,7 +5132,12 @@ function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrJ=null;xr
   tw.addEventListener('pointerleave',()=>{cancelAnimationFrame(q);tw.style.transform=''});
 })();
 $('#xrClose').addEventListener('click',xrClose);
-xrEl.addEventListener('click',e=>{const b=e.target.closest('[data-journey]');if(b)xrJourney(b.dataset.journey)});
+xrEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-journey]');if(b){xrJourney(b.dataset.journey);return}
+  if(e.target.closest('[data-xrwhy]')){xrJ=null;xrSvg.querySelectorAll('.jtrail,.jdot').forEach(n=>n.remove());xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));
+    document.querySelectorAll('#xray [data-journey]').forEach(x=>x.classList.remove('on'));
+    xrCard.innerHTML=`<b>WHY IT IS BUILT THIS WAY</b><ol>${XR_WHY.map(([h,t])=>`<li><span style="color:var(--fg)">${h}.</span> ${t}</li>`).join('')}</ol><span class="hint">The rule behind all of them: put what is most expensive to get wrong (identity, tenant isolation, data consistency) in the most solid place, and keep the rest simple to run.</span>`}
+});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-xray]');if(t){e.preventDefault();vtGo(xrOpen,t,xrEl)}});
 addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!xrEl.hidden){xrClose();return}
@@ -5212,8 +5240,9 @@ function rfTick(){
     const tr=document.querySelector(`[data-tr="${tag}"] .cur`);if(tr)tr.innerHTML=`<span class="${al?'al':''}">${v.toFixed(1)} ${m.unit}</span>`;
   }
   /* the process moves at the speed the data says it does */
-  rfSvg.querySelectorAll('.flow').forEach(f=>{const src=f.dataset.flow,nom=src==='FI-301'?420:96,v=SIM.value(src,t);f.style.animationDuration=`${(1.4*nom/Math.max(v,1)).toFixed(2)}s`});
+  rfSvg.querySelectorAll('.flow').forEach(f=>{const src=f.dataset.flow,nom=src==='FI-301'?420:96,v=SIM.value(src,t);const d=`${(1.4*nom/Math.max(v,1)).toFixed(1)}s`;if(f.style.animationDuration!==d)f.style.animationDuration=d});
   document.querySelectorAll('.rf-tr .curl').forEach(l=>{const x=((t+24)/24*200).toFixed(1);l.setAttribute('x1',x);l.setAttribute('x2',x)});
+  rfKpis(t);
   const unack=rfAlarmsRender(act),unEq=new Set(unack.map(a=>a.eq)),acEq=new Set(act.map(a=>a.eq));
   rfSvg.querySelectorAll('g[data-eq]').forEach(g=>{const hl=g.classList.contains('hl');g.classList.toggle('alarming',unEq.has(g.dataset.eq)&&!hl);g.classList.toggle('alarm-ack',acEq.has(g.dataset.eq)&&!unEq.has(g.dataset.eq)&&!hl)});
 }
@@ -5223,9 +5252,63 @@ $('#rfAl').addEventListener('click',e=>{const b=e.target.closest('[data-ack]');i
   if(b.dataset.ack==='*')rfActiveAt(0).forEach(a=>rfAck.add(a.key));else rfAck.add(b.dataset.ack);
   sfx.blip(523,.06,'sine',.02);rfTick()});
 const rfTin=$('#rfT');
-const rfSetT=t=>{rfT=Math.round(t*10)/10;rfTin.value=rfT;$('#rfTl').textContent=rfT===0?'LIVE':`T${rfT.toFixed(1)} h`;$('#rfLive').classList.toggle('on',rfT===0);rfTick()};
-rfTin.addEventListener('input',()=>rfSetT(+rfTin.value));
-$('#rfLive').addEventListener('click',()=>rfSetT(0));
+/* ---- the last 24 hours as a broadcast: production integrates as it plays, events surface ---- */
+let RF_CUM=null,RF_EVENTS=[];
+const RF_STEP=0.05,RF_PLAN=420;
+function rfPrecompute(){
+  /* cumulative crude, naphtha and loss against plan, every 3 minutes of the window */
+  const n=Math.round(24/RF_STEP)+1,c=new Float64Array(n),na=new Float64Array(n),l=new Float64Array(n);
+  for(let i=1;i<n;i++){const t=-24+i*RF_STEP,f=SIM.value('FI-301',t);c[i]=c[i-1]+f*RF_STEP;na[i]=na[i-1]+SIM.value('FI-320',t)*RF_STEP;l[i]=l[i-1]+Math.max(0,RF_PLAN-6-f)*RF_STEP}   // sensor noise is not a loss
+  RF_CUM={c,na,l};
+  /* the story beats come from the data itself: alarm edges and the first signs of trouble */
+  const ev=[];
+  SIM.alarms(24).forEach(a=>{ev.push({t:a.raised_h,txt:`${a.tag} ${a.kind} alarm raised · limit ${a.limit} ${SIM.TAGS[a.tag].unit}`,alarm:true});if(a.cleared_h!=null)ev.push({t:a.cleared_h,txt:`${a.tag} ${a.kind} cleared`})});
+  const first=(tag,test,txt)=>{for(let t=-24;t<=0;t+=RF_STEP)if(test(SIM.value(tag,t))){ev.push({t,txt});return}};
+  first('VI-301A',v=>v>2.7,'VI-301A vibration starts creeping up on P-301A');
+  first('FI-301',v=>v<410,'crude feed drops below plan (420 m3/h)');
+  first('II-301A',v=>v>190,'P-301A motor current climbing');
+  RF_EVENTS=ev.sort((a,b)=>a.t-b.t);
+}
+const rfAt=(arr,t)=>{const x=(Math.min(0,Math.max(-24,t))+24)/RF_STEP,i=Math.floor(x),f=x-i;return i>=arr.length-1?arr[arr.length-1]:arr[i]+(arr[i+1]-arr[i])*f};
+const rfFmt=v=>Math.round(v).toLocaleString('en');
+function rfKpis(t){
+  if(!RF_CUM)return;
+  $('#rfKpi').innerHTML=`since T-24 h: crude <b>${rfFmt(rfAt(RF_CUM.c,t))} m3</b> · naphtha <b>${rfFmt(rfAt(RF_CUM.na,t))} m3</b> · lost to the fault <b class="lost">${rfFmt(rfAt(RF_CUM.l,t))} m3</b>`;
+  $('#rfMode').innerHTML=t===0?'<span class="live">PROCESS · LIVE</span>':`<span class="rep">${rfPlayOn?'REPLAY':'HISTORIAN'} · T${t.toFixed(1)} h</span>`;
+}
+let rfPlayOn=false,rfSpeed=1,rfRaf=0,rfLastTick=0,rfEvT=0;
+const RF_SPAN=60000;                                     // 24 h in a minute at x1
+function rfShowEvent(e){
+  const el=$('#rfEv');el.className='rf-ev on'+(e.alarm?' alarm':'');el.innerHTML=`<b>T${e.t.toFixed(1)} h</b>${fxEsc(e.txt)}`;
+  clearTimeout(rfEvT);rfEvT=setTimeout(()=>el.classList.remove('on'),2600);
+  if(e.alarm){sfx.blip(988,.12,'square',.016);rfFlash($('#rfAl'))}else sfx.blip(660,.05,'triangle',.012);
+}
+const rfSetT=(t,silent)=>{
+  const prev=rfT;rfT=Math.max(-24,Math.min(0,t));if(Math.abs(rfT)<1e-6)rfT=0;
+  rfTin.value=rfT;$('#rfTl').textContent=rfT===0?'LIVE':`T${rfT.toFixed(1)} h`;$('#rfLive').classList.toggle('on',rfT===0);
+  if(rfPlayOn&&!silent)RF_EVENTS.forEach(e=>{if(e.t>prev&&e.t<=rfT)rfShowEvent(e)});
+  const now=performance.now();if(!rfPlayOn||now-rfLastTick>90||rfT===0){rfLastTick=now;rfTick()}
+  else{document.querySelectorAll('.rf-tr .curl').forEach(l=>{const x=((rfT+24)/24*200).toFixed(1);l.setAttribute('x1',x);l.setAttribute('x2',x)})}
+};
+function rfPlayStop(){rfPlayOn=false;cancelAnimationFrame(rfRaf);$('#rfPlay').textContent='▶';$('#rfPlay').setAttribute('aria-label','replay the last 24 hours');if(SIM)rfKpis(rfT)}
+function rfPlayStart(fromStart){
+  if(!SIM)return;
+  if(fromStart||rfT>=0)rfSetT(-24,true);
+  rfPlayOn=true;$('#rfPlay').textContent='❚❚';$('#rfPlay').setAttribute('aria-label','pause the replay');
+  let last=performance.now();
+  const step=now=>{
+    if(!rfPlayOn||rfEl.hidden)return;
+    const dt=Math.min(100,now-last);last=now;
+    const next=rfT+dt*24/RF_SPAN*rfSpeed;
+    if(next>=0){rfSetT(0);rfPlayStop();rfShowEvent({t:0,txt:'back to live'});return}
+    rfSetT(next);rfRaf=requestAnimationFrame(step);
+  };
+  rfRaf=requestAnimationFrame(step);
+}
+$('#rfPlay').addEventListener('click',()=>{rfPlayOn?rfPlayStop():rfPlayStart(false)});
+$('#rfSpd').addEventListener('click',()=>{rfSpeed=rfSpeed===1?2:rfSpeed===2?4:1;$('#rfSpd').textContent='x'+rfSpeed});
+rfTin.addEventListener('input',()=>{rfPlayStop();rfSetT(+rfTin.value,true)});
+$('#rfLive').addEventListener('click',()=>{rfPlayStop();rfSetT(0)});
 async function rfOpen(){
   if(!rfEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
@@ -5233,10 +5316,11 @@ async function rfOpen(){
   if(!xrEl.hidden)xrClose();
   rfEl.hidden=false;document.documentElement.classList.add('brlock');
   if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
-  rfBuild();rfSetT(0);clearInterval(rfTimer);rfTimer=setInterval(()=>{if(rfT===0)rfTick()},2000);
+  rfBuild();if(!RF_CUM)rfPrecompute();rfSetT(0,true);clearInterval(rfTimer);rfTimer=setInterval(()=>{if(rfT===0&&!rfPlayOn)rfTick()},2000);
+  if(!reduced)setTimeout(()=>{if(!rfEl.hidden)rfPlayStart(true)},500);
   setTimeout(()=>rfIn.focus(),60);
 }
-function rfClose(){if(rfEl.hidden)return;clearInterval(rfTimer);rfEl.hidden=true;document.documentElement.classList.remove('brlock')}
+function rfClose(){if(rfEl.hidden)return;rfPlayStop();clearInterval(rfTimer);rfEl.hidden=true;document.documentElement.classList.remove('brlock')}
 $('#rfClose').addEventListener('click',rfClose);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!rfEl.hidden)rfClose()});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-refinery]');if(t){e.preventDefault();vtGo(rfOpen,t,rfEl)}});
