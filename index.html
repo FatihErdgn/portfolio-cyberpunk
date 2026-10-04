@@ -771,126 +771,6 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 .wanted .wreward{text-align:center;font-size:9px;letter-spacing:.12em;color:var(--dim);border-top:1px dashed var(--line);padding-top:9px}
 .wanted .wreward b{color:var(--neon);font-weight:400}
 
-/* ===== KEYBOARD NAVIGATION HINT ===== */
-#keyhint {
-  position: fixed;
-  top: 68px;
-  right: 18px;
-  z-index: 920;
-  min-width: 218px;
-  padding: 11px 13px;
-
-  color: var(--dim);
-  background: rgba(7, 10, 18, .82);
-  backdrop-filter: blur(7px);
-
-  border: 1px solid var(--line);
-  box-shadow: 0 0 22px rgba(0, 0, 0, .35);
-
-  clip-path: polygon(
-    9px 0,
-    100% 0,
-    100% calc(100% - 9px),
-    calc(100% - 9px) 100%,
-    0 100%,
-    0 9px
-  );
-
-  transition:
-    opacity .35s var(--ease),
-    transform .35s var(--ease),
-    border-color .25s,
-    box-shadow .25s;
-}
-
-#keyhint::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 28px;
-  height: 2px;
-  background: var(--neon);
-  box-shadow: 0 0 8px var(--neon);
-}
-
-#keyhint .kh-title {
-  margin-bottom: 8px;
-  color: var(--neon);
-  font-size: 9px;
-  letter-spacing: .16em;
-}
-
-#keyhint .kh-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-
-  padding: 3px 0;
-  font-size: 9px;
-  letter-spacing: .08em;
-}
-
-#keyhint .kh-keys {
-  display: flex;
-  gap: 4px;
-}
-
-#keyhint kbd {
-  min-width: 24px;
-  padding: 1px 5px;
-  text-align: center;
-
-  color: var(--fg);
-  background: var(--panel2);
-  border: 1px solid color-mix(
-    in srgb,
-    var(--neon) 42%,
-    var(--line)
-  );
-
-  border-radius: 2px;
-  box-shadow: 0 0 5px color-mix(
-    in srgb,
-    var(--neon) 15%,
-    transparent
-  );
-}
-
-/* Kullanıcı klavyeyi kullandıktan sonra geri çekilir */
-#keyhint.used {
-  opacity: .28;
-  transform: translateY(-4px);
-}
-
-#keyhint.used:hover,
-#keyhint.deckmode {
-  opacity: 1;
-  transform: none;
-}
-
-#keyhint.deckmode {
-  border-color: color-mix(
-    in srgb,
-    var(--neon) 60%,
-    var(--line)
-  );
-
-  box-shadow: 0 0 22px color-mix(
-    in srgb,
-    var(--neon) 18%,
-    transparent
-  );
-}
-
-/* Dokunmatik cihazlarda göstermeye gerek yok */
-@media (max-width: 900px), (hover: none), (pointer: coarse) {
-  #keyhint {
-    display: none;
-  }
-}
-
 /* ===== TARGETING RETICLE CURSOR ===== */
 #cursor{
   position:fixed;top:0;left:0;width:24px;height:24px;pointer-events:none;z-index:9999;
@@ -1441,33 +1321,6 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   </div>
   <div id="bootlines"></div>
   <button class="skip" id="skipBoot">skip [esc]</button></div>
-<div id="keyhint" aria-label="Keyboard controls">
-  <div class="kh-title">KEYBOARD LINK // ACTIVE</div>
-
-  <div class="kh-row">
-    <span class="kh-keys">
-      <kbd>↑</kbd>
-      <kbd>↓</kbd>
-    </span>
-    <span>SCROLL / FILES</span>
-  </div>
-
-  <div class="kh-row">
-    <span class="kh-keys">
-      <kbd>←</kbd>
-      <kbd>→</kbd>
-    </span>
-    <span>PREV / NEXT FILE</span>
-  </div>
-
-  <div class="kh-row">
-    <span class="kh-keys">
-      <kbd>X</kbd>
-    </span>
-    <span>ARCHITECTURE X-RAY</span>
-  </div>
-</div>
-
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
     <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — dealt at random each visit; override here">
@@ -3232,16 +3085,17 @@ function ledStrip(text,col){
   [...text].forEach((ch,i)=>{const g=F35[ch]||F35[' '];for(let k=0;k<15;k++)if(g[k]==='1')x.fillRect(i*4+(k%3),(k/3)|0,1,1)});
   return c;
 }
-/* --- the blimp: an ad ship whose ticker carries real messages --- */
-const [blimpC,blX]=mkx(54,22);
-(function(){
-  const x=blX;
+/* --- the blimp: an ad ship whose ticker carries real messages; nose always leads --- */
+function bakeBlimp(right){
+  const [c,x]=mkx(54,22),fx=v=>right?v:53-v;     // mirror the hull, keep the panel readable
   for(let y=0;y<14;y++){const hw=Math.round(25*Math.sqrt(Math.max(0,1-Math.pow((y-6.5)/7,2))));x.fillStyle=y<2?'#3A4766':y>11?'#10141F':'#1A2135';x.fillRect(27-hw,y,hw*2,1)}
-  x.fillStyle='#151B2A';x.fillRect(3,1,4,4);x.fillRect(3,9,4,4);x.fillRect(1,6,6,2);          // tail fins
+  x.fillStyle='#151B2A';[[3,1,4,4],[3,9,4,4],[1,6,6,2]].forEach(([a,b2,w,h])=>x.fillRect(right?a:54-a-w,b2,w,h));   // tail fins
   x.fillStyle='#0C1019';x.fillRect(21,14,12,4);x.fillStyle='#FFB347';x.fillRect(23,15,1,1);x.fillRect(26,15,1,1);x.fillRect(29,15,1,1);
-  x.fillStyle='#07090F';x.fillRect(13,3,30,8);                                                   // LED panel
-  x.fillStyle='rgba(255,179,71,.08)';for(let px=13;px<43;px+=2)for(let py=4;py<10;py+=2)x.fillRect(px,py,1,1);
-})();
+  const px=right?13:11;x.fillStyle='#07090F';x.fillRect(px,3,30,8);                                   // LED panel
+  x.fillStyle='rgba(255,179,71,.08)';for(let q=px;q<px+30;q+=2)for(let py=4;py<10;py+=2)x.fillRect(q,py,1,1);
+  return c;
+}
+const blimpR=bakeBlimp(true),blimpL=bakeBlimp(false);
 let blimp=null,nextBlimp=0;
 function blimpMsgs(){
   const m=['OPEN TO SOFTWARE, PRODUCT & APPLIED AI ROLES · REMOTE OR EUROPE','ASK FIXER ANYTHING · TERMINAL BELOW','BRANDON HALL SILVER · DECISION SUPPORT SYSTEM'];
@@ -3264,13 +3118,14 @@ function drawBlimp(t){
   b.x+=b.dir*dt*(W+66)/80000;
   if(b.x<-62||b.x>W+8){blimp=null;nextBlimp=t+RR(45000,80000);return}
   const bx=Math.round(b.x),by=Math.round(b.y+Math.sin(t*0.0007)*1.5);
-  ctx.drawImage(blimpC,bx,by);
+  ctx.drawImage(b.dir>0?blimpR:blimpL,bx,by);
   /* ticker: blit a moving window of the current message strip, clipped to the panel */
   const st=b.strips[b.mi],off=(t-b.mt)*0.011,pw=30;
   if(off>st.width+pw){b.mi=(b.mi+1)%b.strips.length;b.mt=t}
-  ctx.save();ctx.beginPath();ctx.rect(bx+13,by+4,pw,6);ctx.clip();
-  ctx.drawImage(st,Math.round(bx+13+pw-off),by+4);ctx.restore();
-  if((t%1400)<160){ctx.fillStyle='#FF3B3B';ctx.fillRect(b.dir>0?bx+52:bx,by+6,1,1)}
+  const pl=bx+(b.dir>0?13:11);
+  ctx.save();ctx.beginPath();ctx.rect(pl,by+4,pw,6);ctx.clip();
+  ctx.drawImage(st,Math.round(pl+pw-off),by+4);ctx.restore();
+  if((t%1400)<160){ctx.fillStyle='#FF3B3B';ctx.fillRect(b.dir>0?bx+52:bx+1,by+6,1,1)}   // nose beacon
 }
 let blimp_fetched=0;
 /* --- night sky: a moon, the odd shooting star, a satellite --- */
