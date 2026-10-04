@@ -54,11 +54,11 @@ const TOOLS = [
   },
   {
     name: 'show_section',
-    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), refinery (control-room demo: an industrial ops copilot on a synthetic refinery unit), contact.',
+    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), refinery (control-room demo: an industrial ops copilot on a synthetic refinery unit), skyline (the logistics platform's weekly commit history as a skyline), contact.',
     strict: true,
     input_schema: {
       type: 'object',
-      properties: { section: { type: 'string', enum: ['garage', 'loadout', 'runlog', 'case_files', 'architecture', 'refinery', 'contact'] } },
+      properties: { section: { type: 'string', enum: ['garage', 'loadout', 'runlog', 'case_files', 'architecture', 'refinery', 'skyline', 'contact'] } },
       required: ['section'],
       additionalProperties: false,
     },

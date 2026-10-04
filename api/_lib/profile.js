@@ -40,7 +40,7 @@ export const PROFILE = {
       org: 'Independent build, working with a product owner',
       period: 'March 2026 to present, in QA ahead of go-live',
       highlights: [
-        'Owns the whole technical side alone: architecture, backend, React web app, React Native (Expo) iOS/Android apps, infrastructure and delivery. Roughly 2,700 commits.',
+        'Owns the whole technical side alone: architecture, backend, React web app, React Native (Expo) iOS/Android apps, infrastructure and delivery. More than 2,500 non-merge commits since March 2026.',
         'Shippers, carriers and forwarders run RFQs, bidding, deals and shared operations across road, sea, air and rail.',
         '.NET 10 modular monolith of 13 domain modules (shipment requests, bids, deals, tracking, dock scheduling, documents and more): DDD, Clean Architecture, CQRS with MediatR, domain events; architecture tests (NetArchTest) and ADRs enforce boundaries.',
         'Agentic AI assistant on the Anthropic Messages API: server-side tool-use loop calling live road-routing tools, model routing (small model for simple turns, larger for planning), tiered prompt caching, per-tenant token and cost accounting that records counts, never tenant text.',

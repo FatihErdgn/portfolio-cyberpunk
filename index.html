@@ -1157,6 +1157,33 @@ html.plainlock #matchbox{z-index:9700}
 .rf-wol .new{color:#00FF9C}
 @media (max-width:980px){.rf-wrap{grid-template-columns:1fr}.rf-cop{min-height:0}.rf-log{max-height:none}}
 @media (max-width:560px){.rf-trends{grid-template-columns:1fr}}
+
+/* ============ COMMIT SKYLINE: the logistics platform, one tower per week ============ */
+#skyline{position:fixed;inset:0;z-index:1300;overflow-y:auto;padding:64px 20px 40px;background:radial-gradient(70% 60% at 50% 80%,rgba(255,46,136,.07),transparent 60%),rgba(3,5,9,.9);backdrop-filter:blur(3px)}
+#skyline[hidden]{display:none}
+.sk-wrap{max-width:1180px;margin:0 auto}
+.sk-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.sk-head .k{color:var(--pink);font-size:11px;letter-spacing:.18em}
+.sk-head h3{font-family:'Chakra Petch',sans-serif;font-size:clamp(24px,3vw,38px);margin:4px 0 6px;line-height:1.05}
+.sk-head p{margin:0;color:var(--dim);font-size:12.5px;max-width:74ch;line-height:1.7}
+.sk-btns{display:flex;gap:8px}
+.sk-btns button{background:none;border:1px solid var(--line);color:var(--dim);font:11px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:6px 12px;cursor:pointer}
+.sk-btns button:hover{color:var(--pink);border-color:var(--pink)}
+.sk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:18px 0}
+.sk-stats div{background:rgba(7,10,18,.95);padding:10px 14px}
+.sk-stats b{display:block;font-family:'Chakra Petch',sans-serif;font-size:24px;color:var(--fg);font-weight:600}
+.sk-stats span{font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.sk-stats div:last-child:nth-child(odd){grid-column:1/-1}
+@media (min-width:780px){.sk-stats div:last-child:nth-child(odd){grid-column:auto}}
+#skSvg{width:100%;height:auto;display:block}
+#skSvg text{font-family:'Share Tech Mono',monospace;font-size:9px;fill:var(--dim)}
+#skSvg .tw{cursor:pointer}
+#skSvg .tw:hover .shell,#skSvg .tw:focus .shell,#skSvg .tw.on .shell{stroke:var(--fg)}
+#skSvg .shell{fill:#0B1020;stroke:#1E2840;stroke-width:1}
+.sk-foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:var(--dim)}
+.sk-card{color:var(--fg);min-height:20px}
+.sk-legend span{margin-left:14px}.sk-legend i{display:inline-block;width:8px;height:8px;margin-right:6px}
+#skCount{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body class="crt">
@@ -1432,6 +1459,7 @@ html.plainlock #matchbox{z-index:9700}
       <p class="ext">Multi-tenant security runs on Keycloak (OIDC, RBAC) with tenant isolation. Every uploaded document is scanned with ClamAV and read with <span class="redact">Tesseract OCR</span>. Real-time updates travel over SignalR with a Redis backplane. More than 3,000 automated tests (xUnit, Testcontainers PostgreSQL, NetArchTest) gate a Docker and GitHub Actions pipeline to Azure Container Apps. The web app is React (Vite); mobile is React Native (Expo).</p>
     </div>
     <button type="button" class="xr-open" data-xray>▸ X-RAY THE ARCHITECTURE [X]</button>
+    <button type="button" class="xr-open" data-skyline style="color:var(--pink);border-color:color-mix(in srgb,var(--pink) 55%,transparent)">▸ WATCH IT GET BUILT, WEEK BY WEEK</button>
     <div class="dtags"><span>.net 10</span><span>ddd · cqrs</span><span>react</span><span>react native</span><span>postgresql</span><span>signalr</span><span>keycloak</span><span>ocr · clamav</span><span>azure</span></div>
     <div class="dinteg">DECRYPTION INTEGRITY<div class="bar"><i></i></div><span class="pct">0%</span></div>
   </section>
@@ -1603,6 +1631,7 @@ html.plainlock #matchbox{z-index:9700}
       <div class="pl-proofs">
         <button type="button" data-refinery><span>Industrial ops copilot on a synthetic refinery unit</span><small>live AI demo</small></button>
         <button type="button" data-xray><span>Architecture X-ray of the logistics platform</span><small>interactive</small></button>
+        <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
         <a href="/evals"><span>Eval report for this site's AI agent</span><small>pass rate, latency, cost</small></a>
         <button type="button" data-match><span>Run a job post against his record</span><small>honest fit check</small></button>
         <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
@@ -1650,6 +1679,18 @@ html.plainlock #matchbox{z-index:9700}
       </div>
       <form class="rf-in" id="rfForm"><input id="rfIn" autocomplete="off" placeholder="ask about Unit 300" aria-label="question for the copilot"><button type="submit">ASK</button></form>
     </div>
+  </div>
+</div>
+<div id="skyline" hidden role="dialog" aria-modal="true" aria-labelledby="skTitle">
+  <div class="sk-wrap">
+    <div class="sk-head">
+      <div><div class="k">COMMIT SKYLINE // LOGISTICS PLATFORM</div><h3 id="skTitle">Built from <span id="skCount">0</span> commits.</h3>
+        <p>Each tower is one week of work on the logistics platform, from the first commit in March 2026 to this week. One lit window is two commits: cyan for backend, pink for web, yellow for mobile. Counted: non-merge commits by Fatih on the main development branches. Only weekly totals are published.</p></div>
+      <div class="sk-btns"><button type="button" id="skReplay">↻ REPLAY</button><button type="button" id="skClose">✕ CLOSE [ESC]</button></div>
+    </div>
+    <div class="sk-stats" id="skStats"></div>
+    <svg id="skSvg" role="img" aria-label="Commits per week as a skyline"></svg>
+    <div class="sk-foot"><span class="sk-card" id="skCard" aria-live="polite">Hover a tower for its week.</span><span class="sk-legend"><span><i style="background:#00F0FF"></i>backend</span><span><i style="background:#FF2E88"></i>web</span><span><i style="background:#F5D90A"></i>mobile</span></span></div>
   </div>
 </div>
 <div id="matchbox" hidden>
@@ -3743,6 +3784,7 @@ if (!deckStatic && fdeck) {
       document.querySelector('#plain:not([hidden])') ||
       document.querySelector('#xray:not([hidden])') ||
       document.querySelector('#refinery:not([hidden])') ||
+      document.querySelector('#skyline:not([hidden])') ||
       document.querySelector('#breach:not([hidden])')
     );
   }
@@ -4251,7 +4293,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from Fatih's record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">skyline</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -4276,6 +4318,7 @@ const CMDS={
  fixer:()=>`FIXER is a Claude agent (Haiku 4.5) wired into this page. It answers from Fatih's record only, can open case files and move the camera, and drafts emails you approve before anything leaves your screen. Costs show live in the deck bar.<br>just type a question.`,
  match:()=>{mOpen();return `contract match open. paste the job post.`},
  xray:()=>{xrOpen();return `architecture x-ray on. press X or ESC to put the walls back.`},
+ skyline:()=>{skOpen();return `commit skyline up. one tower per week, two commits per window.`},
  refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
  plain:()=>{plainOpen();return `plain version open. the neon waits.`},
 };
@@ -4350,6 +4393,7 @@ const caseTitle=i=>{const d=document.querySelectorAll('.dossier')[i];return d?d.
 function fxSection(sec){
   if(sec==='architecture'){xrOpen();return 'opened the architecture x-ray'}
   if(sec==='refinery'){rfOpen();return 'opened the refinery control room'}
+  if(sec==='skyline'){skOpen();return 'opened the commit skyline'}
   if(sec==='contact'){const w=document.getElementById('wreveal');if(w)w.classList.add('show');return 'opened the contact card'}
   if(sec==='case_files'){if(!deckStatic&&typeof scrollToDeckFile==='function')scrollToDeckFile(0);else $('#fstage').scrollIntoView({behavior:'smooth'});return 'moved to the case files'}
   const el=$({garage:'#garage',loadout:'#implants',runlog:'#runlog'}[sec]||'#garage');
@@ -4548,7 +4592,7 @@ addEventListener('keydown',e=>{
     const a=document.activeElement;
     if(a&&(a.matches('input,textarea,select,[contenteditable="true"]')))return;
     if(!xrEl.hidden){xrClose();return}
-    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!boot.classList.contains('done'))return;
+    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!$('#skyline').hidden||!boot.classList.contains('done'))return;
     xrOpen();
   }
 });
@@ -4676,6 +4720,69 @@ async function rfAsk(q){
 }
 $('#rfForm').addEventListener('submit',e=>{e.preventDefault();const q=rfIn.value;rfIn.value='';rfAsk(q)});
 $('#rfChips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)rfAsk(b.textContent)});
+
+
+/* ============ COMMIT SKYLINE: one tower per week, one window per two commits ============ */
+/* Heights are data, not decoration: a tower is exactly as tall as its week's windows. */
+const skEl=$('#skyline'),skSvg=$('#skSvg'),skCard=$('#skCard');
+const SK_COL={backend:'#00F0FF',web:'#FF2E88',mobile:'#F5D90A'};
+let SKD=null,skRaf=0;
+const skFmt=w=>new Date(w+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+function skBuild(animate){
+  cancelAnimationFrame(skRaf);
+  const d=SKD,G=d.groups,N=d.weeks.length,TW=18,GAP=6,X0=10,GROUND=290,COLS=3,PER=2;
+  const Wd=X0*2+N*(TW+GAP);
+  skSvg.setAttribute('viewBox',`0 0 ${Wd} 320`);skSvg.innerHTML='';
+  const sv3=(tag,a,p=skSvg)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+  sv3('line',{x1:0,x2:Wd,y1:GROUND+.5,y2:GROUND+.5,stroke:'#2A3554'});
+  let lastMonth='';
+  const towers=d.weeks.map((w,i)=>{
+    const tot=G.reduce((a,g)=>a+w[g],0),wins=G.flatMap(g=>Array(Math.ceil(w[g]/PER)).fill(g));
+    const rows=Math.ceil(wins.length/COLS),h=tot?rows*5+5:2,x=X0+i*(TW+GAP);
+    const g=sv3('g',{class:'tw',tabindex:0,role:'img','aria-label':`Week of ${skFmt(w.week)}: ${tot} commits`});
+    const inner=sv3('g',{},g);
+    sv3('rect',{x,y:GROUND-h,width:TW,height:h,class:'shell'},inner);
+    wins.forEach((grp,k)=>{const r=Math.floor(k/COLS),c=k%COLS;sv3('rect',{x:x+3+c*5,y:GROUND-6-r*5,width:2,height:3,fill:SK_COL[grp]},inner)});
+    const m=w.week.slice(0,7);
+    if(m!==lastMonth){lastMonth=m;sv3('text',{x,y:GROUND+14},skSvg).textContent=new Date(w.week+'T00:00:00Z').toLocaleDateString('en-GB',{month:'short',timeZone:'UTC'}).toUpperCase()}
+    const show=()=>{skSvg.querySelectorAll('.tw.on').forEach(n=>n.classList.remove('on'));g.classList.add('on');
+      skCard.textContent=`Week of ${skFmt(w.week)}: ${tot} commits${tot?` (${G.map(gg=>`${gg} ${w[gg]}`).join(', ')})`:', a quiet week'}.`};
+    g.addEventListener('mouseenter',show);g.addEventListener('focus',show);g.addEventListener('click',show);
+    return {inner,x,h,tot};
+  });
+  /* stats */
+  const tots=towers.map(t=>t.tot),best=tots.indexOf(Math.max(...tots)),active=tots.filter(Boolean).length;
+  $('#skStats').innerHTML=[[d.total.toLocaleString('en'),'COMMITS'],[N,'WEEKS'],[`${active}/${N}`,'WEEKS WITH COMMITS'],[Math.round(d.total/N),'AVERAGE PER WEEK'],[tots[best],`BUSIEST · ${skFmt(d.weeks[best].week).toUpperCase()}`]]
+    .map(([b,k])=>`<div><b>${b}</b><span>${k}</span></div>`).join('');
+  const cnt=$('#skCount');
+  if(!animate||reduced){cnt.textContent=d.total.toLocaleString('en');return}
+  /* timelapse: towers rise in order and the title counts up with them */
+  towers.forEach(t=>t.inner.style.cssText=`transform:scaleY(0);transform-origin:${t.x}px ${GROUND}px;transform-box:view-box`);
+  const t0=performance.now(),STEP=140,RISE=520;let run=0;
+  const cum=tots.map(v=>run+=v);
+  const tick=now=>{
+    const el=now-t0;let shown=0;
+    towers.forEach((t,i)=>{const k=Math.min(1,Math.max(0,(el-i*STEP)/RISE)),e=1-Math.pow(1-k,3);t.inner.style.transform=`scaleY(${e})`;if(k>0)shown=cum[i]-(1-e)*tots[i]});
+    cnt.textContent=Math.round(shown).toLocaleString('en');
+    if(el<N*STEP+RISE)skRaf=requestAnimationFrame(tick);else cnt.textContent=d.total.toLocaleString('en');
+  };
+  skRaf=requestAnimationFrame(tick);
+}
+async function skOpen(){
+  if(!skEl.hidden)return;
+  document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
+  if(!plEl.hidden)plainClose();
+  if(!xrEl.hidden)xrClose();
+  if(!rfEl.hidden)rfClose();
+  skEl.hidden=false;document.documentElement.classList.add('brlock');
+  if(!SKD){try{SKD=await (await fetch('/lib/commit-skyline.json')).json()}catch(_){skCard.textContent='The commit data failed to load.';return}}
+  skBuild(true);setTimeout(()=>$('#skClose').focus(),60);
+}
+function skClose(){if(skEl.hidden)return;cancelAnimationFrame(skRaf);skEl.hidden=true;document.documentElement.classList.remove('brlock')}
+$('#skClose').addEventListener('click',skClose);
+$('#skReplay').addEventListener('click',()=>SKD&&skBuild(true));
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!skEl.hidden)skClose()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-skyline]')){e.preventDefault();skOpen()}});
 
 /* ============ CONTRACT MATCH (Claude via /api/match) ============ */
 const mBox=$('#matchbox'),mForm=$('#mForm'),mJd=$('#mJd'),mGo=$('#mGo'),mOut=$('#mOut');
@@ -5073,6 +5180,7 @@ const ACTIONS=[
  {t:'Plain version (for a quick read)',k:'☀',f:()=>plainOpen()},
  {t:'Architecture X-ray (logistics platform)',k:'X',f:()=>xrOpen()},
  {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
+ {t:'Commit skyline: the logistics platform, week by week',k:'▥',f:()=>skOpen()},
  {t:'Ask FIXER (AI agent) a question',k:'?',f:()=>{if(window._openDock)window._openDock()}},
  {t:'Send contract offer',k:'✉',f:()=>location.href='mailto:fatiherdogann099@gmail.com?subject=CONTRACT%20OFFER'},
 ];
