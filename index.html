@@ -1208,6 +1208,47 @@ html.plainlock #matchbox{z-index:9700}
 ::view-transition-old(ovl),::view-transition-new(ovl){animation-duration:.48s;animation-timing-function:cubic-bezier(.16,1,.3,1);height:100%;object-fit:cover;overflow:clip}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
 @media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
+/* ---- plain view: scroll reveal (pure CSS, scroll-driven where supported) ---- */
+@keyframes plRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    #plain .pl section h2,#plain .pl-proof>div,#plain .pl-exp article,#plain .pl-files button,#plain .pl-skills div,#plain .pl-proofs>*{
+      animation:plRise linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+  }
+}
+@media (prefers-reduced-motion:no-preference){
+  #plain.pl-in .pl-hero>*{animation:plRise .7s cubic-bezier(.16,1,.3,1) both}
+  #plain.pl-in .pl-hero>*:nth-child(2){animation-delay:.08s}
+  #plain.pl-in .pl-hero>*:nth-child(3){animation-delay:.16s}
+}
+.pl-printonly{display:none}
+/* ---- plain view: print / save as PDF, from anywhere on the site ---- */
+@media print{
+  @page{margin:14mm 16mm}
+  html,body{background:#fff!important;padding:0!important}
+  body>*:not(#plain){display:none!important}
+  body.crt::before,body.crt::after{display:none!important}
+  #plain,#plain[hidden]{display:block!important;position:static!important;overflow:visible!important;background:#fff!important;backdrop-filter:none!important;color:#111!important;font-size:11pt;line-height:1.5}
+  #plain *{animation:none!important;transform:none!important;opacity:1!important}
+  .pl-bar,.pl-ctas,.pl-noprint,.pl-files em{display:none!important}
+  .pl{max-width:none;padding:0}
+  .pl-hero{margin-bottom:18pt}
+  .pl-hero h1{font-size:24pt;max-width:none;margin-bottom:6pt}
+  .pl-lede{font-size:12pt;color:#333;margin-bottom:6pt}
+  .pl-printonly{display:block;font-size:10pt;color:#333}
+  .pl section{margin-bottom:16pt;break-inside:auto}
+  .pl h2{font-size:13pt;margin-bottom:8pt;break-after:avoid}
+  .pl-proof{background:#ccc;border-color:#ccc}
+  .pl-proof>div{padding:8pt 10pt}
+  .pl-proof b{font-size:15pt;color:#111}
+  .pl-proof p,.pl-exp p,.pl-files span,.pl-skills span{color:#333!important;font-size:10pt}
+  .pl-exp{gap:8pt}.pl-exp article{break-inside:avoid;grid-template-columns:90pt 1fr;gap:10pt}
+  .pl-files{gap:6pt}.pl-files button{padding:8pt 10pt;border-color:#ccc;break-inside:avoid}
+  .pl-skills{gap:6pt 18pt}
+  .pl-foot{border-color:#ccc}
+  #plain a{color:#111;text-decoration:none}
+}
 </style>
 </head>
 <body class="crt">
@@ -1596,6 +1637,7 @@ html.plainlock #matchbox{z-index:9700}
     <nav>
       <a class="pl-hide" href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">CV (PDF)</a>
       <a class="pl-hide" href="https://linkedin.com/in/fatiherdogan09" target="_blank" rel="noopener">LinkedIn</a>
+      <button type="button" class="pl-btn ghost pl-hide" id="plPrint" title="a clean one-page version, ready to print or save as PDF">Save as PDF</button>
       <button type="button" class="pl-btn ghost" id="plClose">Back to the city</button>
     </nav>
   </div>
@@ -1603,6 +1645,7 @@ html.plainlock #matchbox{z-index:9700}
     <header class="pl-hero">
       <h1>Software for complex real-world operations.</h1>
       <p class="pl-lede">Software engineer for industrial and logistics systems, with LLM features in production. Based in İzmir, open to remote or Europe.</p>
+      <p class="pl-printonly">fatiherdogann099@gmail.com · linkedin.com/in/fatiherdogan09 · fatiherdogan.dev</p>
       <div class="pl-ctas"><a class="pl-btn" href="mailto:fatiherdogann099@gmail.com">Email Fatih</a><button type="button" class="pl-btn ghost" data-match>Check a job post</button></div>
     </header>
 
@@ -1650,7 +1693,7 @@ html.plainlock #matchbox{z-index:9700}
       </div>
     </section>
 
-    <section aria-labelledby="pl-inspect">
+    <section aria-labelledby="pl-inspect" class="pl-noprint">
       <h2 id="pl-inspect">Things you can inspect</h2>
       <div class="pl-proofs">
         <button type="button" data-refinery><span>Industrial ops copilot on a synthetic refinery unit</span><small>live AI demo</small></button>
@@ -4542,20 +4585,35 @@ async function askFixer(q){
 
 /* ============ PLAIN VIEW: the ☀ on the switch; back to the city at sunset ============ */
 const plEl=$('#plain');
-function plainOpen(){
+let plOrigin=null;
+const plCircle=(o,r)=>`circle(${r}px at ${o[0]}px ${o[1]}px)`;
+function plSweep(o){
+  const r=Math.hypot(Math.max(o[0],innerWidth-o[0]),Math.max(o[1],innerHeight-o[1]));
+  return [plCircle(o,0),plCircle(o,r)];
+}
+function plainOpen(src){
   if(!plEl.hidden)return;
+  const b=src&&src.getBoundingClientRect?src.getBoundingClientRect():null;
+  plOrigin=b&&b.width?[b.left+b.width/2,b.top+b.height/2]:[innerWidth/2,innerHeight*.35];
   plEl.hidden=false;plEl.scrollTop=0;document.documentElement.classList.add('plainlock');
+  plEl.classList.remove('pl-in');void plEl.offsetWidth;plEl.classList.add('pl-in');
+  if(!reduced&&plEl.animate)plEl.animate({clipPath:plSweep(plOrigin)},{duration:700,easing:'cubic-bezier(.65,0,.35,1)'});
   setTimeout(()=>$('#plClose').focus(),40);
   try{history.replaceState(null,'',location.pathname+'?plain'+location.hash)}catch(_){}
 }
-function plainClose(){
+function plainClose(instant){
   if(plEl.hidden)return;
+  if(!instant&&!reduced&&plEl.animate&&plOrigin){
+    const a=plEl.animate({clipPath:plSweep(plOrigin).reverse()},{duration:520,easing:'cubic-bezier(.65,0,.35,1)'});
+    a.onfinish=()=>plainClose(true);return;
+  }
   plEl.hidden=true;document.documentElement.classList.remove('plainlock');
   setTod('dusk');                         // back to the city at sunset
   try{history.replaceState(null,'',location.pathname+location.hash)}catch(_){}
 }
-$('#plClose').addEventListener('click',plainClose);
-document.addEventListener('click',e=>{const t=e.target.closest('[data-plain]');if(t){e.preventDefault();plainOpen()}});
+$('#plClose').addEventListener('click',()=>plainClose());
+document.addEventListener('click',e=>{const t=e.target.closest('[data-plain]');if(t){e.preventDefault();plainOpen(t)}});
+$('#plPrint').addEventListener('click',()=>print());
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!plEl.hidden&&!document.querySelector('.fview.show')&&$('#matchbox').hidden)plainClose()});
 if(/[?&]plain/.test(location.search)){endBoot();plainOpen()}
 
@@ -4643,7 +4701,7 @@ function xrAnimate(){
 function xrOpen(){
   if(!xrEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose();
+  if(!plEl.hidden)plainClose(true);
   xrBuild();xrEl.hidden=false;document.documentElement.classList.add('brlock');
   xrAnimate();setTimeout(()=>$('#xrClose').focus(),40);
 }
@@ -4736,7 +4794,7 @@ function rfTick(){
 async function rfOpen(){
   if(!rfEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose();
+  if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
   rfEl.hidden=false;document.documentElement.classList.add('brlock');
   if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
@@ -4835,7 +4893,7 @@ function skBuild(animate){
 async function skOpen(){
   if(!skEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose();
+  if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
   if(!rfEl.hidden)rfClose();
   skEl.hidden=false;document.documentElement.classList.add('brlock');
@@ -5277,7 +5335,7 @@ if(/[?&]director/.test(location.search))dirOpen();
 const pmEl=$('#pmbox');
 function pmOpen(){pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>$('#pmClose').focus(),40)}
 function pmClose(){pmEl.hidden=true;document.documentElement.classList.remove('brlock')}
-function pmReel(){if(!plEl.hidden)plainClose();dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
+function pmReel(){if(!plEl.hidden)plainClose(true);dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
 $('#pmClose').addEventListener('click',pmClose);
 pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
