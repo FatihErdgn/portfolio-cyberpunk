@@ -54,7 +54,7 @@ const TOOLS = [
   },
   {
     name: 'show_section',
-    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), refinery (control-room demo: an industrial ops copilot on a synthetic refinery unit), skyline (the logistics platform's weekly commit history as a skyline), contact.',
+    description: 'Show a part of the page: garage (tech stack), loadout (skills), runlog (work history), case_files, architecture (interactive X-ray of the logistics platform), refinery (control-room demo: an industrial ops copilot on a synthetic refinery unit), skyline (weekly commit history of the logistics platform, drawn as a skyline), contact.',
     strict: true,
     input_schema: {
       type: 'object',
