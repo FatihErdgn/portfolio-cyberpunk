@@ -1203,6 +1203,11 @@ html.plainlock #matchbox{z-index:9700}
 .pm .top button:hover,#dirPm:hover{color:var(--neon);border-color:var(--neon)}
 #dirPm{display:none;margin-bottom:8px;width:100%}
 #director.pmode #dirPm{display:block}
+
+/* ============ VIEW TRANSITIONS: the button becomes the panel ============ */
+::view-transition-old(ovl),::view-transition-new(ovl){animation-duration:.48s;animation-timing-function:cubic-bezier(.16,1,.3,1);height:100%;object-fit:cover;overflow:clip}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
+@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 </style>
 </head>
 <body class="crt">
@@ -1769,7 +1774,7 @@ html.plainlock #matchbox{z-index:9700}
 </div>
 <div id="deck">
   <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span></span>
-  <span class="rhs"><span id="llmseg" hidden title="real token usage and API cost of your FIXER calls this session">LLM <b>0 tok</b></span><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
+  <span class="rhs"><span id="payseg" hidden title="3D models still streaming in the background">PAYLOAD <b>0%</b></span><span id="llmseg" hidden title="real token usage and API cost of your FIXER calls this session">LLM <b>0 tok</b></span><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
 </div>
 
 <div id="palette"><div class="box"><input id="palin" placeholder="run a command…" autocomplete="off"><div class="list" id="pallist"></div></div></div>
@@ -1851,6 +1856,8 @@ function paintBoot(){
         +'  <span class="et">'+(ASSETS.length-parseLeft)+'/'+ASSETS.length+' units</span>';
     blLine.innerHTML=head+'<span class="br">[</span>'+bar+'<span class="br">]</span> '
       +'<span class="pc">'+String(pct).padStart(3,' ')+'%</span>'+tail;
+    const ps=document.getElementById('payseg');
+    if(ps){ps.hidden=!left;ps.querySelector('b').textContent=pct+'%'}
     blNote.innerHTML=dead?'<span class="er">warn: '+dead+' unit(s) unreachable — entering degraded</span>'
       :left?'':'<span class="ok">payload verified — geometry live</span>';
   });
@@ -1910,6 +1917,9 @@ const bootLines=[
  ['<span class="yl">warn</span>: neon levels exceed municipal regulation. proceeding.',8],
  ['<span class="pk">WELCOME TO THE İZMİR GRID.</span>',14],
 ];
+/* a returning runner gets the short handshake */
+let bootSeen=false;try{bootSeen=!!localStorage.getItem('fatih.seen')}catch(_){}
+if(bootSeen&&!reduced){bootLines.splice(1,bootLines.length-1,['<span class="pk">WELCOME BACK TO THE İZMİR GRID.</span>',12])}
 const bl=$('#bootlines'),boot=$('#boot');
 let bi=0;
 function typeLine(){
@@ -1924,12 +1934,13 @@ function typeLine(){
     if(ci>=plain.length){clearInterval(iv);div.innerHTML=html;bi++;setTimeout(typeLine,110)}
   },speed);
 }
-function endBoot(){boot.classList.add('done');startHeroTyping()}
+function endBoot(){if(boot.classList.contains('done'))return;boot.classList.add('done');startHeroTyping();try{localStorage.setItem('fatih.seen',String(Date.now()))}catch(_){}}
 $('#skipBoot').addEventListener('click',endBoot);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!boot.classList.contains('done'))endBoot()});
 if(/skipboot/.test(location.search))setTimeout(()=>{if(!boot.classList.contains('done'))endBoot()},300);
-/* the payload lands first; only once the bar reads 100% does the deck start talking */
-onAssets(()=>setTimeout(typeLine,reduced?0:450));
+/* the deck starts talking right away; the models keep streaming behind it and finish in the
+   deck bar if the boot ends first (the garage and the body mount the moment they land) */
+setTimeout(typeLine,reduced?0:bootSeen?150:350);
 
 /* ============ HERO TYPED CODE ============ */
 const CODE=[
@@ -2996,9 +3007,10 @@ function drawPeds(t){
   });
 }
 let lastStreak=0;
+let cityHold=false;   // set while an opaque overlay covers the canvas: nothing to paint behind it
 function city(t){
   if(!reduced)requestAnimationFrame(city);
-  if(document.hidden)return;
+  if(document.hidden||cityHold)return;
   if(lastFT)fpsE=fpsE*0.9+(1000/Math.max(1,t-lastFT))*0.1;
   lastFT=t;
   ctx.clearRect(0,0,W,H);
@@ -4637,7 +4649,7 @@ function xrOpen(){
 }
 function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrEl.hidden=true;document.documentElement.classList.remove('brlock')}
 $('#xrClose').addEventListener('click',xrClose);
-document.addEventListener('click',e=>{if(e.target.closest('[data-xray]')){e.preventDefault();xrOpen()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-xray]');if(t){e.preventDefault();vtGo(xrOpen,t,xrEl)}});
 addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!xrEl.hidden){xrClose();return}
   if((e.key==='x'||e.key==='X')&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
@@ -4734,7 +4746,7 @@ async function rfOpen(){
 function rfClose(){if(rfEl.hidden)return;clearInterval(rfTimer);rfEl.hidden=true;document.documentElement.classList.remove('brlock')}
 $('#rfClose').addEventListener('click',rfClose);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!rfEl.hidden)rfClose()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-refinery]')){e.preventDefault();rfOpen()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-refinery]');if(t){e.preventDefault();vtGo(rfOpen,t,rfEl)}});
 const rfAdd=(cls,html)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=html;rfLog.appendChild(d);rfLog.scrollTop=rfLog.scrollHeight;return d};
 function rfHighlight(ids){rfSvg.querySelectorAll('g[data-eq]').forEach(g=>g.classList.toggle('hl',ids.includes(g.dataset.eq)))}
 function rfProposal(a){
@@ -4834,7 +4846,34 @@ function skClose(){if(skEl.hidden)return;cancelAnimationFrame(skRaf);skEl.hidden
 $('#skClose').addEventListener('click',skClose);
 $('#skReplay').addEventListener('click',()=>SKD&&skBuild(true));
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!skEl.hidden)skClose()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-skyline]')){e.preventDefault();skOpen()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-skyline]');if(t){e.preventDefault();vtGo(skOpen,t,skEl)}});
+
+
+/* ============ OVERLAY PLUMBING: view transitions, city hold, sound ============ */
+/* vtGo morphs the clicked control into the panel it opens (where the browser supports it). */
+function vtGo(open,src,target){
+  if(!document.startViewTransition||reduced||!src||!target){open();return}
+  src.style.viewTransitionName='ovl';
+  const tr=document.startViewTransition(async()=>{src.style.viewTransitionName='';await open();target.style.viewTransitionName='ovl'});
+  tr.finished.finally(()=>{target.style.viewTransitionName=''});
+}
+/* one observer watches every overlay: it parks the city while something opaque covers it,
+   and gives the open/close a tick of sound when the ambient feed is on */
+(function(){
+  const ids=['plain','refinery','skyline','pmbox','matchbox','xray','wreveal'];
+  const els=ids.map(i=>document.getElementById(i)).filter(Boolean);
+  const isOpen=el=>el.id==='wreveal'?el.classList.contains('show'):!el.hidden;
+  let prev=new Map(els.map(e=>[e,isOpen(e)]));
+  const sync=()=>{
+    els.forEach(e=>{const o=isOpen(e);if(o!==prev.get(e)){prev.set(e,o);sfx.blip(o?660:440,.06,'square',.02,o?1.5:.6)}});
+    const skyCity=!$('#skyline').hidden&&document.body.classList.contains('sk-city');
+    cityHold=!skyCity&&(els.some(e=>e.id!=='wreveal'&&isOpen(e))||!!document.querySelector('.fview.show'));
+  };
+  const mo=new MutationObserver(sync);
+  els.forEach(e=>mo.observe(e,{attributes:true,attributeFilter:['hidden','class']}));
+  document.querySelectorAll('.fview').forEach(f=>mo.observe(f,{attributes:true,attributeFilter:['class']}));
+  mo.observe(document.body,{attributes:true,attributeFilter:['class']});
+})();
 
 /* ============ CONTRACT MATCH (Claude via /api/match) ============ */
 const mBox=$('#matchbox'),mForm=$('#mForm'),mJd=$('#mJd'),mGo=$('#mGo'),mOut=$('#mOut');
@@ -4844,7 +4883,7 @@ function mClose(){mBox.hidden=true;document.documentElement.classList.remove('br
 $('#mClose').addEventListener('click',mClose);
 mBox.addEventListener('click',e=>{if(e.target===mBox)mClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!mBox.hidden)mClose()});
-document.addEventListener('click',e=>{const t=e.target.closest('[data-match]');if(t){e.preventDefault();mOpen()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-match]');if(t){e.preventDefault();vtGo(mOpen,t,mBox.querySelector('.mpanel'))}});
 function mText(b){
   return [`${b.role} at ${b.company}: fit ${b.fit}`,b.verdict,'',...b.requirements.map(r=>`[${r.status}] ${r.requirement}: ${r.evidence}`),
     ...(b.hard_gates.length?['','Hard gates:',...b.hard_gates.map(g=>`- ${g}`)]:[]),
@@ -4958,6 +4997,15 @@ const sfx=(()=>{
     const b=$('#sndBtn');if(b){b.innerHTML='snd <b>'+(v?'on':'off')+'</b>';b.setAttribute('aria-pressed',String(v))}
     try{localStorage.setItem('fatih.snd',v?'1':'0')}catch(_){}
   }
+  /* a short synthesized blip for UI moments; silent unless the ambient feed is on */
+  api.blip=(freq=880,dur=.07,type='square',vol=.025,glide=0)=>{
+    if(!on||!ac)return;
+    const t0=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,t0);
+    if(glide)o.frequency.exponentialRampToValueAtTime(Math.max(40,freq*glide),t0+dur);
+    g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.02);
+  };
   return api;
 })();
 $('#sndBtn').addEventListener('click',()=>sfx.toggle());
@@ -5233,7 +5281,7 @@ function pmReel(){if(!plEl.hidden)plainClose();dirScene='postmortem';dirOpen();d
 $('#pmClose').addEventListener('click',pmClose);
 pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-postmortem]')){e.preventDefault();pmOpen()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-postmortem]');if(t){e.preventDefault();vtGo(pmOpen,t,pmEl.querySelector('.pm'))}});
 if(/[?&]postmortem/.test(location.search)){endBoot();pmReel();pmOpen()}
 
 /* ============ PALETTE ============ */
