@@ -1305,6 +1305,21 @@ html.plainlock #matchbox{z-index:9700}
 .xr-card li.on::marker{color:#00FF9C}
 .xr-card li.done{color:#9FB3D1}
 .xr-card .hint{display:block;margin-top:6px;font-size:11px;color:var(--dim)}
+
+/* ---- commit skyline, city mode: the towers rise from the real street ---- */
+body.sk-city>*:not(#skyline):not(#city):not(#deck):not(script){visibility:hidden}
+body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
+#skyline.city{background:linear-gradient(180deg,rgba(3,5,9,.94) 0%,rgba(3,5,9,.78) 26%,rgba(3,5,9,0) 46%);backdrop-filter:none;overflow:hidden}
+#skyline.city #skSvg{display:none}
+#skyline.city .sk-foot{position:fixed;left:24px;right:24px;bottom:58px;background:rgba(5,7,12,.82);border:1px solid var(--line);padding:8px 12px;z-index:2}
+#skyline.city .sk-stats{margin:14px 0 0}
+.sk-labels{position:fixed;inset:0;pointer-events:none;z-index:1}
+.sk-flag{position:absolute;transform:translate(-50%,-100%);font:10px 'Share Tech Mono',monospace;letter-spacing:.08em;color:var(--fg);white-space:nowrap;padding:2px 6px;background:rgba(5,7,12,.85);border:1px solid rgba(255,46,136,.6);opacity:0;transition:opacity .4s,transform .4s}
+.sk-flag::after{content:'';position:absolute;left:50%;top:100%;width:1px;height:10px;background:rgba(255,46,136,.6)}
+.sk-flag.on{opacity:1;transform:translate(-50%,calc(-100% - 6px))}
+#skSvg .flag{font-size:8px;fill:var(--fg)}
+#skSvg .flagl{stroke:rgba(255,46,136,.6)}
+@media (max-width:700px){#skSvg .flag{display:none}}
 </style>
 </head>
 <body class="crt">
@@ -1813,12 +1828,13 @@ html.plainlock #matchbox{z-index:9700}
   <div class="sk-wrap">
     <div class="sk-head">
       <div><div class="k">COMMIT SKYLINE // LOGISTICS PLATFORM</div><h3 id="skTitle">Built from <span id="skCount">0</span> commits.</h3>
-        <p>Each tower is one week of work on the logistics platform, from the first commit in March 2026 to this week. One lit window is two commits: cyan for backend, pink for web, yellow for mobile. Counted: non-merge commits by Fatih on the main development branches. Only weekly totals are published.</p></div>
+        <p>Each tower is one week of work on the logistics platform, from the first commit in March 2026 to this week. One lit window is <span id="skPer">two commits</span>: cyan for backend, pink for web, yellow for mobile. Counted: non-merge commits by Fatih on the main development branches. Only weekly totals are published.</p></div>
       <div class="sk-btns"><button type="button" id="skReplay">↻ REPLAY</button><button type="button" id="skClose">✕ CLOSE [ESC]</button></div>
     </div>
     <div class="sk-stats" id="skStats"></div>
     <svg id="skSvg" role="img" aria-label="Commits per week as a skyline"></svg>
-    <div class="sk-foot"><span class="sk-card" id="skCard" aria-live="polite">Hover a tower for its week.</span><span class="sk-legend"><span><i style="background:#00F0FF"></i>backend</span><span><i style="background:#FF2E88"></i>web</span><span><i style="background:#F5D90A"></i>mobile</span></span></div>
+    <div class="sk-labels" id="skLabels" aria-hidden="true"></div>
+    <div class="sk-foot"><span class="sk-card" id="skCard" aria-live="polite">Hover a tower (or use ← →) for its week.</span><span class="sk-legend"><span><i style="background:#00F0FF"></i>backend</span><span><i style="background:#FF2E88"></i>web</span><span><i style="background:#F5D90A"></i>mobile</span></span></div>
   </div>
 </div>
 <div id="pmbox" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle">
@@ -3133,6 +3149,7 @@ function drawPeds(t){
 }
 let lastStreak=0;
 let cityHold=false;   // set while an opaque overlay covers the canvas: nothing to paint behind it
+let skCity=false;     // commit skyline in city mode: the front row steps aside for the commit towers
 function city(t){
   if(!reduced)requestAnimationFrame(city);
   if(document.hidden||cityHold)return;
@@ -3162,6 +3179,7 @@ function city(t){
   });
   layers.forEach((b,L)=>{
     if(L===2)drawMono(t);                   // the monorail threads between mid and front towers
+    if(L===2&&skCity){drawCommitTowers(t);return}
     const par=Math.round(mxr*(L+1)*5);
     const yoff=-Math.min(Math.round(scrollY/PXS*0.02*(L*0.5+0.35)),Math.round(H*0.05));
     ctx.drawImage(bakeC[L],-par,yoff);
@@ -3274,8 +3292,7 @@ function city(t){
   });
   ctx.fillStyle='rgba(0,0,0,.3)';
   for(let ry=roadTop+6;ry<roadBot;ry+=5)ctx.fillRect(Math.round(Math.sin(ry+t*0.001)*3),ry,W,1);
-  drawIncident(t);
-  drawHack(t);
+  if(!skCity){drawIncident(t);drawHack(t)}
   /* traffic sprites — far lane behind, near lane in front */
   cars.slice().sort((a2,b2)=>a2.y-b2.y).forEach(c=>{
     const fx=Math.round(c.x),d=c.dir,hw=Math.round(c.w/2);
@@ -5112,6 +5129,10 @@ function skBuild(animate){
     g.addEventListener('mouseenter',show);g.addEventListener('focus',show);g.addEventListener('click',show);
     return {inner,x,h,tot};
   });
+  /* milestones, same rules as the city version */
+  skMilestones().forEach(([i,label],n)=>{const t=towers[i];if(!t)return;const ty=GROUND-t.h-6-(n%2?12:0);
+    sv3('line',{x1:t.x+TW/2,x2:t.x+TW/2,y1:ty+2,y2:GROUND-t.h-1,class:'flagl'});
+    sv3('text',{x:t.x+TW/2,y:ty,class:'flag','text-anchor':'middle'}).textContent=label});
   /* stats */
   const tots=towers.map(t=>t.tot),best=tots.indexOf(Math.max(...tots)),active=tots.filter(Boolean).length;
   $('#skStats').innerHTML=[[d.total.toLocaleString('en'),'COMMITS'],[N,'WEEKS'],[`${active}/${N}`,'WEEKS WITH COMMITS'],[Math.round(d.total/N),'AVERAGE PER WEEK'],[tots[best],`BUSIEST · ${skFmt(d.weeks[best].week).toUpperCase()}`]]
@@ -5130,6 +5151,98 @@ function skBuild(animate){
   };
   skRaf=requestAnimationFrame(tick);
 }
+
+/* ---- commit skyline, city mode: drawn into the city canvas at street level ---- */
+let skT0=0,skHover=-1,skRisen=-1,skMarks=[];
+function skGeom(){
+  const d=SKD,N=d.weeks.length,x0=Math.round(W*.05),slot=Math.max(6,Math.floor(W*.9/N)),tw=Math.max(4,slot-3);
+  const base=H-32-deckOff,hMax=Math.round(base*.5),cols=tw>=10?3:tw>=7?2:1,rowsMax=Math.max(4,Math.floor((hMax-5)/3));
+  const tots=d.weeks.map(w=>d.groups.reduce((a,g)=>a+w[g],0)),max=Math.max(...tots),per=Math.max(1,Math.ceil(max/(rowsMax*cols)));
+  return {N,x0,slot,tw,base,cols,per,tots};
+}
+function skHeight(G,i){const w=SKD.weeks[i],n=SKD.groups.reduce((a,g)=>a+Math.ceil(w[g]/G.per),0);return n?Math.ceil(n/G.cols)*3+4:1}
+function drawCommitTowers(t){
+  if(!SKD)return;
+  const G=skGeom(),d=SKD;
+  ctx.fillStyle='rgba(4,6,11,.5)';ctx.fillRect(0,0,W,G.base);   // the old skyline steps back so the new one reads
+  for(let i=0;i<G.N;i++){
+    const k=Math.min(1,Math.max(0,(t-skT0-i*150)/620)),e=1-Math.pow(1-k,3);
+    if(k>0&&i>skRisen){skRisen=i;sfx.blip(180+Math.min(900,G.tots[i]*3),.06,'triangle',.02)}
+    if(k<=0)continue;
+    const x=G.x0+i*G.slot,full=skHeight(G,i),h=Math.max(1,Math.round(full*e)),top=G.base-h;
+    ctx.fillStyle=TOD.shades[2];ctx.fillRect(x,top,G.tw,h);
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(x+G.tw-2,top,2,h);
+    ctx.fillStyle=TOD.rim[1];ctx.fillRect(x,top,G.tw,1);
+    const w=d.weeks[i];let n=0;
+    for(const g of d.groups){
+      const c=SK_COL[g],m=Math.ceil(w[g]/G.per);
+      for(let q=0;q<m;q++,n++){
+        const row=Math.floor(n/G.cols),col=n%G.cols,wy=G.base-4-row*3;
+        if(wy<top+2)continue;
+        if(((t+i*977+n*131)%9000)<70)continue;          // the odd window blinks, like the rest of the city
+        ctx.fillStyle=c+'33';ctx.fillRect(x+1+col*3,wy-1,3,3);
+        ctx.fillStyle=c;ctx.fillRect(x+2+col*3,wy,1,2);
+      }
+    }
+    if(i===skHover){ctx.strokeStyle='rgba(230,240,255,.85)';ctx.lineWidth=1;ctx.strokeRect(x-.5,top-.5,G.tw+1,h+1)}
+    if(k===1&&G.tots[i]===Math.max(...G.tots)&&(t%1200)<600){ctx.fillStyle='#FF3B3B';ctx.fillRect(x+Math.floor(G.tw/2),top-2,1,1)}
+  }
+}
+/* milestones come from the data only: firsts, round numbers, the busiest week, this week */
+function skMilestones(){
+  const d=SKD,tots=d.weeks.map(w=>d.groups.reduce((a,g)=>a+w[g],0)),out=[];
+  out.push([0,'first commit']);
+  const fm=d.weeks.findIndex(w=>(w.mobile||0)>0);if(fm>0)out.push([fm,'first mobile commit']);
+  let cum=0;const marks=[1000,2000];
+  tots.forEach((v,i)=>{const before=cum;cum+=v;marks.forEach(m=>{if(before<m&&cum>=m)out.push([i,`${m.toLocaleString('en')}th commit`])})});
+  const best=tots.indexOf(Math.max(...tots));out.push([best,`busiest week · ${tots[best]}`]);
+  out.push([d.weeks.length-1,'this week']);
+  /* one flag per tower: merge labels that land on the same week */
+  const by=new Map();out.forEach(([i,l])=>by.set(i,by.has(i)?by.get(i)+' · '+l:l));
+  return [...by.entries()].sort((a,b)=>a[0]-b[0]);
+}
+function skPlaceFlags(){
+  const box=$('#skLabels');box.innerHTML='';
+  if(!skCity)return;
+  const G=skGeom(),sc=innerWidth/W,syc=innerHeight/H;
+  skMarks=skMilestones().map(([i,label],n)=>{
+    const f=document.createElement('div');f.className='sk-flag';f.textContent=label;
+    const top=(G.base-skHeight(G,i))*syc-(n%2?26:8);
+    f.style.left=((G.x0+i*G.slot+G.tw/2)*sc)+'px';f.style.top=top+'px';
+    box.appendChild(f);
+    setTimeout(()=>f.classList.add('on'),reduced?0:i*150+700);
+    return f;
+  });
+}
+function skCityStart(){
+  skCity=true;document.body.classList.add('sk-city');skEl.classList.add('city');
+  skT0=performance.now();skRisen=-1;skHover=-1;
+  const G=skGeom();$('#skPer').textContent=G.per===1?'one commit':`${G.per} commits`;
+  skPlaceFlags();
+  /* the title counts up with the towers */
+  const cnt=$('#skCount'),tots=G.tots;let run=0;const cum=tots.map(v=>run+=v);
+  const tick=now=>{const el=now-skT0;let shown=0;tots.forEach((v,i)=>{const k=Math.min(1,Math.max(0,(el-i*150)/620));if(k>0)shown=cum[i]-(1-(1-Math.pow(1-k,3)))*v});
+    cnt.textContent=Math.round(shown).toLocaleString('en');if(el<tots.length*150+620)skRaf=requestAnimationFrame(tick);else cnt.textContent=SKD.total.toLocaleString('en')};
+  skRaf=requestAnimationFrame(tick);
+}
+function skCityStop(){skCity=false;document.body.classList.remove('sk-city');skEl.classList.remove('city');$('#skLabels').innerHTML='';$('#skPer').textContent='two commits'}
+function skCardFor(i){
+  const w=SKD.weeks[i],tot=SKD.groups.reduce((a,g)=>a+w[g],0);
+  skCard.textContent=`Week of ${skFmt(w.week)}: ${tot} commits${tot?` (${SKD.groups.map(g=>`${g} ${w[g]}`).join(', ')})`:', a quiet week'}.`;
+}
+skEl.addEventListener('pointermove',e=>{
+  if(!skCity||e.clientY<innerHeight*.42)return;
+  const G=skGeom(),ux=e.clientX/(innerWidth/W),i=Math.floor((ux-G.x0)/G.slot);
+  if(i>=0&&i<G.N&&i!==skHover){skHover=i;skCardFor(i)}
+});
+addEventListener('keydown',e=>{
+  if(skEl.hidden||!SKD||(e.key!=='ArrowLeft'&&e.key!=='ArrowRight'))return;
+  e.preventDefault();const N=SKD.weeks.length;
+  skHover=skHover<0?N-1:Math.max(0,Math.min(N-1,skHover+(e.key==='ArrowRight'?1:-1)));skCardFor(skHover);
+  if(!skCity){skSvg.querySelectorAll('.tw.on').forEach(n=>n.classList.remove('on'));const g=skSvg.querySelectorAll('.tw')[skHover];if(g)g.classList.add('on')}
+});
+addEventListener('resize',()=>{if(skCity)skPlaceFlags()});
+
 async function skOpen(){
   if(!skEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
@@ -5138,11 +5251,13 @@ async function skOpen(){
   if(!rfEl.hidden)rfClose();
   skEl.hidden=false;document.documentElement.classList.add('brlock');
   if(!SKD){try{SKD=await (await fetch('/lib/commit-skyline.json')).json()}catch(_){skCard.textContent='The commit data failed to load.';return}}
-  skBuild(true);setTimeout(()=>$('#skClose').focus(),60);
+  /* wide screens get the wild version: the towers rise out of the city itself */
+  if(innerWidth>=900&&!reduced){skBuild(false);skCityStart()}else skBuild(true);
+  setTimeout(()=>$('#skClose').focus(),60);
 }
-function skClose(){if(skEl.hidden)return;cancelAnimationFrame(skRaf);skEl.hidden=true;document.documentElement.classList.remove('brlock')}
+function skClose(){if(skEl.hidden)return;cancelAnimationFrame(skRaf);skCityStop();skEl.hidden=true;document.documentElement.classList.remove('brlock')}
 $('#skClose').addEventListener('click',skClose);
-$('#skReplay').addEventListener('click',()=>SKD&&skBuild(true));
+$('#skReplay').addEventListener('click',()=>{if(!SKD)return;if(skCity){cancelAnimationFrame(skRaf);skCityStart()}else skBuild(true)});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!skEl.hidden)skClose()});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-skyline]');if(t){e.preventDefault();vtGo(skOpen,t,skEl)}});
 
