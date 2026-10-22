@@ -795,7 +795,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
   font-size:9px;letter-spacing:.22em;color:var(--neon);text-shadow:0 0 8px var(--neon);
   white-space:nowrap;opacity:0;transition:opacity .2s;
 }
-#cursor.city .ret i{border-color:#FFB347}#cursor.city .label{color:#FFB347;text-shadow:0 0 8px #FFB347}
+#cursor.city .ret i{border-color:#FFB347}#cursor.city .label{color:#0B0F18;background:#FFB347;text-shadow:none;font:600 12px 'Geist',system-ui,sans-serif;letter-spacing:.02em;padding:3px 8px;border-radius:3px;white-space:nowrap}
 #cursor.hov{width:50px;height:50px}
 #cursor.hov .ret{transform:rotate(45deg)}
 #cursor.hov .ret i{width:11px;height:11px}
@@ -1310,66 +1310,102 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 #rfPlay:hover,#rfSpd:hover{background:rgba(157,78,221,.14)}
 
 /* ===== THE RUN: a guided route, the city as a menu, city cams between sections ===== */
-.runpick{margin:0 0 26px;max-width:960px}
-.runpick .hint{margin-top:10px}
-.runpick .rp-q{display:flex;gap:10px;align-items:baseline;font-size:12.5px;color:var(--fg);margin-bottom:10px}
-.runpick .rp-q b{color:var(--neon);font-weight:400;letter-spacing:.16em;font-size:11px;border:1px solid color-mix(in srgb,var(--neon) 55%,transparent);padding:2px 7px}
+/* Readability first: every surface below sits on an opaque panel, body copy is Geist at 14px+,
+   and the mono face is kept for short labels only. */
+.runpick{margin:0 0 26px;max-width:760px;background:rgba(6,8,14,.94);border:1px solid #26314A;border-left:3px solid var(--neon);padding:14px 16px 12px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+.runpick .rp-q{display:flex;gap:12px;align-items:center;font:500 15px/1.4 'Geist',system-ui,sans-serif;color:#EEF4FA;margin-bottom:12px}
+.runpick .rp-q b{color:var(--neon);font:400 11px 'Share Tech Mono',monospace;letter-spacing:.16em;border:1px solid color-mix(in srgb,var(--neon) 65%,transparent);padding:3px 8px;flex:none}
 .runpick .rp-opts{display:flex;gap:10px;flex-wrap:wrap}
-.runpick [data-route]{font:13px 'Share Tech Mono',monospace;color:var(--fg);background:rgba(10,13,22,.82);border:1px solid var(--line);padding:9px 16px 8px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:border-color .2s,background .2s,transform .2s var(--ease)}
-.runpick [data-route] small{font-size:10.5px;color:var(--dim);letter-spacing:.06em}
-.runpick [data-route]:hover,.runpick [data-route]:focus-visible{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 10%,rgba(10,13,22,.9));transform:translateY(-2px)}
-.runpick .hint{margin-top:12px}
-.rp-prog{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:12.5px}
+.runpick [data-route]{font:600 15px/1.25 'Geist',system-ui,sans-serif;color:#F2F6FA;background:#111829;border:1px solid #34405C;padding:11px 16px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;border-radius:4px;transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.runpick [data-route] small{font:400 12.5px 'Geist',system-ui,sans-serif;color:#A9B6CB}
+.runpick [data-route]:hover,.runpick [data-route]:focus-visible{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 14%,#111829);transform:translateY(-2px)}
+.runpick .hint{margin-top:12px;font:400 13px/1.5 'Geist',system-ui,sans-serif;color:#B7C3D6}
+.runpick .hint a{color:#FF7DB4;text-decoration:underline;text-underline-offset:3px}
+.rp-prog{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;font:400 14px 'Geist',system-ui,sans-serif;color:#E6EDF5}
 .rp-dots{display:flex;gap:5px}
-.rp-dots i{width:9px;height:9px;border:1px solid var(--neon);display:block}
+.rp-dots i{width:10px;height:10px;border:1px solid var(--neon);display:block;border-radius:2px}
 .rp-dots i.on{background:var(--neon);box-shadow:0 0 8px var(--neon)}
-.rp-prog .rp-next b{color:var(--fg);font-weight:400}
-.rp-prog button{font:12px 'Share Tech Mono',monospace;cursor:pointer;padding:6px 12px;border:1px solid var(--neon);color:var(--neon);background:rgba(10,13,22,.85)}
-.rp-prog button:hover{background:color-mix(in srgb,var(--neon) 14%,rgba(10,13,22,.9))}
-.rp-prog button.ghost{border-color:var(--line);color:var(--dim)}
-.rp-prog button.ghost:hover{color:var(--fg)}
-@media(max-width:760px){.runpick [data-route]{flex:1 1 100%}}
+.rp-prog .rp-next b{color:#fff;font-weight:600}
+.rp-prog button{font:600 14px 'Geist',system-ui,sans-serif;cursor:pointer;padding:8px 14px;border:1px solid var(--neon);color:#fff;background:var(--neon);border-radius:4px}
+.rp-prog button:hover{filter:brightness(1.12)}
+.rp-prog button.ghost{border-color:#34405C;color:#C9D4E3;background:transparent;font-weight:500}
+.rp-prog button.ghost:hover{color:#fff}
+@media(max-width:760px){.runpick [data-route]{flex:1 1 100%}.runpick{padding:12px}}
 
-/* city cams: a stretch of page with nothing on it but the city, and a caption */
+/* city cams: a stretch of page with nothing on it but the city, and a caption card */
 .cityband{height:36vh;min-height:210px;position:relative;display:flex;align-items:flex-end;pointer-events:none}
-.cityband .cb-cap{display:flex;flex-direction:column;gap:5px;font-size:11px;letter-spacing:.12em;color:var(--dim);padding:10px 14px;background:linear-gradient(90deg,rgba(5,6,10,.72),rgba(5,6,10,0));border-left:2px solid var(--neon);opacity:0;transform:translateX(-10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.cityband .cb-cap{display:flex;flex-direction:column;gap:6px;max-width:520px;font:400 14px/1.45 'Geist',system-ui,sans-serif;color:#DCE5EF;padding:12px 16px;background:rgba(6,8,14,.92);border:1px solid #26314A;border-left:3px solid var(--neon);opacity:0;transform:translateX(-10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .cityband.on .cb-cap{opacity:1;transform:none}
-.cityband .cb-cam{display:flex;align-items:center;gap:8px;color:var(--fg)}
+.cityband .cb-cam{display:flex;align-items:center;gap:8px;font:400 11px 'Share Tech Mono',monospace;letter-spacing:.14em;color:#AEBBD0}
 .cityband .cb-cam i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse 1.2s infinite}
-.cityband .cb-next b{color:var(--neon);font-weight:400}
+.cityband .cb-next b{color:#fff;font-weight:600}
 .cityband .cb-run:empty{display:none}
-.cityband .cb-run{color:var(--fg);letter-spacing:.06em;font-size:12px}
+.cityband .cb-run{color:#fff;font-weight:600;border-top:1px solid #26314A;padding-top:6px}
 .cityband::before,.cityband::after{content:"";position:absolute;width:22px;height:22px;border:1px solid rgba(214,228,240,.28);opacity:0;transition:opacity .6s}
 .cityband::before{top:10%;left:0;border-right:0;border-bottom:0}
 .cityband::after{top:10%;right:0;border-left:0;border-bottom:0}
 .cityband.on::before,.cityband.on::after{opacity:1}
-@media(max-width:760px){.cityband{height:24vh;min-height:150px}}
+@media(max-width:760px){.cityband{height:24vh;min-height:150px}.cityband .cb-cap{font-size:13.5px}}
 @media(prefers-reduced-motion:reduce){.cityband{height:14vh;min-height:90px}}
 
-/* the deck carries the route: progress, and a list one click away */
-#runseg{font:11px 'Share Tech Mono',monospace;color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--neon) 60%,transparent);padding:1px 8px;margin-left:12px;cursor:pointer;letter-spacing:.06em}
-#runseg b{color:var(--neon)}
-#runseg:hover{background:color-mix(in srgb,var(--neon) 14%,transparent)}
-#runseg.ping{animation:runping .9s var(--ease)}
-@keyframes runping{30%{box-shadow:0 0 0 4px color-mix(in srgb,var(--neon) 35%,transparent);background:color-mix(in srgb,var(--neon) 25%,transparent)}}
-#runpop{position:fixed;left:12px;bottom:44px;z-index:960;width:min(380px,calc(100vw - 24px));background:rgba(8,10,18,.97);border:1px solid var(--line);border-top:2px solid var(--neon);padding:14px 16px 12px;font-size:12px}
-#runpop h4{font:600 13px 'Chakra Petch',sans-serif;letter-spacing:.14em;margin-bottom:10px;display:flex;justify-content:space-between;color:var(--fg)}
-#runpop h4 span{color:var(--dim);font:11px 'Share Tech Mono',monospace}
-#runpop ol{list-style:none;display:flex;flex-direction:column;gap:2px}
-#runpop li button{width:100%;text-align:left;font:12px 'Share Tech Mono',monospace;color:var(--fg);background:transparent;border:0;padding:7px 8px;cursor:pointer;display:grid;grid-template-columns:20px 1fr;gap:6px}
-#runpop li button:hover{background:rgba(255,255,255,.04)}
-#runpop li button small{grid-column:2;color:var(--dim);font-size:11px}
-#runpop li.done button{color:var(--dim)}
-#runpop li.done .ck{color:var(--green)}
-#runpop li.next button{background:color-mix(in srgb,var(--neon) 9%,transparent)}
-#runpop .rpf{display:flex;gap:10px;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--dim);font-size:11px}
-#runpop .rpf button{font:11px 'Share Tech Mono',monospace;background:none;border:0;color:var(--dim);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-#runpop .rpf button:hover{color:var(--fg)}
-#runtoast{position:fixed;left:12px;bottom:44px;z-index:9800;max-width:min(440px,calc(100vw - 24px));background:rgba(8,10,18,.96);border:1px solid var(--line);border-left:2px solid var(--neon);padding:10px 14px;font-size:12.5px;line-height:1.55;color:var(--fg);opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+/* the guide button: always in the same corner, says where you are and what is next */
+#guidepill{position:fixed;left:12px;bottom:44px;z-index:945;display:flex;align-items:center;gap:10px;max-width:min(440px,calc(100vw - 24px));padding:9px 14px 9px 10px;background:#0B1120;border:1px solid var(--neon);border-radius:6px;color:#F2F6FA;font:500 14px/1.3 'Geist',system-ui,sans-serif;cursor:pointer;text-align:left;box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 0 3px color-mix(in srgb,var(--neon) 18%,transparent)}
+#guidepill .gp-k{flex:none;font:600 11px 'Share Tech Mono',monospace;letter-spacing:.12em;color:#fff;background:var(--neon);padding:4px 7px;border-radius:3px}
+#guidepill .gp-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#guidepill:hover{background:color-mix(in srgb,var(--neon) 12%,#0B1120)}
+#guidepill.ping{animation:runping 1s var(--ease) 2}
+@keyframes runping{40%{box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 0 10px color-mix(in srgb,var(--neon) 35%,transparent)}}
+body.has-pill .gigcta{bottom:100px}
+@media(max-width:760px){
+  #guidepill{left:8px;bottom:40px;max-width:calc(50% - 12px);padding:8px 10px 8px 8px;font-size:13px}
+  body.has-pill #term.min{left:calc(50% + 4px)}
+  body.has-pill #term.min #termhead .tl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  #deck .dk-deco,#deck .rhs>:not(#wxseg){display:none}
+  #term{bottom:40px}
+}
+
+/* the guide: big, plain, opaque. The first thing a first-time visitor sees after the intro */
+#guide{position:fixed;inset:0;z-index:9750;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(3,5,9,.78);backdrop-filter:blur(3px)}
+#guide[hidden]{display:none}
+.gd-card{position:relative;width:min(640px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#0B1120;border:1px solid #2A3654;border-top:3px solid var(--neon);border-radius:8px;padding:26px 26px 20px;color:#E8EEF5;font:400 15px/1.55 'Geist',system-ui,sans-serif;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:gdIn .45s var(--ease)}
+@keyframes gdIn{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.gd-k{font:400 11px 'Share Tech Mono',monospace;letter-spacing:.18em;color:var(--neon);margin-bottom:8px}
+.gd-card h2{font:700 24px/1.25 'Geist',system-ui,sans-serif;color:#fff;margin:0 0 8px;letter-spacing:-.01em}
+.gd-card p{margin:0 0 16px;color:#C3CEDD}
+.gd-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid #34405C;background:#111829;color:#DCE5EF;font:400 18px/1 system-ui;cursor:pointer}
+.gd-x:hover{border-color:var(--neon);color:#fff}
+.gd-opts{display:flex;flex-direction:column;gap:10px;margin:4px 0 16px}
+.gd-opts button{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;min-height:60px;border-radius:6px;border:1px solid #34405C;background:#111829;color:#fff;cursor:pointer;font:600 17px/1.25 'Geist',system-ui,sans-serif;transition:border-color .2s,background .2s}
+.gd-opts button span{font:400 14px/1.4 'Geist',system-ui,sans-serif;color:#AEBBD0}
+.gd-opts button:hover,.gd-opts button:focus-visible{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 12%,#111829);outline:none}
+.gd-opts button.first{border-color:var(--neon)}
+.gd-steps{list-style:none;display:flex;flex-direction:column;gap:8px;margin:6px 0 16px;padding:0}
+.gd-steps li{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;padding:11px 12px;border:1px solid #26314A;border-radius:6px;background:#0E1526}
+.gd-steps li.next{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 9%,#0E1526)}
+.gd-steps li.done{opacity:.72}
+.gd-n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 14px 'Geist',sans-serif;border:1px solid #4A5878;color:#DCE5EF}
+.gd-steps li.next .gd-n{background:var(--neon);border-color:var(--neon);color:#fff}
+.gd-steps li.done .gd-n{background:#0E3B2C;border-color:var(--green);color:var(--green)}
+.gd-steps strong{display:block;color:#fff;font-weight:600;font-size:15px}
+.gd-steps small{display:block;color:#AEBBD0;font-size:13.5px;line-height:1.4}
+.gd-steps button,.gd-steps a.gd-btn{font:600 13.5px 'Geist',sans-serif;padding:8px 12px;border-radius:4px;border:1px solid #4A5878;background:#16203A;color:#fff;cursor:pointer;text-decoration:none;white-space:nowrap}
+.gd-steps li.next button,.gd-steps li.next a.gd-btn{background:var(--neon);border-color:var(--neon)}
+.gd-main{display:block;width:100%;padding:14px 18px;border-radius:6px;border:0;background:var(--neon);color:#fff;font:700 17px 'Geist',sans-serif;cursor:pointer;margin:0 0 14px}
+.gd-main:hover{filter:brightness(1.1)}
+.gd-quick{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:14px;padding-top:12px;border-top:1px solid #222C44;color:#AEBBD0}
+.gd-quick a{color:#FF8DBE;text-decoration:underline;text-underline-offset:3px}
+.gd-quick button{font:400 14px 'Geist',sans-serif;background:none;border:0;padding:0;color:#AEBBD0;text-decoration:underline;text-underline-offset:3px;cursor:pointer;margin-left:auto}
+.gd-quick button:hover{color:#fff}
+.gd-tip{font-size:13.5px;color:#AEBBD0;background:#0E1526;border:1px dashed #2A3654;border-radius:6px;padding:9px 12px;margin:0 0 14px}
+.gd-tip b{color:#fff;font-weight:600}
+@media(max-width:560px){.gd-card{padding:22px 16px 16px}.gd-card h2{font-size:21px}.gd-steps li{grid-template-columns:28px 1fr;}.gd-steps li>:last-child{grid-column:2;justify-self:start}}
+
+#runtoast{position:fixed;left:12px;bottom:96px;z-index:9800;max-width:min(460px,calc(100vw - 24px));background:#0B1120;border:1px solid #2A3654;border-left:3px solid var(--neon);border-radius:6px;padding:12px 14px;font:400 14.5px/1.5 'Geist',system-ui,sans-serif;color:#EEF4FA;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease);box-shadow:0 12px 36px rgba(0,0,0,.55)}
 #runtoast.on{opacity:1;transform:none;pointer-events:auto}
-#runtoast b.fx{color:var(--neon);font-weight:400;letter-spacing:.14em;font-size:11px;margin-right:8px}
-#runtoast button{font:12px 'Share Tech Mono',monospace;background:none;border:0;color:var(--neon);cursor:pointer;padding:0;margin-left:6px;text-decoration:underline;text-underline-offset:3px}
-@media(max-width:760px){#runpop,#runtoast{bottom:auto;top:84px}#runseg{margin-left:0}#runseg .rs-next{display:none}#runseg::after{content:' ▸'}}
+#runtoast b.fx{display:block;color:var(--neon);font:400 11px 'Share Tech Mono',monospace;letter-spacing:.16em;margin-bottom:3px}
+#runtoast button{font:600 13.5px 'Geist',sans-serif;background:var(--neon);border:0;border-radius:4px;color:#fff;cursor:pointer;padding:6px 11px;margin:8px 8px 0 0}
+#runtoast button.ghost{background:transparent;border:1px solid #34405C;color:#C9D4E3}
+@media(max-width:760px){#runtoast{bottom:auto;top:84px}}
 
 /* the glass between you and the city */
 #drops{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
@@ -1397,21 +1433,21 @@ html.plainlock #drops,html.plainlock #glass{display:none}
 #conn .cn.live path{opacity:.95;filter:drop-shadow(0 0 3px var(--neon))}
 .sgroup.scan{animation:sgscan 1.1s var(--ease)}
 @keyframes sgscan{0%{border-color:var(--neon);box-shadow:0 0 0 1px var(--neon),0 0 26px color-mix(in srgb,var(--neon) 45%,transparent)}100%{}}
-.impcount{position:absolute;left:10px;top:8px;z-index:5;font-size:9px;letter-spacing:.16em;color:var(--dim);pointer-events:none;background:rgba(7,10,18,.72);padding:3px 7px;border:1px solid var(--line)}
+.impcount{position:absolute;left:10px;top:8px;z-index:5;font:400 11px 'Share Tech Mono',monospace;letter-spacing:.12em;color:#DCE5EF;pointer-events:none;background:rgba(6,8,14,.92);padding:5px 9px;border:1px solid #2A3654}
 .impcount b{color:var(--neon);font-weight:400}
 .tapring{position:absolute;width:150px;height:150px;margin:-75px;border:1.5px solid var(--neon);border-radius:50%;pointer-events:none;z-index:6;animation:tapring .7s var(--ease) forwards}
 @keyframes tapring{from{transform:scale(.15);opacity:1}to{transform:scale(1);opacity:0}}
-.impltag{position:absolute;z-index:6;transform:translate(14px,-50%);--o:0;font-size:9px;letter-spacing:.16em;color:var(--fg);background:rgba(7,10,18,.85);border:1px solid var(--neon);padding:2px 6px;white-space:nowrap;pointer-events:none;animation:impltag 1.5s var(--ease) forwards}
+.impltag{position:absolute;z-index:6;transform:translate(14px,-50%);font:600 12px 'Geist',system-ui,sans-serif;letter-spacing:.04em;color:#fff;background:#0B1120;border:1px solid var(--neon);padding:2px 6px;white-space:nowrap;pointer-events:none;animation:impltag 1.5s var(--ease) forwards}
 .impltag.left{transform:translate(calc(-100% - 14px),-50%)}
 @keyframes impltag{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0}}
 
 /* refinery: the shift drill */
-.rf-op{position:absolute;right:8px;bottom:8px;z-index:4;max-width:min(430px,calc(100% - 16px));background:rgba(5,7,12,.95);border:1px solid rgba(255,59,59,.75);border-left:3px solid #FF3B3B;padding:10px 12px;font-size:12px;line-height:1.5;color:var(--fg);box-shadow:0 0 30px rgba(255,59,59,.18);animation:rfOpIn .35s var(--ease)}
+.rf-op{position:absolute;right:8px;bottom:8px;z-index:4;max-width:min(440px,calc(100% - 16px));background:#0B0F18;border:1px solid rgba(255,59,59,.8);border-left:3px solid #FF3B3B;border-radius:4px;padding:12px 14px;font:400 14px/1.5 'Geist',system-ui,sans-serif;color:var(--fg);box-shadow:0 0 30px rgba(255,59,59,.18);animation:rfOpIn .35s var(--ease)}
 @keyframes rfOpIn{from{opacity:0;transform:translateY(6px)}}
 .rf-op b{color:#FF3B3B;font-weight:400;letter-spacing:.14em;font-size:11px}
-.rf-op p{margin:4px 0 8px;color:#C9D6E6}
+.rf-op p{margin:5px 0 10px;color:#EEF2F7}
 .rf-op-b{display:flex;gap:8px;flex-wrap:wrap}
-.rf-op-b button{font:11px 'Share Tech Mono',monospace;padding:6px 10px;cursor:pointer;background:rgba(255,59,59,.12);color:#FFD0D0;border:1px solid rgba(255,59,59,.7)}
+.rf-op-b button{font:600 13px 'Geist',system-ui,sans-serif;padding:8px 12px;border-radius:4px;cursor:pointer;background:rgba(255,59,59,.12);color:#FFD0D0;border:1px solid rgba(255,59,59,.7)}
 .rf-op-b button[data-op=switch]:not(:disabled){background:rgba(0,255,156,.14);color:#B8FFE2;border-color:var(--green);animation:rfGo 1s ease-in-out infinite alternate}
 @keyframes rfGo{to{box-shadow:0 0 14px rgba(0,255,156,.45)}}
 .rf-op-b button:disabled{opacity:.45;cursor:default;animation:none}
@@ -1419,7 +1455,8 @@ html.plainlock #drops,html.plainlock #glass{display:none}
 #rfSvg g.running .eq{stroke:var(--green);fill:rgba(0,255,156,.12);filter:drop-shadow(0 0 6px rgba(0,255,156,.6))}
 #rfSvg g.stopped .eq{stroke:rgba(140,160,190,.4);fill:rgba(140,160,190,.04)}
 #rfSvg g.stopped{opacity:.55}
-.rf-report b{color:var(--fg);font-weight:400}
+.rf-report{font:400 14px/1.55 'Geist',system-ui,sans-serif!important;color:#E6EDF5!important}
+.rf-report b{color:#fff;font-weight:600}
 .rf-tr .whatif{fill:none;stroke:var(--green);stroke-width:1.6;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px rgba(0,255,156,.6))}
 .rf-report button{font:11px 'Share Tech Mono',monospace;margin-top:6px;display:block;background:none;border:1px solid var(--line);color:var(--cyan);padding:4px 8px;cursor:pointer}
 
@@ -1429,9 +1466,9 @@ html.plainlock #drops,html.plainlock #glass{display:none}
 @keyframes xbad{50%{transform:translateX(3px)}}
 #xrSvg .xf.xhint{animation:xhint 1s ease-in-out infinite alternate}
 @keyframes xhint{to{fill:rgba(0,240,255,.28);stroke:#00F0FF}}
-.xr-card .xq{display:block;color:var(--fg);margin-top:6px}
-.xr-card .xok{display:block;color:var(--green);margin-top:6px;font-size:12px}
-.xr-card .xno{display:block;color:#FF8A8A;margin-top:6px;font-size:12px}
+.xr-card .xq{display:block;color:#fff;margin-top:8px;font:500 15px/1.5 'Geist',system-ui,sans-serif}
+.xr-card .xok{display:block;color:#5CFFB8;margin-top:8px;font:400 14px/1.5 'Geist',system-ui,sans-serif}
+.xr-card .xno{display:block;color:#FF9A9A;margin-top:8px;font:400 14px/1.5 'Geist',system-ui,sans-serif}
 .xr-card .xr-inline{font:11px 'Share Tech Mono',monospace;background:none;border:1px solid var(--line);color:var(--cyan);padding:4px 8px;cursor:pointer;margin-top:6px}
 
 /* city cams push in a little, like a camera finding its shot */
@@ -1440,6 +1477,17 @@ html.citycam #city{transform:scale(1.045)}
 @media(prefers-reduced-motion:reduce){html.citycam #city{transform:none}}
 .banchor.on{animation:implpop .7s var(--ease)}
 @keyframes implpop{0%{transform:scale(2.6);box-shadow:0 0 0 6px color-mix(in srgb,var(--neon) 40%,transparent),0 0 24px var(--neon)}100%{transform:none}}
+
+#cityChips{position:fixed;inset:0;z-index:1;pointer-events:none}
+.cchip{position:absolute;left:0;top:0;opacity:0;background:#FFB347;color:#0B0F18;font:600 13px/1 'Geist',system-ui,sans-serif;padding:6px 9px;border-radius:4px;white-space:nowrap;box-shadow:0 3px 14px rgba(0,0,0,.55);transition:opacity .2s}
+.cchip::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:#FFB347}
+html.guideopen body.crt::before,html.guideopen body.crt::after{display:none}
+
+/* the two instructions that make a section work are readable chips, not dim captions */
+.carbox .drag{left:50%;right:auto;transform:translateX(-50%);bottom:12px;white-space:nowrap;padding:7px 12px;background:rgba(6,8,14,.88);border:1px solid #2A3654;border-radius:4px;color:#EEF4FA;font:500 13px 'Geist',system-ui,sans-serif;letter-spacing:.02em}
+.carbox .drag b{color:var(--neon);font-weight:600}
+.carbox .rpm{bottom:60px}
+.scanprompt .lbl{font:500 13px 'Geist',system-ui,sans-serif;letter-spacing:.02em;color:#EEF4FA;text-shadow:none;background:rgba(6,8,14,.88);border:1px solid #2A3654;border-radius:4px;padding:6px 10px}
 </style>
 </head>
 <body class="crt">
@@ -1470,7 +1518,7 @@ html.citycam #city{transform:scale(1.045)}
     <div id="blnote"></div>
   </div>
   <div id="bootlines"></div>
-  <button class="skip" id="skipBoot">skip [esc]</button></div>
+  <button class="skip" id="skipBoot">Skip intro ▸</button></div>
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
     <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — dealt at random each visit; override here">
@@ -1508,7 +1556,7 @@ html.citycam #city{transform:scale(1.045)}
       <button type="button" data-route="engineer">I'm an engineer<small>5 stops · the systems</small></button>
       <button type="button" data-route="explore">Just looking<small>7 stops · the full run</small></button>
     </div>
-    <p class="hint">▸ No time? <a href="?plain" data-plain>Read the plain version</a>, <a href="#match" data-match>paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>. The city is clickable too.</p>
+    <p class="hint">No time? <a href="?plain" data-plain>Read the one-page summary</a>, <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">download the CV</a>, or <a href="#match" data-match>check a job post</a> against my profile.</p>
   </div>
   <div class="row2">
     <div class="codeblock hud-frame">
@@ -1534,7 +1582,7 @@ html.citycam #city{transform:scale(1.045)}
       <div class="vig"></div>
       <div class="hudtxt">◢ UNIT <b>FE-08</b> · "QUADRA STACK" · LIVE RENDER ◣</div>
       <div class="rpm" id="rpm">RPM <b>0000</b></div>
-      <div class="drag">PRESS AND HOLD TO REV · SCROLL TO ROTATE</div>
+      <div class="drag"><b>Press and hold</b> the car to rev it · scroll to turn it</div>
     </div>
     <div class="spec hud-frame">
       <h4>SPEC SHEET</h4>
@@ -1997,11 +2045,12 @@ html.citycam #city{transform:scale(1.045)}
   <div class="dnote">the ICE-wall breach has always scrubbed with your scroll — that one's on you</div>
 </div>
 <div id="deck">
-  <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span><button type="button" id="runseg" hidden aria-haspopup="dialog" aria-controls="runpop"></button></span>
+  <span class="dk-l"><span class="dk-deco">[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; </span><span id="buildseg">breaching… <b>0%</b></span></span>
   <span class="rhs"><span id="wxseg" hidden title="live conditions in İzmir (Open-Meteo); real rain over İzmir means rain in the city">İZMİR <b>--°C</b></span><span id="payseg" hidden title="3D models still streaming in the background">PAYLOAD <b>0%</b></span><span id="llmseg" hidden title="real token usage and API cost of your FIXER calls this session">LLM <b>0 tok</b></span><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
 </div>
 
-<div id="runpop" hidden role="dialog" aria-label="Your route through the site"></div>
+<button type="button" id="guidepill" hidden aria-haspopup="dialog" aria-controls="guide"></button>
+<div id="guide" hidden role="dialog" aria-modal="true" aria-labelledby="gdTitle"><div class="gd-card" id="gdCard"></div></div>
 <div id="runtoast" role="status" aria-live="polite"></div>
 <canvas id="glass" aria-hidden="true"></canvas>
 
@@ -2162,7 +2211,8 @@ function typeLine(){
     if(ci>=plain.length){clearInterval(iv);div.innerHTML=html;bi++;setTimeout(typeLine,110)}
   },speed);
 }
-function endBoot(){if(boot.classList.contains('done'))return;boot.classList.add('done');startHeroTyping();try{localStorage.setItem('fatih.seen',String(Date.now()))}catch(_){}}
+function endBoot(){if(boot.classList.contains('done'))return;boot.classList.add('done');startHeroTyping();try{localStorage.setItem('fatih.seen',String(Date.now()))}catch(_){}
+  setTimeout(()=>{if(RUN_READY)guideWelcome()},700)}   // a first-time visitor gets asked where they want to go
 $('#skipBoot').addEventListener('click',endBoot);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!boot.classList.contains('done'))endBoot()});
 if(/skipboot/.test(location.search))setTimeout(()=>{if(!boot.classList.contains('done'))endBoot()},300);
@@ -6167,24 +6217,24 @@ mForm.addEventListener('submit',async e=>{
    (revs the car, finds the implants, takes the shift), never for scrolling past it. Progress is
    a per-browser convenience in localStorage; the page reads the same without it. */
 const RUN_STOPS={
-  plain:{t:'Read the plain version',d:'Everything on one calm page, about two minutes.',go:()=>plainOpen()},
-  match:{t:'Check a job post against my profile',d:'Requirement by requirement, gaps included.',go:()=>mOpen()},
-  contact:{t:'Get my CV or write to me',d:'Email, LinkedIn or the PDF.',go:()=>openContact()},
-  garage:{t:'Rev the engine in the garage',d:'Press and hold the car.',go:()=>runScroll('#garage')},
-  loadout:{t:'Bring the seven implants online',d:'Run the scan lens over the body.',go:()=>runScroll('#implants')},
-  runlog:{t:'Walk the runlog',d:'Point at a commit to see where it happened.',go:()=>runScroll('#runlog')},
-  breach:{t:'Get through the ICE wall',d:'Scroll through it, or solve the breach.',go:()=>runScroll('#icewall')},
-  file:{t:'Open a case file',d:'Six projects, with the numbers.',go:()=>{const a=document.querySelector('[data-fopen]');if(a)a.click()}},
-  refinery:{t:'Take a shift in the control room',d:'A feed pump is failing. Catch it.',go:()=>rfOpen()},
-  xray:{t:'Route a request through the architecture',d:'Pick the floors in the right order.',go:()=>{xrOpen();setTimeout(xrPuzzleStart,250)}},
-  skyline:{t:'See the commit skyline',d:'Every week of the logistics build as a tower.',go:()=>skOpen()},
-  evals:{t:'Read the eval report',d:'How the two agents on this site are tested.',go:()=>{runDone('evals');location.href='/evals'}},
-  fixer:{t:'Ask FIXER a hard question',d:'It knows my gaps too.',go:()=>window._openDock&&window._openDock()},
+  plain:{t:'Read the one-page summary',d:'Experience, projects and skills in plain language.',go:()=>plainOpen()},
+  match:{t:'Check your job post against my profile',d:'Paste it and get an honest, line-by-line fit check, gaps included.',go:()=>mOpen()},
+  contact:{t:'Get my CV or write to me',d:'Download the PDF, or email me directly.',go:()=>openContact()},
+  garage:{t:'Rev the engine in the garage',d:'My tech stack, built as a car. Press and hold it.',go:()=>runScroll('#garage')},
+  loadout:{t:'Wake the seven implants',d:'My skills, wired to a body. Move the scanner over it, or tap it on a phone.',go:()=>runScroll('#implants')},
+  runlog:{t:'Walk the runlog',d:'Where I have worked. Point at a commit, or read down to the first one.',go:()=>runScroll('#runlog')},
+  breach:{t:'Get through the ICE wall',d:'Keep scrolling, or solve the little hacking puzzle.',go:()=>runScroll('#icewall')},
+  file:{t:'Open a case file',d:'Six projects, with the details and the numbers.',go:()=>{const a=document.querySelector('[data-fopen]');if(a)a.click()}},
+  refinery:{t:'Take a shift in the control room',d:'A pump is failing on a simulated refinery unit. You make the call.',go:()=>rfOpen()},
+  xray:{t:'Route a request through the architecture',d:'Pick the floors of my logistics platform in the right order.',go:()=>{xrOpen();setTimeout(xrPuzzleStart,250)}},
+  skyline:{t:'See the commit skyline',d:'Every week of the logistics build, drawn as a tower.',go:()=>skOpen()},
+  evals:{t:'Read the eval report',d:'How the two AI agents on this site are tested.',go:()=>{runDone('evals');location.href='/evals'}},
+  fixer:{t:'Ask FIXER a hard question',d:'The AI assistant in the terminal. It knows my gaps too.',go:()=>window._openDock&&window._openDock()},
 };
 const RUN_ROUTES={
-  hiring:{name:'HIRING',stops:['plain','match','contact']},
-  engineer:{name:'ENGINEER',stops:['xray','refinery','skyline','evals','fixer']},
-  explore:{name:'THE FULL RUN',stops:['garage','loadout','runlog','breach','file','refinery','xray']},
+  hiring:{name:'HIRING',label:'hiring',stops:['plain','match','contact']},
+  engineer:{name:'ENGINEER',label:'engineer',stops:['xray','refinery','skyline','evals','fixer']},
+  explore:{name:'THE FULL TOUR',label:'the full tour',stops:['garage','loadout','runlog','breach','file','refinery','xray']},
 };
 var RUNST=null;   // var, not let: stop hooks elsewhere may fire before this block has run
 function runLoad(){
@@ -6207,78 +6257,131 @@ function runDone(id){
   if(!r||!r.stops.includes(id))return;
   const nx=runNext();
   if(!nx){
-    runToast(`That's the route done, and the whole picture. If it fits, let's talk. <button type="button" data-run-contact>get in touch ▸</button>`,9000);
+    runToast(`<b class="fx">FIXER</b>✓ That's the whole route, thank you for walking it. If what you saw fits, let's talk.<br><button type="button" data-run-contact>Get in touch ▸</button>`,10000);
     setTimeout(()=>glassCrash('route'),1600);
     return;
   }
-  const n=RUN_STOPS[nx];
-  runToast(`✓ ${RUN_STOPS[id].t}. Next: ${n.t.charAt(0).toLowerCase()+n.t.slice(1)}. <button type="button" data-run-go="${nx}">go ▸</button>`);
+  const i=r.stops.indexOf(nx)+1;
+  runToast(`<b class="fx">FIXER · STEP ${i-1} OF ${r.stops.length} DONE</b>✓ ${RUN_STOPS[id].t}.<br>Next: <b>${RUN_STOPS[nx].t}</b>.<br><button type="button" data-run-go="${nx}">Go to step ${i} ▸</button><button type="button" class="ghost" data-guide>See all steps</button>`,9000);
 }
 let runToastT=0;
 function runToast(html,ms=6500){
-  const el=document.getElementById('runtoast');if(!el)return;
-  if(!document.getElementById('runpop').hidden)return;
-  el.innerHTML=`<b class="fx">FIXER</b>${html}`;el.classList.add('on');
+  const el=document.getElementById('runtoast');if(!el||!document.getElementById('guide').hidden)return;
+  el.innerHTML=html;el.classList.add('on');
   clearTimeout(runToastT);runToastT=setTimeout(()=>el.classList.remove('on'),ms);
   sfx.blip(1320,.05,'square',.014,1.3);
 }
+const lc1=t=>t.charAt(0).toLowerCase()+t.slice(1);
 function runUI(ping){
   const s=runLoad(),r=RUN_ROUTES[s.route],nx=runNext();
-  const opts=document.getElementById('rpOpts'),line=document.getElementById('rpLine'),seg=document.getElementById('runseg');
-  if(!opts||!seg)return;
+  const opts=document.getElementById('rpOpts'),line=document.getElementById('rpLine'),pill=document.getElementById('guidepill');
+  if(!opts||!pill)return;
   if(!r){
     line.textContent="Who's asking? Pick a route and I'll walk you through.";
-    if(!opts.querySelector('[data-route]'))opts.innerHTML=Object.entries({hiring:["I'm hiring",'3 stops · about 2 min'],engineer:["I'm an engineer",'5 stops · the systems'],explore:['Just looking','7 stops · the full run']}).map(([k,[a,b]])=>`<button type="button" data-route="${k}">${a}<small>${b}</small></button>`).join('');
-    seg.hidden=true;
+    if(!opts.querySelector('[data-route]'))opts.innerHTML=Object.entries({hiring:["I'm hiring",'3 steps · about 2 min'],engineer:["I'm an engineer",'5 stops · the systems'],explore:['Just looking','7 stops · the full tour']}).map(([k,[a,b]])=>`<button type="button" data-route="${k}">${a}<small>${b}</small></button>`).join('');
+    pill.innerHTML='<span class="gp-k">GUIDE</span><span class="gp-t">Where to start?</span>';
   }else{
-    const n=r.stops.filter(k=>s.done.includes(k)).length;
-    line.textContent=nx?(n?`Route: ${r.name.toLowerCase()}. ${n} of ${r.stops.length} done.`:`Route: ${r.name.toLowerCase()}. Your progress stays in the bar at the bottom of the screen.`):`Route: ${r.name.toLowerCase()}. All ${r.stops.length} done. Thanks for the walk.`;
+    const n=r.stops.filter(k=>s.done.includes(k)).length,L=r.stops.length;
+    line.textContent=nx?`Your route: ${r.label}. ${n} of ${L} done.`:`Your route: ${r.label}. All ${L} done, thank you.`;
     opts.innerHTML=`<div class="rp-prog"><span class="rp-dots">${r.stops.map(k=>`<i class="${s.done.includes(k)?'on':''}" title="${fxEsc(RUN_STOPS[k].t)}"></i>`).join('')}</span>`+
-      (nx?`<span class="rp-next">Next: <b>${fxEsc(RUN_STOPS[nx].t)}</b></span><button type="button" data-run-go="${nx}">go ▸</button>`:`<button type="button" data-run-contact>get in touch ▸</button>`)+
-      `<button type="button" class="ghost" data-run-reset>change route</button></div>`;
-    seg.hidden=false;
-    seg.innerHTML=`RUN <b>${n}/${r.stops.length}</b>${nx?` <span class="rs-next">· ${fxEsc(RUN_STOPS[nx].t.toLowerCase())}</span>`:' ✓'}`;
-    if(ping){seg.classList.remove('ping');void seg.offsetWidth;seg.classList.add('ping')}
+      (nx?`<span class="rp-next">Next: <b>${fxEsc(RUN_STOPS[nx].t)}</b></span><button type="button" data-run-go="${nx}">Go ▸</button>`:`<button type="button" data-run-contact>Get in touch ▸</button>`)+
+      `<button type="button" class="ghost" data-guide>All steps</button><button type="button" class="ghost" data-run-reset>Change route</button></div>`;
+    pill.innerHTML=nx?`<span class="gp-k">${n}/${L}</span><span class="gp-t">Next: ${fxEsc(RUN_STOPS[nx].t)}</span>`:`<span class="gp-k">✓ ${L}/${L}</span><span class="gp-t">Route done · get in touch</span>`;
   }
+  pill.setAttribute('aria-label',r?`Your route, ${pill.textContent}. Open the guide.`:'Open the guide: where to start');
+  if(ping){pill.classList.remove('ping');void pill.offsetWidth;pill.classList.add('ping')}
   /* each city cam tells you if your next stop is behind it */
-  const BAND_STOPS={garage:['garage'],runlog:['loadout','runlog'],breach:['breach','file']};
+  const BAND_STOPS={garage:['garage'],runlog:['runlog'],breach:['breach','file']};
   document.querySelectorAll('.cityband').forEach(b=>{
     const c=b.querySelector('.cb-run');if(!c)return;
-    const hit=nx&&(BAND_STOPS[b.dataset.band]||[]).includes(nx)&&!(b.dataset.band==='runlog'&&nx==='loadout');
-    c.textContent=hit?`▸ your next stop: ${RUN_STOPS[nx].t.toLowerCase()}. ${RUN_STOPS[nx].d}`:'';
+    const hit=nx&&(BAND_STOPS[b.dataset.band]||[]).includes(nx);
+    c.textContent=hit?`▸ Your next step is right below: ${lc1(RUN_STOPS[nx].t)}. ${RUN_STOPS[nx].d}`:'';
   });
-  if(!document.getElementById('runpop').hidden)runPopRender();
+  if(!document.getElementById('guide').hidden)guideRender();
 }
-function runPopRender(){
-  const s=runLoad(),r=RUN_ROUTES[s.route],pop=document.getElementById('runpop');
-  if(!r){pop.hidden=true;return}
-  const nx=runNext(),n=r.stops.filter(k=>s.done.includes(k)).length;
-  pop.innerHTML=`<h4>YOUR ROUTE · ${r.name}<span>${n}/${r.stops.length}</span></h4><ol>`+
-    r.stops.map((k,i)=>{const d=s.done.includes(k);return `<li class="${d?'done':''} ${k===nx?'next':''}"><button type="button" data-run-go="${k}"><span class="ck">${d?'✓':i+1}</span><span>${fxEsc(RUN_STOPS[k].t)}</span><small>${fxEsc(RUN_STOPS[k].d)}</small></button></li>`}).join('')+
-    `</ol><div class="rpf"><span>The city is clickable: the blimp, the flare, the koi, the drones.</span><button type="button" data-run-reset>change route</button></div>`;
+/* ---- the guide: a welcome on the first visit, then the route with every step one tap away ---- */
+const GD_ROUTES={
+  hiring:{h:'Three steps, about two minutes.',p:'Each step opens on top of the city; close it and you are back here. I tick the steps off as you go.',
+    opt:["I'm hiring or recruiting",'The essentials in about two minutes: a one-page summary, a fit check for your job post, and my CV.']},
+  engineer:{h:'Five stops through the systems.',p:'The architecture of what I built, a live AI demo on a simulated refinery unit, and how the agents on this site are tested. Every stop is something you do, not just read.',
+    opt:["I'm an engineer",'The architecture of what I built, a live AI demo, and how the agents are tested.']},
+  explore:{h:'Seven stops through the city.',p:'Each stop is a small thing to do: rev a car, wake an implant, run a refinery shift. I tick them off as you go.',
+    opt:['Just looking around','A guided tour of the whole city in seven short stops.']},
+};
+let guideMode='welcome',guideFrom=null;
+const GD_QUICK=`<a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">Download CV (PDF)</a><a href="mailto:fatiherdogann099@gmail.com">Email</a><a href="https://linkedin.com/in/fatiherdogan09" target="_blank" rel="noopener">LinkedIn</a>`;
+function guideRender(){
+  const card=document.getElementById('gdCard'),s=runLoad(),r=RUN_ROUTES[s.route];
+  if(guideMode==='welcome'||!r){
+    guideMode='welcome';
+    card.innerHTML=`<button type="button" class="gd-x" data-gdclose aria-label="Close">✕</button>
+      <div class="gd-k">WELCOME TO FATIHERDOGAN.DEV</div>
+      <h2 id="gdTitle">Hi, I'm Fatih, a software engineer.</h2>
+      <p>This site is built like a small neon city, but you don't need to play to get the facts. Tell me why you're here and I'll show you the quickest way through.</p>
+      <div class="gd-opts">${Object.entries(GD_ROUTES).map(([k,v],i)=>`<button type="button" data-route="${k}"${i?'':' class="first"'}>${v.opt[0]}<span>${v.opt[1]}</span></button>`).join('')}</div>
+      <div class="gd-quick">${GD_QUICK}<button type="button" data-gdclose>Skip, I'll look around myself</button></div>`;
+    return;
+  }
+  const nx=runNext(),G=GD_ROUTES[s.route],L=r.stops.length;
+  const step=(k,i)=>{
+    const d=s.done.includes(k),st=RUN_STOPS[k];
+    const act=k==='contact'?`<span style="display:flex;gap:6px;flex-wrap:wrap"><a class="gd-btn" href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">CV</a><a class="gd-btn" href="mailto:fatiherdogann099@gmail.com">Email</a></span>`:`<button type="button" data-run-go="${k}">${d?'Again':'Open'}</button>`;
+    return `<li class="${d?'done':''}${k===nx?' next':''}"><span class="gd-n">${d?'✓':i+1}</span><div><strong>${fxEsc(st.t)}</strong><small>${fxEsc(st.d)}</small></div>${act}</li>`;
+  };
+  const main=nx?`<button type="button" class="gd-main" data-run-go="${nx}">${s.done.some(k=>r.stops.includes(k))?'Continue':'Start'} with step ${r.stops.indexOf(nx)+1}: ${fxEsc(lc1(RUN_STOPS[nx].t))} ▸</button>`
+    :`<button type="button" class="gd-main" data-run-contact>All done. Get in touch ▸</button>`;
+  card.innerHTML=`<button type="button" class="gd-x" data-gdclose aria-label="Close">✕</button>
+    <div class="gd-k">YOUR ROUTE · ${r.name} · ${r.stops.filter(k=>s.done.includes(k)).length}/${L} DONE</div>
+    <h2 id="gdTitle">${G.h}</h2><p>${G.p}</p>
+    <ol class="gd-steps">${r.stops.map(step).join('')}</ol>
+    ${main}
+    <div class="gd-tip">This guide waits in the <b>bottom-left corner</b> of the screen. Tap it any time to see where you are.${s.route!=='hiring'?' The city is clickable too: try the blimp, the refinery flare or a drone.':''}</div>
+    <div class="gd-quick">${GD_QUICK}<button type="button" data-run-reset>Change route</button></div>`;
+}
+function guideOpen(mode){
+  const g=document.getElementById('guide');
+  guideMode=mode||(runLoad().route?'route':'welcome');
+  guideFrom=document.activeElement;
+  document.getElementById('runtoast').classList.remove('on');
+  guideRender();g.hidden=false;document.documentElement.classList.add('guideopen');
+  setTimeout(()=>{const f=g.querySelector('.gd-opts button,.gd-main');if(f)f.focus()},60);
+}
+function guideClose(){
+  const g=document.getElementById('guide');if(g.hidden)return;
+  g.hidden=true;document.documentElement.classList.remove('guideopen');try{localStorage.setItem('fatih.welcome','1')}catch(_){}
+  if(guideFrom&&guideFrom.focus&&document.contains(guideFrom))guideFrom.focus({preventScroll:true});
+}
+/* first visit: right after the intro, ask. Never over a shared link, the plain view or a dialog */
+function guideWelcome(){
+  let seen=null;try{seen=localStorage.getItem('fatih.welcome')}catch(_){}
+  if(seen||runLoad().route)return;
+  if(/[?&](plain|postmortem|for)\b/.test(location.search)||/^#brief=/.test(location.hash))return;
+  if(document.querySelector('#plain:not([hidden]),#matchbox:not([hidden]),#xray:not([hidden]),#refinery:not([hidden]),#skyline:not([hidden]),#pmbox:not([hidden]),.fview.show'))return;
+  guideOpen('welcome');
 }
 function runPick(k){
   const s=runLoad();if(!RUN_ROUTES[k])return;
-  s.route=k;runSave();runUI(true);cityPing();
-  const nx=runNext(),pr=document.getElementById('runpick').getBoundingClientRect();
-  if(pr.top<innerHeight&&pr.bottom>0)return;   // the picker itself already shows the next stop
-  if(nx)runToast(`Route set. First stop: ${RUN_STOPS[nx].t.charAt(0).toLowerCase()+RUN_STOPS[nx].t.slice(1)}. <button type="button" data-run-go="${nx}">go ▸</button> Your progress sits in the bar at the bottom.`,8000);
-  else runToast(`You've already done every stop on this route. <button type="button" data-run-contact>get in touch ▸</button>`);
+  s.route=k;runSave();runUI(true);
+  if(k!=='hiring')cityPing();
+  guideOpen('route');
 }
 document.addEventListener('click',e=>{
   const t=e.target;
   const pick=t.closest('[data-route]');if(pick){runPick(pick.dataset.route);return}
   const go=t.closest('[data-run-go]');
-  if(go){const k=go.dataset.runGo;document.getElementById('runpop').hidden=true;document.getElementById('runtoast').classList.remove('on');if(RUN_STOPS[k])RUN_STOPS[k].go();return}
-  if(t.closest('[data-run-reset]')){const s=runLoad();s.route=null;runSave();document.getElementById('runpop').hidden=true;runUI();runScroll('.hero');return}
-  if(t.closest('[data-run-contact]')){document.getElementById('runtoast').classList.remove('on');openContact();return}
-  if(t.closest('#runseg')){const p=document.getElementById('runpop');p.hidden=!p.hidden;if(!p.hidden){document.getElementById('runtoast').classList.remove('on');runPopRender()}return}
-  if(!t.closest('#runpop'))document.getElementById('runpop').hidden=true;
+  if(go){const k=go.dataset.runGo;guideClose();document.getElementById('runtoast').classList.remove('on');if(RUN_STOPS[k])RUN_STOPS[k].go();return}
+  if(t.closest('[data-run-reset]')){const s=runLoad();s.route=null;runSave();runUI();guideOpen('welcome');return}
+  if(t.closest('[data-run-contact]')){guideClose();document.getElementById('runtoast').classList.remove('on');openContact();return}
+  if(t.closest('[data-guide],#guidepill')){guideOpen();return}
+  if(t.closest('[data-gdclose]')||t.id==='guide'){guideClose();if(!runLoad().route)setTimeout(cityPing,300);return}
   /* stops that are a single click somewhere on the page */
   if(t.closest('a[href^="mailto:"],a[download],a[href*="linkedin.com/in/"]'))runDone('contact');
   if(t.closest('a[href="/evals"]'))runDone('evals');
 });
-addEventListener('keydown',e=>{if(e.key==='Escape'){const p=document.getElementById('runpop');if(!p.hidden){p.hidden=true;e.stopImmediatePropagation()}}},true);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('guide').hidden){guideClose();e.stopImmediatePropagation()}},true);
+/* the guide button shows up once the intro is out of the way */
+(function(){const pill=document.getElementById('guidepill');const show=()=>{pill.hidden=false;document.body.classList.add('has-pill')};
+  if(boot.classList.contains('done'))show();else new MutationObserver((m,o)=>{if(boot.classList.contains('done')){o.disconnect();show()}}).observe(boot,{attributes:true,attributeFilter:['class']});})();
 /* the contact card counts as getting in touch */
 /* (#wreveal is parsed after this script, so the watcher waits for the DOM) */
 var cardAuto=false;   // the glass brings the card itself: that is not the visitor getting in touch
@@ -6308,7 +6411,17 @@ const HOT_ACT={
 const HOT_ORDER=['drone','blimp','mono','koi','ref','board','inc'];
 const isBare=el=>!!el&&(el===document.documentElement||el===document.body||(el.matches&&el.matches('main,main>section,.cityband,.hero,.hero .row2')));
 let cityPtr=null,menuHov=false,pingT=-1e9;
-const hotLbl={};
+const hotChip={};let chipsOn=false;
+/* readable labels for the ping: real text on a solid chip, riding on top of the object */
+function chipFor(k){
+  chipsOn=true;
+  if(hotChip[k])return hotChip[k];
+  let layer=document.getElementById('cityChips');
+  if(!layer){layer=document.createElement('div');layer.id='cityChips';layer.setAttribute('aria-hidden','true');document.body.appendChild(layer)}
+  const el=document.createElement('span');el.className='cchip';el.textContent=HOT_TEXT[k]||HOT_ACT[k].label;layer.appendChild(el);
+  return hotChip[k]=el;
+}
+const HOT_TEXT={blimp:'Contact me',ref:'Control room demo',koi:'Architecture X-ray',board:'ICE wall · case files',mono:'Work history',drone:'Send me a message',inc:'Replay the chase'};
 function hotBoxes(){
   const out=[];
   HOT_ORDER.forEach(k=>{
@@ -6340,27 +6453,30 @@ function bracket(b,col,a){
   ctx.fillRect(x+w-L+2,y+h+1,L,1);ctx.fillRect(x+w+1,y+h-L+2,1,L);
   ctx.globalAlpha=1;
 }
-function hotLabel(h,a){
-  const c=hotLbl[h.k]||(hotLbl[h.k]=ledStrip(HOT_ACT[h.k].label,'#FFB347'));
-  const [x,y,w]=h.b,lx=Math.max(1,Math.min(W-c.width-1,Math.round(x+w/2-c.width/2))),ly=Math.max(1,y-9);
-  ctx.globalAlpha=a*.85;ctx.fillStyle='#05070D';ctx.fillRect(lx-1,ly-1,c.width+1,7);ctx.globalAlpha=a;ctx.drawImage(c,lx,ly);ctx.globalAlpha=1;
-}
 /* called at the end of every city frame, on top of everything it drew */
 function cityMenuDraw(t,par2,yoff2){
   if(inc&&incT0&&t-incT0>13000)HOT.inc=[inc.bd.x-par2,inc.top+yoff2,inc.bd.w,Math.round(inc.base-inc.top)];
   const hit=cityPtr?hotAt(cityPtr.x*W/innerWidth,cityPtr.y*H/innerHeight,2):null;
   const cur=document.getElementById('cursor');
   if(cur){
-    if(hit){cur.classList.add('hov','city');cur.querySelector('.label').textContent='▸ '+HOT_ACT[hit.k].label;menuHov=true}
+    if(hit){cur.classList.add('hov','city');cur.querySelector('.label').textContent=HOT_TEXT[hit.k]||HOT_ACT[hit.k].label;menuHov=true}
     else if(menuHov){cur.classList.remove('hov','city');menuHov=false}
   }
   document.documentElement.classList.toggle('cityhot',!!hit);
   const pe=t-pingT;
-  if(pe<2600){
-    const a=pe<200?pe/200:pe>2000?(2600-pe)/600:1,seen=new Set();
-    hotBoxes().forEach(h=>{bracket(h.b,'#FFB347',a*(.65+.35*Math.sin(pe*.012)));if(!seen.has(h.k)){seen.add(h.k);hotLabel(h,a)}});
-  }
-  if(hit){bracket(hit.b,'#FFB347',.95);hotLabel(hit,1)}
+  if(pe<3200){
+    const a=pe<200?pe/200:pe>2600?(3200-pe)/600:1,seen=new Set(),kx=innerWidth/W,ky=innerHeight/H,placed=[];
+    hotBoxes().forEach(h=>{bracket(h.b,'#FFB347',a*(.65+.35*Math.sin(pe*.012)));
+      if(seen.has(h.k))return;seen.add(h.k);
+      /* keep every chip on screen and off its neighbours */
+      const el=chipFor(h.k),cw=el._w||(el._w=el.offsetWidth),ch=el._h||(el._h=el.offsetHeight);
+      let cx=Math.max(cw/2+8,Math.min(innerWidth-cw/2-8,(h.b[0]+h.b[2]/2)*kx)),cy=Math.max(ch+70,h.b[1]*ky-6);
+      for(let n=0;n<6&&placed.some(r=>Math.abs(r[0]-cx)<(r[2]+cw)/2+6&&Math.abs(r[1]-cy)<ch+6);n++)cy-=ch+8;
+      placed.push([cx,cy,cw]);
+      el.style.opacity=a.toFixed(2);el.style.transform=`translate(${Math.round(cx)}px,${Math.round(cy)}px) translate(-50%,-100%)`});
+    Object.keys(hotChip).forEach(k=>{if(!seen.has(k))hotChip[k].style.opacity='0'});
+  }else if(chipsOn){chipsOn=false;Object.values(hotChip).forEach(el=>el.style.opacity='0')}
+  if(hit)bracket(hit.b,'#FFB347',.95);
 }
 /* first visit: once the boot clears and the hero has settled, show what the city can do */
 setTimeout(()=>{if(boot.classList.contains('done')&&scrollY<innerHeight*.5)cityPing()},9000);
@@ -6482,38 +6598,85 @@ function glassCrash(why,force){
   if(busy&&!force){setTimeout(()=>glassCrash(why),3000);return}
   try{sessionStorage.setItem('fatih.glass','1')}catch(_){}
   glassOn=true;
-  const c=$('#glass'),x=c.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2),VW=innerWidth,VH=innerHeight;
+  const c=$('#glass'),dpr=Math.min(devicePixelRatio||1,2),VW=innerWidth,VH=innerHeight;let x=c.getContext('2d');
   c.width=Math.round(VW*dpr);c.height=Math.round(VH*dpr);x.setTransform(dpr,0,0,dpr,0,0);x.imageSmoothingEnabled=false;
   c.style.opacity='1';c.classList.add('on');
   /* hit off-centre, so the card that comes next sits clear of the worst of it */
   const side=Math.random()<.5?-1:1,ix=VW*(0.5+side*(0.24+Math.random()*0.08)),iy=VH*(0.2+Math.random()*0.1);
   const sx=VW*(0.5-side*0.3),sy=VH*0.28;
-  /* the cracks: radial runs with a little wander, a few branches, and rings between them */
-  const rnd=(a,b)=>a+Math.random()*(b-a),cracks=[],N=15+((Math.random()*5)|0);
+  /* the break: how laminated glass actually goes. A crushed, frosted core; radial cracks that
+     start thick and taper; spider-web rings between them, complete near the centre and broken
+     further out; facets of glass that each catch the light a little differently; short branch
+     cracks; every line with a shadow under it and a glint along it. Built once, drawn as it grows. */
+  const rnd=(a,b)=>a+Math.random()*(b-a),R=Math.hypot(VW,VH),sc=Math.max(.75,Math.min(1.25,Math.min(VW,VH)/820));
+  const N=22+((Math.random()*8)|0),cracks=[];
   for(let i=0;i<N;i++){
-    const a0=i/N*Math.PI*2+rnd(-.12,.12),len=rnd(120,Math.max(VW,VH)*0.62),pts=[[ix,iy]];
-    let a=a0,d=0;while(d<len){const st=rnd(14,34);d+=st;a+=rnd(-.22,.22);const p=pts[pts.length-1];pts.push([p[0]+Math.cos(a)*st,p[1]+Math.sin(a)*st])}
-    cracks.push({pts,a0});
-    if(Math.random()<.55){const k=2+((Math.random()*(pts.length-3))|0),b=[pts[k]];let ab=a0+(Math.random()<.5?-1:1)*rnd(.4,.8),db=0,lb=rnd(30,110);
-      while(db<lb){const st=rnd(10,22);db+=st;ab+=rnd(-.2,.2);const p=b[b.length-1];b.push([p[0]+Math.cos(ab)*st,p[1]+Math.sin(ab)*st])}cracks.push({pts:b,a0:ab,br:true})}
+    const a0=i/N*Math.PI*2+rnd(-.09,.09),len=(Math.random()<.35?rnd(.18,.4):rnd(.45,.95))*R*.6,pts=[[ix,iy,0]];
+    let a=a0,d=0;
+    while(d<len){const st=d<40*sc?rnd(4,8):rnd(10,24);d+=st;a+=rnd(-.13,.13)*(d<40?.4:1);const p=pts[pts.length-1];pts.push([p[0]+Math.cos(a)*st,p[1]+Math.sin(a)*st,d])}
+    cracks.push({pts,len,glint:Math.random()<.45});
   }
-  const rings=[22,48,84].map(R=>{
-    const ps=cracks.filter(k=>!k.br).map(k=>{let acc=0;for(let j=1;j<k.pts.length;j++){acc+=Math.hypot(k.pts[j][0]-k.pts[j-1][0],k.pts[j][1]-k.pts[j-1][1]);if(acc>=R)return k.pts[j]}return k.pts[k.pts.length-1]});
-    /* fixed once: which links break and where they kink, so the rings never shimmer */
-    return ps.map((p,j)=>{const q=ps[(j+1)%ps.length];return Math.random()<.18?null:[p,[(p[0]+q[0])/2+rnd(-3,3),(p[1]+q[1])/2+rnd(-3,3)],q]}).filter(Boolean);
-  });
-  const path=(pts,frac)=>{const n=Math.max(2,Math.ceil(pts.length*frac));x.beginPath();x.moveTo(pts[0][0],pts[0][1]);for(let j=1;j<n;j++)x.lineTo(pts[j][0],pts[j][1])};
+  const ptAt=(c,r)=>{if(r>c.len)return null;const P=c.pts;for(let j=1;j<P.length;j++)if(P[j][2]>=r){const A=P[j-1],B=P[j],f=(r-A[2])/(B[2]-A[2]||1);return [A[0]+(B[0]-A[0])*f,A[1]+(B[1]-A[1])*f]}return null};
+  const RINGS=[10,20,33,50,72,100,136,182,240].map(r=>r*sc),KEEP=[1,1,.95,.85,.72,.58,.45,.34,.24];
+  const rings=RINGS.map((r,k)=>{const out=[];for(let i=0;i<N;i++){const p=ptAt(cracks[i],r),q=ptAt(cracks[(i+1)%N],r);
+    if(!p||!q||Math.random()>KEEP[k]){out.push(null);continue}
+    const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,ox=mx-ix,oy=my-iy,ol=Math.hypot(ox,oy)||1,L=Math.hypot(q[0]-p[0],q[1]-p[1]),bow=rnd(-.04,.12)*L;
+    out.push({p,q,m:[mx+ox/ol*bow+rnd(-1.5,1.5),my+oy/ol*bow+rnd(-1.5,1.5)],r})}return out});
+  /* facets: the cells between two radials and two rings */
+  const facets=[];
+  for(let k=0;k<RINGS.length;k++)for(let i=0;i<N;i++){
+    const A=rings[k][i],B=k?rings[k-1][i]:null;if(!A||(k&&!B))continue;
+    const poly=k?[B.p,B.m,B.q,A.q,A.m,A.p]:[[ix,iy],A.p,A.m,A.q];
+    const t=Math.random();let fill;
+    if(k===0)fill=`rgba(235,245,255,${rnd(.16,.3).toFixed(3)})`;
+    else if(t<.5)fill=`rgba(225,240,255,${rnd(.015,.07).toFixed(3)})`;
+    else if(t<.78)fill=`rgba(0,0,0,${rnd(.03,.09).toFixed(3)})`;
+    else{const g=x.createLinearGradient(A.p[0],A.p[1],A.q[0],A.q[1]);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(rnd(.3,.7),`rgba(220,245,255,${rnd(.08,.18).toFixed(3)})`);g.addColorStop(1,'rgba(255,255,255,0)');fill=g}
+    facets.push({poly,fill,r:A.r});
+  }
+  /* branch cracks off the radials */
+  const branches=[];
+  cracks.forEach(c=>{const n=(Math.random()*3)|0;for(let b=0;b<n;b++){const j=2+((Math.random()*(c.pts.length-3))|0),P=c.pts[j];if(!P||P[2]<25)continue;
+    let a=Math.atan2(P[1]-iy,P[0]-ix)+(Math.random()<.5?-1:1)*rnd(.35,.95),pts=[[P[0],P[1]]],L=rnd(10,46)*(1-P[2]/c.len)+8,d=0;
+    while(d<L){const st=rnd(4,9);d+=st;a+=rnd(-.25,.25);const q=pts[pts.length-1];pts.push([q[0]+Math.cos(a)*st,q[1]+Math.sin(a)*st])}branches.push({pts,r:P[2]})}});
+  /* the crushed core: a frost of tiny fractures and chips */
+  const core=[],specks=[];
+  for(let k=0;k<70;k++){const a=Math.random()*Math.PI*2,r0=rnd(2,RINGS[1]*1.1),L=rnd(2,7);core.push([ix+Math.cos(a)*r0,iy+Math.sin(a)*r0,a+rnd(-1.2,1.2),L])}
+  for(let k=0;k<40;k++){const a=Math.random()*Math.PI*2,r0=rnd(3,RINGS[3]);specks.push([ix+Math.cos(a)*r0,iy+Math.sin(a)*r0,rnd(.4,1)])}
+  const hole=Array.from({length:9},(_,k)=>{const a=k/9*Math.PI*2,r0=rnd(3.5,6.5)*sc;return [ix+Math.cos(a)*r0,iy+Math.sin(a)*r0]});
+  const BANDS=[[0,16,2.6],[16,55,1.8],[55,130,1.25],[130,260,.9],[260,1e9,.65]];
+  const strokeBand=(P,lim,lo,hi)=>{x.beginPath();let on=false;for(let j=1;j<P.length;j++){const d=P[j][2];if(d<lo||P[j-1][2]>hi||P[j-1][2]>lim)continue;if(!on){x.moveTo(P[j-1][0],P[j-1][1]);on=true}x.lineTo(P[j][0],P[j][1])}return on};
+  const poly=pts=>{x.beginPath();x.moveTo(pts[0][0],pts[0][1]);for(let j=1;j<pts.length;j++)x.lineTo(pts[j][0],pts[j][1])};
   const drawCracks=(g,dim=1)=>{
-    x.lineCap='round';x.lineJoin='round';
-    rings.forEach((ring,ri)=>{if(g<.35+ri*.2)return;x.beginPath();ring.forEach(([p,m,q])=>{x.moveTo(p[0],p[1]);x.lineTo(m[0],m[1]);x.lineTo(q[0],q[1])});
-      x.strokeStyle=`rgba(225,240,255,${(.4*dim).toFixed(2)})`;x.lineWidth=.8;x.stroke()});
-    cracks.forEach(k=>{path(k.pts,g);x.strokeStyle=`rgba(0,240,255,${(.08*dim).toFixed(3)})`;x.lineWidth=4;x.stroke();x.strokeStyle=`rgba(240,248,255,${((k.br?.45:.7)*dim).toFixed(2)})`;x.lineWidth=k.br?.7:1;x.stroke()});
-    /* the impact: a frosted star around a small dark hole */
-    const rg=x.createRadialGradient(ix,iy,2,ix,iy,40);rg.addColorStop(0,'rgba(255,255,255,.28)');rg.addColorStop(.25,'rgba(220,235,255,.12)');rg.addColorStop(1,'rgba(220,235,255,0)');
-    x.fillStyle=rg;x.beginPath();x.arc(ix,iy,40,0,Math.PI*2);x.fill();
-    x.fillStyle='rgba(3,5,9,.55)';x.beginPath();x.arc(ix,iy,6,0,Math.PI*2);x.fill();
-    x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=1;x.stroke();
+    const lim=g*R*.62;
+    x.save();x.globalAlpha=dim;x.lineCap='round';x.lineJoin='round';
+    facets.forEach(f=>{if(f.r>lim)return;x.fillStyle=f.fill;poly(f.poly);x.closePath();x.fill()});
+    /* shadow, body, glint: three passes so each line sits in the glass rather than on it */
+    for(const pass of ['shadow','body','glint']){
+      x.save();
+      if(pass==='shadow'){x.translate(.9,1.1);x.strokeStyle='rgba(0,0,0,.55)'}
+      else if(pass==='body')x.strokeStyle='rgba(236,246,255,.88)';
+      else{x.globalCompositeOperation='lighter';x.strokeStyle='rgba(150,235,255,.55)';x.translate(-.5,-.5)}
+      cracks.forEach(c=>{if(pass==='glint'&&!c.glint)return;
+        BANDS.forEach(([lo,hi,w])=>{if(pass==='glint'&&lo>60)return;if(strokeBand(c.pts,lim,lo*sc,hi*sc)){x.lineWidth=pass==='shadow'?w+1.1:pass==='glint'?Math.max(.5,w*.35):w;x.stroke()}})});
+      if(pass!=='glint'){
+        rings.forEach(ring=>ring.forEach(s=>{if(!s||s.r>lim)return;x.beginPath();x.moveTo(s.p[0],s.p[1]);x.lineTo(s.m[0],s.m[1]);x.lineTo(s.q[0],s.q[1]);x.lineWidth=(pass==='shadow'?1.6:.85)*(s.r<60?1.2:1);x.stroke()}));
+        branches.forEach(b=>{if(b.r>lim)return;poly(b.pts);x.lineWidth=pass==='shadow'?1.4:.6;x.stroke()});
+      }
+      x.restore();
+    }
+    /* the core */
+    const fr=x.createRadialGradient(ix,iy,0,ix,iy,RINGS[2]*1.2);fr.addColorStop(0,'rgba(255,255,255,.55)');fr.addColorStop(.45,'rgba(225,240,255,.2)');fr.addColorStop(1,'rgba(225,240,255,0)');
+    x.fillStyle=fr;x.beginPath();x.arc(ix,iy,RINGS[2]*1.2,0,Math.PI*2);x.fill();
+    x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=.6;
+    core.forEach(([cx0,cy0,a,L])=>{x.beginPath();x.moveTo(cx0,cy0);x.lineTo(cx0+Math.cos(a)*L,cy0+Math.sin(a)*L);x.stroke()});
+    x.fillStyle='rgba(255,255,255,.9)';specks.forEach(([sx0,sy0,s0])=>x.fillRect(sx0,sy0,s0*1.4,s0*1.4));
+    x.fillStyle='rgba(2,4,8,.7)';poly(hole);x.closePath();x.fill();x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.1;x.stroke();
+    x.restore();
   };
+  /* once grown, the whole break is cached so the falling drone costs one blit a frame */
+  let crackC=null;
+  const crackDone=()=>{if(crackC)return crackC;crackC=document.createElement('canvas');crackC.width=c.width;crackC.height=c.height;const keep=x;x=crackC.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);drawCracks(1);x=keep;return crackC};
   const T0=performance.now(),HIT=720;let hitDone=false;
   const frame=now=>{
     const e=now-T0;x.clearRect(0,0,VW,VH);
@@ -6523,8 +6686,9 @@ function glassCrash(why,force){
       x.save();x.translate(px,py);x.rotate(Math.sin(e*.02)*.18*(1-k));x.drawImage(((e/45)|0)%2?courierA:courierB,-11.5*s,-8*s,23*s,16*s);x.restore();
     }else{
       if(!hitDone){hitDone=true;sfx.shatter();document.documentElement.classList.add('quake');setTimeout(()=>document.documentElement.classList.remove('quake'),460);
-        if(why!=='test'||force)setTimeout(()=>{cardAuto=true;openContact()},420)}
-      const g=Math.min(1,(e-HIT)/260);drawCracks(g);
+        if(why!=='test')setTimeout(()=>{cardAuto=true;openContact()},420)}
+      const g=Math.min(1,(e-HIT)/420);
+      if(g<1)drawCracks(1-Math.pow(1-g,2.2));else{x.setTransform(1,0,0,1,0,0);x.drawImage(crackDone(),0,0);x.setTransform(dpr,0,0,dpr,0,0)}
       if(e-HIT<140){x.fillStyle=`rgba(235,245,255,${(.35*(1-(e-HIT)/140)).toFixed(3)})`;x.fillRect(0,0,VW,VH)}
       /* the drone drops away down the glass */
       const f=(e-HIT)/900;
@@ -6538,7 +6702,7 @@ function glassCrash(why,force){
   function glassHold(){
     const w=document.getElementById('wreveal');let left=false;
     /* while the card is up the cracks step back so it reads cleanly */
-    x.clearRect(0,0,VW,VH);drawCracks(1,w&&w.classList.contains('show')?.5:1);
+    x.clearRect(0,0,VW,VH);x.setTransform(1,0,0,1,0,0);x.globalAlpha=w&&w.classList.contains('show')?.6:1;x.drawImage(crackDone(),0,0);x.globalAlpha=1;x.setTransform(dpr,0,0,dpr,0,0);
     const fade=()=>{if(left)return;left=true;c.style.opacity='0';setTimeout(()=>{c.classList.remove('on');x.clearRect(0,0,VW,VH);glassOn=false},1300)};
     const mo=new MutationObserver(()=>{if(!w.classList.contains('show')){mo.disconnect();setTimeout(fade,500)}});
     if(w&&w.classList.contains('show'))mo.observe(w,{attributes:true,attributeFilter:['class']});else setTimeout(fade,2500);
@@ -6614,6 +6778,7 @@ if(/[?&]devx/.test(location.search))window.__dev={
   run:()=>JSON.stringify(runLoad()),
   hot:()=>JSON.stringify(HOT),
   glass:k=>glassCrash(k||'test',true),
+  ping:()=>cityPing(),
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
   cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
@@ -7162,7 +7327,7 @@ let bodyAPI=null;
   view.appendChild(xl);
   const hint=document.createElement('div');hint.className='xhint';hint.textContent='◎ SCAN';box.appendChild(hint);
   const prompt=document.createElement('div');prompt.className='scanprompt';
-  prompt.innerHTML='<div class="ring"></div><div class="lbl">MOVE CURSOR TO SCAN</div>';
+  prompt.innerHTML='<div class="ring"></div><div class="lbl">Move the cursor over the body</div>';
   view.appendChild(prompt);
   function lights(sc,inner){
     sc.add(new THREE.AmbientLight(0x25355a,inner?1.0:0.85));
