@@ -331,7 +331,7 @@ section{padding:96px 0}
 .sb i{flex:1;height:9px;background:var(--line)}
 .sb i.f{background:var(--neon);box-shadow:0 0 6px color-mix(in srgb,var(--neon) 70%,transparent)}
 .stat .sv{text-align:right;font-family:'Share Tech Mono',monospace;font-size:10px}
-@media(max-width:1000px){.loadout{grid-template-columns:1fr}.bodybox{position:static;order:-1;max-width:320px;margin:0 auto;width:100%}#conn{display:none}}
+@media(max-width:1000px){.loadout{grid-template-columns:1fr}.bodybox{position:relative;top:auto;order:-1;max-width:320px;margin:0 auto;width:100%}#conn{display:none}}
 
 /* ===== ICE WALL (hex iris breach) ===== */
 .icewall{height:210vh;position:relative;z-index:2}  /* JS overrides: ice scroll + deck scroll + 100vh exit */
@@ -795,6 +795,7 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
   font-size:9px;letter-spacing:.22em;color:var(--neon);text-shadow:0 0 8px var(--neon);
   white-space:nowrap;opacity:0;transition:opacity .2s;
 }
+#cursor.city .ret i{border-color:#FFB347}#cursor.city .label{color:#FFB347;text-shadow:0 0 8px #FFB347}
 #cursor.hov{width:50px;height:50px}
 #cursor.hov .ret{transform:rotate(45deg)}
 #cursor.hov .ret i{width:11px;height:11px}
@@ -1035,7 +1036,7 @@ html.plainlock #matchbox{z-index:9700}
 .rf-wol div{display:flex;gap:10px;padding:3px 0;border-top:1px dashed var(--line)}
 .rf-wol .id{color:var(--fg);min-width:70px}
 .rf-wol .new{color:#00FF9C}
-@media (max-width:980px){.rf-wrap{grid-template-columns:1fr}.rf-cop{min-height:0}.rf-log{max-height:none}}
+@media (max-width:980px){.rf-wrap{grid-template-columns:minmax(0,1fr)}.rf-panel{min-width:0}.rf-wol>div span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rf-cop{min-height:0}.rf-log{max-height:none}}
 @media (max-width:560px){.rf-trends{grid-template-columns:1fr}}
 
 /* ============ COMMIT SKYLINE: the logistics platform, one tower per week ============ */
@@ -1158,7 +1159,8 @@ html.plainlock #matchbox{z-index:9700}
 #rfSvg g.alarm-ack .eq{stroke:#FF3B3B}
 /* ---- historian scrub ---- */
 .rf-scrub{display:flex;align-items:center;gap:10px;margin:8px 0 2px;font-size:11px;color:var(--dim)}
-.rf-scrub input{flex:1;accent-color:#9D4EDD}
+.rf-scrub input{flex:1;min-width:0;accent-color:#9D4EDD}
+@media(max-width:520px){.rf-scrub{gap:6px}.rf-scrub>span{display:none}.rf-scrub b{min-width:0}}
 .rf-scrub b{color:#9D4EDD;font-weight:400;min-width:74px;text-align:right}
 .rf-scrub button{font:10px 'Share Tech Mono',monospace;letter-spacing:.12em;padding:3px 8px;background:transparent;color:var(--dim);border:1px solid var(--line);cursor:pointer}
 .rf-scrub button.on{color:#00FF9C;border-color:#00FF9C}
@@ -1306,6 +1308,138 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 .rf-ev.alarm{border-color:rgba(255,59,59,.8)}.rf-ev.alarm b{color:#FF3B3B}
 #rfPlay,#rfSpd{font:11px 'Share Tech Mono',monospace;padding:3px 8px;background:transparent;color:#9D4EDD;border:1px solid rgba(157,78,221,.7);cursor:pointer;min-width:30px}
 #rfPlay:hover,#rfSpd:hover{background:rgba(157,78,221,.14)}
+
+/* ===== THE RUN: a guided route, the city as a menu, city cams between sections ===== */
+.runpick{margin:0 0 26px;max-width:960px}
+.runpick .hint{margin-top:10px}
+.runpick .rp-q{display:flex;gap:10px;align-items:baseline;font-size:12.5px;color:var(--fg);margin-bottom:10px}
+.runpick .rp-q b{color:var(--neon);font-weight:400;letter-spacing:.16em;font-size:11px;border:1px solid color-mix(in srgb,var(--neon) 55%,transparent);padding:2px 7px}
+.runpick .rp-opts{display:flex;gap:10px;flex-wrap:wrap}
+.runpick [data-route]{font:13px 'Share Tech Mono',monospace;color:var(--fg);background:rgba(10,13,22,.82);border:1px solid var(--line);padding:9px 16px 8px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.runpick [data-route] small{font-size:10.5px;color:var(--dim);letter-spacing:.06em}
+.runpick [data-route]:hover,.runpick [data-route]:focus-visible{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 10%,rgba(10,13,22,.9));transform:translateY(-2px)}
+.runpick .hint{margin-top:12px}
+.rp-prog{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:12.5px}
+.rp-dots{display:flex;gap:5px}
+.rp-dots i{width:9px;height:9px;border:1px solid var(--neon);display:block}
+.rp-dots i.on{background:var(--neon);box-shadow:0 0 8px var(--neon)}
+.rp-prog .rp-next b{color:var(--fg);font-weight:400}
+.rp-prog button{font:12px 'Share Tech Mono',monospace;cursor:pointer;padding:6px 12px;border:1px solid var(--neon);color:var(--neon);background:rgba(10,13,22,.85)}
+.rp-prog button:hover{background:color-mix(in srgb,var(--neon) 14%,rgba(10,13,22,.9))}
+.rp-prog button.ghost{border-color:var(--line);color:var(--dim)}
+.rp-prog button.ghost:hover{color:var(--fg)}
+@media(max-width:760px){.runpick [data-route]{flex:1 1 100%}}
+
+/* city cams: a stretch of page with nothing on it but the city, and a caption */
+.cityband{height:36vh;min-height:210px;position:relative;display:flex;align-items:flex-end;pointer-events:none}
+.cityband .cb-cap{display:flex;flex-direction:column;gap:5px;font-size:11px;letter-spacing:.12em;color:var(--dim);padding:10px 14px;background:linear-gradient(90deg,rgba(5,6,10,.72),rgba(5,6,10,0));border-left:2px solid var(--neon);opacity:0;transform:translateX(-10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.cityband.on .cb-cap{opacity:1;transform:none}
+.cityband .cb-cam{display:flex;align-items:center;gap:8px;color:var(--fg)}
+.cityband .cb-cam i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse 1.2s infinite}
+.cityband .cb-next b{color:var(--neon);font-weight:400}
+.cityband .cb-run:empty{display:none}
+.cityband .cb-run{color:var(--fg);letter-spacing:.06em;font-size:12px}
+.cityband::before,.cityband::after{content:"";position:absolute;width:22px;height:22px;border:1px solid rgba(214,228,240,.28);opacity:0;transition:opacity .6s}
+.cityband::before{top:10%;left:0;border-right:0;border-bottom:0}
+.cityband::after{top:10%;right:0;border-left:0;border-bottom:0}
+.cityband.on::before,.cityband.on::after{opacity:1}
+@media(max-width:760px){.cityband{height:24vh;min-height:150px}}
+@media(prefers-reduced-motion:reduce){.cityband{height:14vh;min-height:90px}}
+
+/* the deck carries the route: progress, and a list one click away */
+#runseg{font:11px 'Share Tech Mono',monospace;color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--neon) 60%,transparent);padding:1px 8px;margin-left:12px;cursor:pointer;letter-spacing:.06em}
+#runseg b{color:var(--neon)}
+#runseg:hover{background:color-mix(in srgb,var(--neon) 14%,transparent)}
+#runseg.ping{animation:runping .9s var(--ease)}
+@keyframes runping{30%{box-shadow:0 0 0 4px color-mix(in srgb,var(--neon) 35%,transparent);background:color-mix(in srgb,var(--neon) 25%,transparent)}}
+#runpop{position:fixed;left:12px;bottom:44px;z-index:960;width:min(380px,calc(100vw - 24px));background:rgba(8,10,18,.97);border:1px solid var(--line);border-top:2px solid var(--neon);padding:14px 16px 12px;font-size:12px}
+#runpop h4{font:600 13px 'Chakra Petch',sans-serif;letter-spacing:.14em;margin-bottom:10px;display:flex;justify-content:space-between;color:var(--fg)}
+#runpop h4 span{color:var(--dim);font:11px 'Share Tech Mono',monospace}
+#runpop ol{list-style:none;display:flex;flex-direction:column;gap:2px}
+#runpop li button{width:100%;text-align:left;font:12px 'Share Tech Mono',monospace;color:var(--fg);background:transparent;border:0;padding:7px 8px;cursor:pointer;display:grid;grid-template-columns:20px 1fr;gap:6px}
+#runpop li button:hover{background:rgba(255,255,255,.04)}
+#runpop li button small{grid-column:2;color:var(--dim);font-size:11px}
+#runpop li.done button{color:var(--dim)}
+#runpop li.done .ck{color:var(--green)}
+#runpop li.next button{background:color-mix(in srgb,var(--neon) 9%,transparent)}
+#runpop .rpf{display:flex;gap:10px;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--dim);font-size:11px}
+#runpop .rpf button{font:11px 'Share Tech Mono',monospace;background:none;border:0;color:var(--dim);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#runpop .rpf button:hover{color:var(--fg)}
+#runtoast{position:fixed;left:12px;bottom:44px;z-index:9800;max-width:min(440px,calc(100vw - 24px));background:rgba(8,10,18,.96);border:1px solid var(--line);border-left:2px solid var(--neon);padding:10px 14px;font-size:12.5px;line-height:1.55;color:var(--fg);opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+#runtoast.on{opacity:1;transform:none;pointer-events:auto}
+#runtoast b.fx{color:var(--neon);font-weight:400;letter-spacing:.14em;font-size:11px;margin-right:8px}
+#runtoast button{font:12px 'Share Tech Mono',monospace;background:none;border:0;color:var(--neon);cursor:pointer;padding:0;margin-left:6px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){#runpop,#runtoast{bottom:auto;top:84px}#runseg{margin-left:0}#runseg .rs-next{display:none}#runseg::after{content:' ▸'}}
+
+/* the glass between you and the city */
+#drops{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+#glass{position:fixed;inset:0;width:100%;height:100%;z-index:9990;pointer-events:none;display:none;transition:opacity 1.2s}
+#glass.on{display:block}
+html.quake main,html.quake #gigs,html.quake #city{animation:quake .42s steps(2) both}
+@keyframes quake{0%{transform:translate(0,0)}20%{transform:translate(-7px,4px)}40%{transform:translate(6px,-5px)}60%{transform:translate(-4px,3px)}80%{transform:translate(3px,-2px)}100%{transform:none}}
+html.plainlock #drops,html.plainlock #glass{display:none}
+
+/* garage: hold to rev */
+.carbox{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.carbox:focus-visible{outline:1px solid var(--neon);outline-offset:3px}
+.carbox .rpm.red,.carbox .rpm.red b{color:var(--red);text-shadow:0 0 10px var(--red)}
+.carbox.revving .vig{box-shadow:inset 0 0 90px rgba(255,59,59,.22)}
+.spec .row{transition:background .35s}
+.spec .row.lit{background:color-mix(in srgb,var(--neon) 18%,transparent);transition:background .05s}
+.spec .plate.stamp{animation:dyno .9s var(--ease)}
+@keyframes dyno{0%{color:var(--fg);text-shadow:0 0 14px var(--neon)}100%{}}
+
+/* loadout: implants wake under the scan lens */
+.loadout.dormant .banchor:not(.on){border-color:rgba(214,228,240,.32);box-shadow:none}
+.loadout.dormant .banchor:not(.on)::after{display:none}
+.banchor.on{background:color-mix(in srgb,var(--neon) 55%,transparent)}
+.loadout.dormant #conn .cn:not(.live) path,.loadout.dormant #conn .cn:not(.live) rect,.loadout.dormant #conn .cn:not(.live) circle{opacity:.2}
+#conn .cn.live path{opacity:.95;filter:drop-shadow(0 0 3px var(--neon))}
+.sgroup.scan{animation:sgscan 1.1s var(--ease)}
+@keyframes sgscan{0%{border-color:var(--neon);box-shadow:0 0 0 1px var(--neon),0 0 26px color-mix(in srgb,var(--neon) 45%,transparent)}100%{}}
+.impcount{position:absolute;left:10px;top:8px;z-index:5;font-size:9px;letter-spacing:.16em;color:var(--dim);pointer-events:none;background:rgba(7,10,18,.72);padding:3px 7px;border:1px solid var(--line)}
+.impcount b{color:var(--neon);font-weight:400}
+.tapring{position:absolute;width:150px;height:150px;margin:-75px;border:1.5px solid var(--neon);border-radius:50%;pointer-events:none;z-index:6;animation:tapring .7s var(--ease) forwards}
+@keyframes tapring{from{transform:scale(.15);opacity:1}to{transform:scale(1);opacity:0}}
+.impltag{position:absolute;z-index:6;transform:translate(14px,-50%);--o:0;font-size:9px;letter-spacing:.16em;color:var(--fg);background:rgba(7,10,18,.85);border:1px solid var(--neon);padding:2px 6px;white-space:nowrap;pointer-events:none;animation:impltag 1.5s var(--ease) forwards}
+.impltag.left{transform:translate(calc(-100% - 14px),-50%)}
+@keyframes impltag{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0}}
+
+/* refinery: the shift drill */
+.rf-op{position:absolute;right:8px;bottom:8px;z-index:4;max-width:min(430px,calc(100% - 16px));background:rgba(5,7,12,.95);border:1px solid rgba(255,59,59,.75);border-left:3px solid #FF3B3B;padding:10px 12px;font-size:12px;line-height:1.5;color:var(--fg);box-shadow:0 0 30px rgba(255,59,59,.18);animation:rfOpIn .35s var(--ease)}
+@keyframes rfOpIn{from{opacity:0;transform:translateY(6px)}}
+.rf-op b{color:#FF3B3B;font-weight:400;letter-spacing:.14em;font-size:11px}
+.rf-op p{margin:4px 0 8px;color:#C9D6E6}
+.rf-op-b{display:flex;gap:8px;flex-wrap:wrap}
+.rf-op-b button{font:11px 'Share Tech Mono',monospace;padding:6px 10px;cursor:pointer;background:rgba(255,59,59,.12);color:#FFD0D0;border:1px solid rgba(255,59,59,.7)}
+.rf-op-b button[data-op=switch]:not(:disabled){background:rgba(0,255,156,.14);color:#B8FFE2;border-color:var(--green);animation:rfGo 1s ease-in-out infinite alternate}
+@keyframes rfGo{to{box-shadow:0 0 14px rgba(0,255,156,.45)}}
+.rf-op-b button:disabled{opacity:.45;cursor:default;animation:none}
+.rf-op-b button.ghost{background:transparent;color:var(--dim);border-color:var(--line)}
+#rfSvg g.running .eq{stroke:var(--green);fill:rgba(0,255,156,.12);filter:drop-shadow(0 0 6px rgba(0,255,156,.6))}
+#rfSvg g.stopped .eq{stroke:rgba(140,160,190,.4);fill:rgba(140,160,190,.04)}
+#rfSvg g.stopped{opacity:.55}
+.rf-report b{color:var(--fg);font-weight:400}
+.rf-tr .whatif{fill:none;stroke:var(--green);stroke-width:1.6;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px rgba(0,255,156,.6))}
+.rf-report button{font:11px 'Share Tech Mono',monospace;margin-top:6px;display:block;background:none;border:1px solid var(--line);color:var(--cyan);padding:4px 8px;cursor:pointer}
+
+/* x-ray: route one yourself */
+#xray [data-xrpuzzle].on{background:color-mix(in srgb,var(--cyan) 16%,transparent)}
+#xrSvg .xf.xbad{stroke:#FF3B3B!important;fill:rgba(255,59,59,.22)!important;animation:xbad .6s steps(2) 1}
+@keyframes xbad{50%{transform:translateX(3px)}}
+#xrSvg .xf.xhint{animation:xhint 1s ease-in-out infinite alternate}
+@keyframes xhint{to{fill:rgba(0,240,255,.28);stroke:#00F0FF}}
+.xr-card .xq{display:block;color:var(--fg);margin-top:6px}
+.xr-card .xok{display:block;color:var(--green);margin-top:6px;font-size:12px}
+.xr-card .xno{display:block;color:#FF8A8A;margin-top:6px;font-size:12px}
+.xr-card .xr-inline{font:11px 'Share Tech Mono',monospace;background:none;border:1px solid var(--line);color:var(--cyan);padding:4px 8px;cursor:pointer;margin-top:6px}
+
+/* city cams push in a little, like a camera finding its shot */
+#city{transition:transform 1.8s var(--ease);transform-origin:50% 72%}
+html.citycam #city{transform:scale(1.045)}
+@media(prefers-reduced-motion:reduce){html.citycam #city{transform:none}}
+.banchor.on{animation:implpop .7s var(--ease)}
+@keyframes implpop{0%{transform:scale(2.6);box-shadow:0 0 0 6px color-mix(in srgb,var(--neon) 40%,transparent),0 0 24px var(--neon)}100%{transform:none}}
 </style>
 </head>
 <body class="crt">
@@ -1327,6 +1461,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 <div id="cursor" aria-hidden="true"><span class="ret"><i></i><i></i><i></i><i></i></span><span class="dot"></span><span class="label">▸ EXEC</span></div>
 
 <canvas id="city"></canvas>
+<canvas id="drops" aria-hidden="true"></canvas>
 
 <div id="boot">
   <div id="bootload">
@@ -1366,6 +1501,15 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   </div>
   <h1 class="glitch" id="glitchTitle" data-text="FATIH ERDOGAN">FATIH <span class="nx">ERDOGAN</span></h1>
   <div class="jpsub">ソフトウェアエンジニア <b>//</b> SOFTWARE FOR COMPLEX REAL-WORLD OPERATIONS</div>
+  <div class="runpick" id="runpick" role="group" aria-label="Pick a route through the site">
+    <div class="rp-q"><b>FIXER</b><span id="rpLine">Who's asking? Pick a route and I'll walk you through.</span></div>
+    <div class="rp-opts" id="rpOpts">
+      <button type="button" data-route="hiring">I'm hiring<small>3 stops · about 2 min</small></button>
+      <button type="button" data-route="engineer">I'm an engineer<small>5 stops · the systems</small></button>
+      <button type="button" data-route="explore">Just looking<small>7 stops · the full run</small></button>
+    </div>
+    <p class="hint">▸ No time? <a href="?plain" data-plain>Read the plain version</a>, <a href="#match" data-match>paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>. The city is clickable too.</p>
+  </div>
   <div class="row2">
     <div class="codeblock hud-frame">
       <div class="chrome"><i></i><span>neural_deck :: engineer.ts</span></div>
@@ -1378,9 +1522,9 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
       </div>
     </div>
   </div>
-  <p class="hint">▸ In a hurry? <a href="?plain" data-plain>Read the plain version</a>. Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>.</p>
 </section>
 
+<div class="cityband" data-band="garage" aria-hidden="true"><div class="cb-cap"><span class="cb-cam"><i></i>CAM 01 · SKYWAY</span><span class="cb-next">next: <b>the garage</b> · my stack, built as a car</span><span class="cb-run"></span></div></div>
 <!-- ===== GARAGE ===== -->
 <section id="garage" data-accent="#FF2E88">
   <div class="sec-label"><b>01</b> <span data-decode>./garage --render --spec-sheet # the stack, as a vehicle</span><span class="jp">ガレージ</span></div>
@@ -1390,7 +1534,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
       <div class="vig"></div>
       <div class="hudtxt">◢ UNIT <b>FE-08</b> · "QUADRA STACK" · LIVE RENDER ◣</div>
       <div class="rpm" id="rpm">RPM <b>0000</b></div>
-      <div class="drag">SCROLL TO ROTATE · MOVE MOUSE TO PARALLAX</div>
+      <div class="drag">PRESS AND HOLD TO REV · SCROLL TO ROTATE</div>
     </div>
     <div class="spec hud-frame">
       <h4>SPEC SHEET</h4>
@@ -1439,7 +1583,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
     </div>
     <div id="statsR" class="statcol"></div>
   </div>
-  <p class="dep-note">// levels self-assessed on an 18-segment scale — dispute them in the terminal below. bars fill with scroll; run the lens over the unit for an internal scan.</p>
+  <p class="dep-note">// levels self-assessed on an 18-segment scale — dispute them in the terminal below. bars fill with scroll; run the scan lens over the body to bring its seven implants online.</p>
   <details class="rawman hud-frame">
     <summary>&nbsp;view raw cyberware.manifest</summary>
     <div class="pkg">
@@ -1460,6 +1604,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 </main>
 
 <main>
+<div class="cityband" data-band="runlog" aria-hidden="true"><div class="cb-cap"><span class="cb-cam"><i></i>CAM 02 · MONORAIL LINE 3</span><span class="cb-next">next: <b>the runlog</b> · where I have worked</span><span class="cb-run"></span></div></div>
 <section id="runlog" data-accent="#9D4EDD">
   <div class="sec-label"><b>03</b> <span data-decode>git log --graph --street-history</span><span class="jp">ランログ</span></div>
   <div class="gitlog">
@@ -1469,6 +1614,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
     <div class="commit" data-obj="uni"><span class="st">*</span> <span class="hash">1nit001</span> <span class="msg">init(dokuz-eylul): B.Sc. Industrial Engineering</span><span class="meta">graduated Jun 2022 · İzmir</span><span class="desc">Where the systems mindset started. Languages: Turkish (native), English (B2), German (A2), Japanese (A1).</span></div>
   </div>
 </section>
+<div class="cityband" data-band="breach" aria-hidden="true"><div class="cb-cap"><span class="cb-cam"><i></i>CAM 03 · WEST TOWER</span><span class="cb-next">next: <b>the ICE wall</b> · six case files behind it</span><span class="cb-run"></span></div></div>
 </main>
 
 <!-- ===== CLASSIFIED ZONE — ICE breach + file deck share ONE pinned stage ===== -->
@@ -1749,7 +1895,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
     <h3 id="xrTitle">One tower, thirteen floors.</h3>
     <p>I designed the logistics platform as a .NET 10 modular monolith: one deployable, thirteen modules, each owning its data. Modules never reach through the floor slabs; they talk through the shaft, and architecture tests turn anything that tries back.</p>
     <p>Hover a floor for what it owns, send a request through the building, or read why it is built this way:</p>
-    <div class="xr-jbtns"><button type="button" data-journey="accept">▶ ACCEPT A BID</button><button type="button" data-journey="arrive">▶ A BID ARRIVES</button><button type="button" data-xrwhy>? WHY THIS WAY</button></div>
+    <div class="xr-jbtns"><button type="button" data-journey="accept">▶ ACCEPT A BID</button><button type="button" data-journey="arrive">▶ A BID ARRIVES</button><button type="button" data-xrwhy>? WHY THIS WAY</button><button type="button" data-xrpuzzle>◎ ROUTE ONE YOURSELF</button></div>
     <div class="xr-card" id="xrCard" aria-live="polite"><b>SHIPMENT LIFECYCLE</b><span>Pulses climb the shaft as a shipment moves from request to bids, deal, tracking and documents. The red flash is a cross-module shortcut being stopped by an architecture test.</span></div>
     <div class="xr-legend"><span><i style="background:#00FF9C"></i>edge</span><span><i style="background:#00F0FF"></i>domain modules</span><span><i style="background:#FF8A3D"></i>AI layer</span><span><i style="background:#9D4EDD"></i>data</span><span><i style="background:#FF2E88"></i>boundaries</span></div>
   </div>
@@ -1765,7 +1911,7 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
     <div class="rf-panel">
       <h4 class="rf-h4"><span id="rfMode"><span class="live">PROCESS · LIVE</span></span><span class="rf-kpi" id="rfKpi"></span></h4>
       <div class="rf-alarms" id="rfAl" aria-live="polite"></div>
-      <div class="rf-schem"><svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg><div class="rf-ev" id="rfEv" aria-live="polite"></div></div>
+      <div class="rf-schem"><svg id="rfSvg" viewBox="0 0 660 300" role="img" aria-label="Unit 300 process schematic"></svg><div class="rf-ev" id="rfEv" aria-live="polite"></div><div class="rf-op" id="rfOp" hidden role="group" aria-label="Your call as the operator"></div></div>
       <div class="rf-scrub"><button type="button" id="rfPlay" aria-label="replay the last 24 hours">▶</button><span>HISTORIAN</span><input type="range" id="rfT" min="-24" max="0" step="0.1" value="0" aria-label="rewind the unit up to 24 hours"><b id="rfTl">LIVE</b><button type="button" id="rfSpd" title="replay speed">x1</button><button type="button" id="rfLive" class="on">LIVE</button></div>
       <div class="rf-trends" id="rfTrends"></div>
       <div class="rf-wol" id="rfWol"></div>
@@ -1851,9 +1997,13 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
   <div class="dnote">the ICE-wall breach has always scrubbed with your scroll — that one's on you</div>
 </div>
 <div id="deck">
-  <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span></span>
+  <span>[<b>DECK</b>] portfolio.exe &nbsp;|&nbsp; branch: <b>main</b> &nbsp;|&nbsp; <span id="buildseg">breaching… <b>0%</b></span><button type="button" id="runseg" hidden aria-haspopup="dialog" aria-controls="runpop"></button></span>
   <span class="rhs"><span id="wxseg" hidden title="live conditions in İzmir (Open-Meteo); real rain over İzmir means rain in the city">İZMİR <b>--°C</b></span><span id="payseg" hidden title="3D models still streaming in the background">PAYLOAD <b>0%</b></span><span id="llmseg" hidden title="real token usage and API cost of your FIXER calls this session">LLM <b>0 tok</b></span><span id="heatseg">HEAT <b>36°C</b></span><span>RAM <b id="ram">9.2/16</b></span><span id="deckclock">--:--</span></span>
 </div>
+
+<div id="runpop" hidden role="dialog" aria-label="Your route through the site"></div>
+<div id="runtoast" role="status" aria-live="polite"></div>
+<canvas id="glass" aria-hidden="true"></canvas>
 
 <div id="palette"><div class="box"><input id="palin" placeholder="run a command…" autocomplete="off"><div class="list" id="pallist"></div></div></div>
 
@@ -2043,6 +2193,10 @@ function startHeroTyping(){
 }
 setTimeout(()=>{if(!started)startHeroTyping()},10000);
 
+/* the run's stop hooks can fire before its block runs (e.g. ?plain opens during the first pass) */
+var RUN_READY=false,RUN_Q=null;
+/* loadout implants woken by the scan lens, by LOADOUT index */
+var IMPL_ON=new Set();
 /* ============ STAT BARS ============ */
 const LOADOUT=[
  {g:'CORTEX // backend',side:'L',ax:.50,ay:.075,rows:[['.NET / C#',17],['EF Core · MediatR',14],['DDD · CQRS',13],['xUnit · tests',13]]},
@@ -2088,7 +2242,7 @@ function drawConn(){
     const dir=g.side==='L'?1:-1;
     const k1=x+dir*22;           /* short spur off the panel */
     const k2=ax-dir*16;          /* elbow near the model */
-    h+=`<g class="cn" style="--i:${gi}">
+    h+=`<g class="cn${IMPL_ON.has(gi)?' live':''}" style="--i:${gi}">
       <path d="M${x},${y} H${k1} L${k2},${ay} H${ax}"/>
       <rect x="${x-3}" y="${y-3}" width="6" height="6" transform="rotate(45 ${x} ${y})"/>
       <circle class="ring" cx="${ax}" cy="${ay}" r="4.5"/>
@@ -2101,6 +2255,45 @@ addEventListener('resize',drawConn);
 addEventListener('load',drawConn);
 document.fonts&&document.fonts.ready.then(drawConn);
 setTimeout(drawConn,400);
+/* ---- seven implants, one per skill group, dormant until the scan lens passes over them ---- */
+(function(){
+  const box=bodybox;if(!box)return;
+  const N=LOADOUT.length,dots=[...box.querySelectorAll('.banchor')];
+  let prior=[];try{prior=(JSON.parse(localStorage.getItem('fatih.run')||'{}').done)||[]}catch(_){}
+  if(prior.includes('loadout'))LOADOUT.forEach((_,i)=>IMPL_ON.add(i));
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches){const rl=box.querySelector('.rl');if(rl)rl.innerHTML='UNIT <b>F.E.-08</b> — TAP THE BODY TO WAKE ITS IMPLANTS'}
+  const cnt=document.createElement('div');cnt.className='impcount';cnt.setAttribute('aria-live','polite');box.appendChild(cnt);
+  const paint=()=>{
+    dots.forEach((d,i)=>d.classList.toggle('on',IMPL_ON.has(i)));
+    const all=IMPL_ON.size===N;
+    loadoutBox.classList.toggle('dormant',!all);
+    cnt.innerHTML=all?`ALL <b>${N}</b> IMPLANTS ONLINE`:`IMPLANTS ONLINE <b>${IMPL_ON.size}/${N}</b>`;
+  };
+  paint();
+  const wake=(x,y,R)=>{
+    if(IMPL_ON.size===N)return;
+    const b=box.getBoundingClientRect();let woke=0;
+    LOADOUT.forEach((g,i)=>{
+      if(IMPL_ON.has(i)||Math.hypot(x-(b.left+b.width*g.ax),y-(b.top+b.height*g.ay))>R)return;
+      IMPL_ON.add(i);woke++;
+      const el=statGroups[i].el;el.classList.remove('scan');void el.offsetWidth;el.classList.add('scan');
+      const cn=connSvg&&connSvg.querySelectorAll('.cn')[i];if(cn)cn.classList.add('live');
+      const tag=document.createElement('span');tag.className='impltag'+(g.ax>0.6?' left':'');tag.textContent='◉ '+g.g.split(' //')[0]+' ONLINE';
+      tag.style.left=(g.ax*100)+'%';tag.style.top=(g.ay*100)+'%';box.appendChild(tag);setTimeout(()=>tag.remove(),1500);
+    });
+    if(!woke)return;
+    paint();sfx.blip(880+IMPL_ON.size*110,.05,'square',.016,1.25);
+    if(IMPL_ON.size===N)runDone('loadout');
+  };
+  box.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')wake(e.clientX,e.clientY,50)});
+  /* touch has no hover: a tap sends out a scan ping instead */
+  box.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse')return;
+    const b=box.getBoundingClientRect(),r=document.createElement('i');r.className='tapring';
+    r.style.left=(e.clientX-b.left)+'px';r.style.top=(e.clientY-b.top)+'px';box.appendChild(r);setTimeout(()=>r.remove(),800);
+    wake(e.clientX,e.clientY,75);
+  });
+})();
 
 /* ============ PIXEL-ART NEON CITY ============ */
 const cv=$('#city'),ctx=cv.getContext('2d');
@@ -2262,6 +2455,7 @@ function bakeRefinery(X,bd){
 function drawRefinery(t,par,yoff){
   if(!refy||refy.flareX===undefined)return;
   const fx=refy.flareX-par,fy=refy.flareTop+yoff;
+  HOT.ref=[refy.x-par-2,fy-9,refy.w+5,refy.base-refy.flareTop+9];
   const f=Math.sin(t*.011)*1.2+Math.sin(t*.027)*.8,hgt=4+Math.round(Math.abs(f)*1.4);
   for(let r=4;r>=1;r--){ctx.fillStyle=`rgba(255,138,61,${.05*r})`;ctx.fillRect(fx-r-1,fy-hgt-r,3+r*2,hgt+r*2)}
   ctx.fillStyle='#FF8A3D';ctx.fillRect(fx-1,fy-hgt,3,hgt);
@@ -2754,7 +2948,7 @@ function drawHack(t){
   const par=Math.round(mxr*15);
   const yoff=-Math.min(Math.round(scrollY/PXS*0.02*1.35),Math.round(H*0.05));
   const bx=hk.bx-par,by=hk.by+yoff,bw=hk.bw,bh=hk.bh;
-  const top=hk.top+yoff,ex=hk.bd.x+1-par;            // ex: the roof's left corner, where the wire hangs
+  const top=hk.top+yoff,ex=hk.bd.x+1-par;HOT.board=[bx-2,by-2,bw+4,bh+4];            // ex: the roof's left corner, where the wire hangs
   const jx=bx+2,rx=jx;                               // jack seat on the board's shoulder; the runner squats right above it
   /* beats */
   const TK=1500,DA=5200,LK=8800,YK=9300,ZP=9800,GN=10700,Z1=12000,Z2=14800,BYE=16400;
@@ -3027,13 +3221,27 @@ function drawMono(t){
     const cx2=Math.round(mono.x+i*10);
     ctx.fillStyle='#0D1524';ctx.fillRect(cx2,my-3,9,4);             // car hull
     ctx.fillStyle='rgba(160,205,255,.25)';ctx.fillRect(cx2,my-3,9,1);
-    ctx.fillStyle='rgba(140,225,255,.85)';
+    ctx.fillStyle=mono.vip?'#C79BFF':'rgba(140,225,255,.85)';
     ctx.fillRect(cx2+2,my-2,2,1);ctx.fillRect(cx2+5,my-2,2,1);      // lit windows
   }
-  const len=mono.n*10-1;
+  const len=mono.n*10-1;HOT.mono=[Math.round(mono.x)-1,my-(mono.vip?10:5),len+2,mono.vip?13:8];
+  if(mono.vip){
+    /* the express: a tall body whose whole flank is an LED ticker carrying the runlog */
+    const mx=Math.round(mono.x),top=my-9;
+    ctx.fillStyle='#0B1220';ctx.fillRect(mx,top,len,10);
+    ctx.fillStyle='rgba(199,155,255,.35)';ctx.fillRect(mx,top,len,1);
+    ctx.fillStyle='#05070D';ctx.fillRect(mx+2,top+2,len-4,6);
+    ctx.save();ctx.beginPath();ctx.rect(mx+2,top+2,len-4,6);ctx.clip();
+    const st=mono.strip,off=((t-(mono.t0||(mono.t0=t)))*0.04)%(st.width+len);
+    ctx.drawImage(st,Math.round(mx+len-off),top+3);ctx.restore();
+    ctx.fillStyle='rgba(5,7,13,.9)';for(let i=1;i<mono.n;i++)ctx.fillRect(mx+i*10-1,top+1,1,8);   // couplings
+    const nose=mono.dir>0?mx+len:mx-3;ctx.fillStyle='#0B1220';ctx.fillRect(nose,top+3,3,6);ctx.fillRect(mono.dir>0?nose:nose+1,top+5,mono.dir>0?2:2,4);
+    ctx.fillStyle='#F2FAFF';ctx.fillRect(mono.dir>0?nose+2:nose,top+6,1,2);
+    ctx.fillStyle='rgba(157,78,221,.22)';ctx.fillRect(mx,my+1,len,4);                                  // glow on the guideway
+  }
   ctx.fillStyle='#F2FAFF';ctx.fillRect(Math.round(mono.dir>0?mono.x+len:mono.x),my-2,1,2);       // headlight
   ctx.fillStyle='#FF3B3B';ctx.fillRect(Math.round(mono.dir>0?mono.x:mono.x+len),my-2,1,1);       // tail lamp
-  ctx.fillStyle='rgba(140,225,255,.06)';ctx.fillRect(Math.round(mono.x),my+2,len,2);             // wash under the rail
+  ctx.fillStyle=mono.vip?'rgba(157,78,221,.16)':'rgba(140,225,255,.06)';ctx.fillRect(Math.round(mono.x),my+2,len,mono.vip?3:2);             // wash under the rail
 }
 /* lightning: only when the rain has real weight behind it */
 let boltT=-1e9,nextBolt=18000+Math.random()*27000;
@@ -3133,7 +3341,7 @@ function drawBlimp(t){
   b.x+=b.dir*dt*(W+66)/80000;
   if(b.x<-62||b.x>W+8){blimp=null;nextBlimp=t+RR(45000,80000);return}
   const bx=Math.round(b.x),by=Math.round(b.y+Math.sin(t*0.0007)*1.5);
-  ctx.drawImage(b.dir>0?blimpR:blimpL,bx,by);
+  ctx.drawImage(b.dir>0?blimpR:blimpL,bx,by);HOT.blimp=[bx,by,54,18];
   /* ticker: blit a moving window of the current message strip, clipped to the panel */
   const st=b.strips[b.mi],off=(t-b.mt)*0.011,pw=30;
   if(off>st.width+pw){b.mi=(b.mi+1)%b.strips.length;b.mt=t}
@@ -3199,6 +3407,7 @@ function drawHolo(t){
   ctx.save();if(!right){ctx.translate(fx*2+28,0);ctx.scale(-1,1)}
   ctx.drawImage(((t/260)|0)%2?koiA:koiB,fx+gl,fy);ctx.restore();ctx.globalAlpha=1;
   ctx.fillStyle='#00F0FF';ctx.fillRect(rx-2,ry-1,5,1);
+  HOT.koi=[Math.min(fx,rx-3),fy-2,Math.max(30,rx+3-fx),ry-fy+3];
 }
 /* --- cargo drones run deliveries between rooftop pads (a nod to the logistics platform) --- */
 let pads=null,drones=[],droneNext=0;
@@ -3212,6 +3421,7 @@ function padPick(){
 function drawDrones(t,par,yoff){
   if(!pads||!pads.every(p=>layers[2].includes(p))){pads=padPick();drones=[]}
   if(pads.length<2)return;
+  if(drones.some(d=>d.ttl))drones=drones.filter(d=>!d.ttl||t<d.ttl||d.state==='fly');
   const pxy=b=>[b.x-par+Math.round(b.w/2),b.base-b.h+yoff-1];
   pads.forEach(b=>{const [x,y]=pxy(b);ctx.fillStyle='rgba(0,240,255,.45)';ctx.fillRect(x-3,y,7,1)});
   if(drones.length<(XLITE?1:3)&&t>droneNext){droneNext=t+RR(3000,6000);const a=(Math.random()*pads.length)|0;drones.push({a,b:a,state:'wait',until:t+RR(300,1500),carry:false,t0:t,dur:1})}
@@ -3220,7 +3430,7 @@ function drawDrones(t,par,yoff){
     const A=pxy(pads[d.a]),B=pxy(pads[d.b]);let x,y;
     if(d.state==='fly'){const k=Math.min(1,(t-d.t0)/d.dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;x=A[0]+(B[0]-A[0])*e;y=A[1]+(B[1]-A[1])*e-Math.sin(Math.PI*k)*26-2;if(k>=1){d.state='wait';d.until=t+RR(1500,3200)}}
     else{x=B[0];y=B[1]-2}
-    x=Math.round(x);y=Math.round(y);
+    x=Math.round(x);y=Math.round(y);HOT.drones.push([x-4,y-3,9,8]);
     ctx.fillStyle='#1B2333';ctx.fillRect(x-2,y,5,1);
     ctx.fillStyle='rgba(185,215,255,.55)';const f=((t/60)|0)%2;ctx.fillRect(x-3+f,y-1,2,1);ctx.fillRect(x+2-f,y-1,2,1);
     if((t%900)<450){ctx.fillStyle='#FF3B3B';ctx.fillRect(x-2,y,1,1);ctx.fillStyle='#00FF9C';ctx.fillRect(x+2,y,1,1)}
@@ -3323,11 +3533,14 @@ function drawFireworks(t){
       ctx.globalAlpha=1-k;ctx.fillStyle=q.col;ctx.fillRect(x,y,1,1);ctx.globalAlpha=(1-k)*.38;ctx.fillRect(x-1,y-1,3,3);ctx.globalAlpha=1});
   });
 }
+/* where the clickable things in the city were drawn this frame, in city pixels [x,y,w,h] */
+const HOT={drones:[]};
 let cityHold=false;   // set while an opaque overlay covers the canvas: nothing to paint behind it
 let skCity=false;     // commit skyline in city mode: the front row steps aside for the commit towers
 function city(t){
   if(!reduced)requestAnimationFrame(city);
   if(document.hidden||cityHold)return;
+  HOT.blimp=HOT.koi=HOT.ref=HOT.mono=HOT.board=HOT.inc=null;HOT.drones.length=0;
   if(lastFT)fpsE=fpsE*0.9+(1000/Math.max(1,t-lastFT))*0.1;
   lastFT=t;
   ctx.clearRect(0,0,W,H);
@@ -3430,7 +3643,7 @@ function city(t){
   });
 
   const par2=Math.round(mxr*15),yoff2=-Math.min(Math.round(scrollY/PXS*0.02*1.35),Math.round(H*0.05));
-  if(!skCity){drawWindowLife(t,par2,yoff2);drawDrones(t,par2,yoff2)}
+  if(!skCity){drawWindowLife(t,par2,yoff2);drawDrones(t,par2,yoff2);drawFlyer(t)}
   if(t-lastStreak>2600+Math.random()*2600){
     lastStreak=t;
     const dir=Math.random()<.5?1:-1;
@@ -3517,6 +3730,7 @@ function city(t){
       for(let k=0;k<r.l;k++)ctx.fillRect(Math.round(r.x-k*(0.25+wk*0.35)),Math.round(r.y-k),1,1);
     });
   }
+  if(!skCity)cityMenuDraw(t,par2,yoff2);
   /* cyberpsycho episode: the feed itself starts tearing */
   if(psychoT){
     ctx.fillStyle='rgba(255,40,40,.08)';ctx.fillRect(0,0,W,H);
@@ -3793,7 +4007,7 @@ function initGarage(){
     spinWheels:true    /* only works if the model has separate wheel nodes */
   };
   let modelRig=null,modelWheels=[],modelGlow=[];
-  const lampHead=[],lampRear=[],lampMeshes=[],beams=[];
+  const lampHead=[],lampRear=[],lampMeshes=[],beams=[],flames=[];
   const hud=document.querySelector('.carbox .hudtxt');
   /* a wheel is a disc: its thinnest local axis is the one it spins around */
   function wheelAxis(o){
@@ -3851,6 +4065,17 @@ function initGarage(){
         const p=inner.worldToLocal(new THREE.Vector3(lc.x,lc.y,lc.z+side*ls.z*0.32));
         cone.position.copy(p);cone.rotation.z=dir*-0.08;inner.add(cone);beams.push(cone);
       });
+      /* exhaust flames: blue at the pipe, orange at the tip; only the revs light them */
+      const ms=mb.getSize(new THREE.Vector3()),rx=dir>0?mb.min.x:mb.max.x,ry=mb.min.y+ms.y*0.3,FL=0.62;
+      [-1,1].forEach(side=>{
+        const g=new THREE.ConeGeometry(0.055,FL,12,6,true);g.translate(0,FL/2,0);
+        const pos=g.attributes.position,col=new Float32Array(pos.count*3);
+        for(let v=0;v<pos.count;v++){const k=pos.getY(v)/FL,fade=Math.pow(1-k,1.6)*.62,o=Math.min(1,k*3.2);col[v*3]=(.35+.65*o)*fade;col[v*3+1]=(.55-.15*o)*fade;col[v*3+2]=(1-.9*o)*fade}
+        g.setAttribute('color',new THREE.BufferAttribute(col,3));
+        g.rotateZ(dir>0?Math.PI/2:-Math.PI/2);
+        const mat=new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+        const fl=new THREE.Mesh(g,mat);fl.position.copy(inner.worldToLocal(new THREE.Vector3(rx-dir*0.02,ry,mc.z+side*ms.z*0.17)));inner.add(fl);flames.push(fl);
+      });
     }
     const nm=((m.name||'').trim()||CAR.url.split('/').pop().replace(/\.glb$/i,''));
     if(hud)hud.innerHTML='◢ UNIT <b>'+nm.toUpperCase().slice(0,24)+'</b> · GLB LOADED · LIVE RENDER ◣';
@@ -3874,24 +4099,61 @@ function initGarage(){
       rig.rotation.y=-0.62+prog*Math.PI*1.9+mxr*0.42;
       rig.rotation.z=Math.sin(t*0.0006)*0.012;
       rig.position.y=-0.45+Math.sin(t*0.0011)*0.03;
-      const spin=0.05+Math.abs(vel)*0.012;
+      const rv=GREV.v;
+      if(rv){rig.position.y+=Math.sin(t*0.09)*0.014*rv;rig.rotation.z+=Math.sin(t*0.13)*0.009*rv-0.02*rv}
+      const spin=0.05+Math.abs(vel)*0.012+rv*0.6;
       if(modelRig)modelWheels.forEach(w=>w.o.rotation[w.ax]-=spin);
       else wheels.forEach(w=>w.rotation.z-=spin);
       grid.rotation.y=prog*0.5;
       /* the lamps follow the hour: brighter at night, beams only after dark */
       const nite={night:1,dusk:.7,dawn:.45}[todName]||0;
-      lampHead.forEach(mt=>{mt.emissiveIntensity=1+nite*2.4});
-      lampRear.forEach(mt=>{mt.emissiveIntensity=1+nite*1.6});
-      beams.forEach((b,i)=>{b.material.opacity=nite*0.42*(0.94+0.06*Math.sin(t*0.013+i))});
+      lampHead.forEach(mt=>{mt.emissiveIntensity=1+nite*2.4+rv*3.2});
+      lampRear.forEach(mt=>{mt.emissiveIntensity=1+nite*1.6+rv*2.4});
+      beams.forEach((b,i)=>{b.material.opacity=Math.max(nite*0.42,rv*0.6)*(0.94+0.06*Math.sin(t*0.013+i))});
+      glowL.intensity=1.3+rv*2.6;
+      const pop=GREV.pop&&t-GREV.pop<180;
+      flames.forEach((fl,i)=>{const on=Math.max(0,(rv-0.5)*2);fl.material.opacity=pop?.95:on*(0.45+0.4*Math.abs(Math.sin(t*0.05+i*1.7)));fl.scale.y=pop?2.6:0.5+on*1.1*(0.75+0.5*Math.abs(Math.sin(t*0.031+i)));});
       camera.position.y=2.95+Math.sin(t*0.0005)*0.12;
+      camera.position.x=8.1+Math.sin(t*0.071)*0.03*rv;
       camera.lookAt(0,0.20,0);
       renderer.render(scene,camera);
-      rpmEl.innerHTML='RPM <b>'+String(Math.round(1200+Math.abs(vel)*140+Math.sin(t*0.003)*90)).padStart(4,'0')+'</b>';
+      if(!rv)rpmEl.innerHTML='RPM <b>'+String(Math.round(1200+Math.abs(vel)*140+Math.sin(t*0.003)*90)).padStart(4,'0')+'</b>';
     }
   };
 }
 if(window.THREE&&!reduced){try{initGarage()}catch(e){console.warn(e);$('#garage').classList.add('nogl')}}
 else $('#garage').classList.add('nogl');
+/* hold to rev: the stack under load. Hit the redline and the spec sheet gets its dyno pass */
+var GREV={v:0,held:false,peak:false,pop:0};
+(function(){
+  const box=document.querySelector('.carbox'),rpm=$('#rpm');if(!box)return;
+  let raf=0;
+  const step=()=>{
+    const g=GREV;g.v+=((g.held?1:0)-g.v)*(g.held?0.034:0.07);
+    if(!g.held&&g.v<0.004)g.v=0;
+    if(g.v>0.95&&!g.peak){g.peak=true;g.pop=performance.now();garageRedline()}
+    if(g.v<0.3)g.peak=false;
+    if(g.v){const r=Math.round(1200+g.v*7600+Math.sin(performance.now()*0.05)*70*g.v);rpm.innerHTML=(g.v>0.9?'REDLINE ':'RPM ')+'<b>'+String(r).padStart(4,'0')+'</b>';rpm.classList.toggle('red',g.v>0.9)}
+    else rpm.classList.remove('red');
+    sfx.engine(g.v);
+    raf=g.v||g.held?requestAnimationFrame(step):0;
+  };
+  const hold=on=>{GREV.held=on;box.classList.toggle('revving',on);if(!raf)raf=requestAnimationFrame(step)};
+  box.addEventListener('pointerdown',e=>{if(e.button)return;hold(true)});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>box.addEventListener(ev,()=>{if(GREV.held)hold(false)}));
+  box.addEventListener('contextmenu',e=>{if(GREV.held)e.preventDefault()});
+  box.tabIndex=0;box.setAttribute('role','button');box.setAttribute('aria-label','The garage car. Press and hold, or hold Space, to rev the engine.');
+  box.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();hold(true)}});
+  box.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')hold(false)});
+})();
+function garageRedline(){
+  document.querySelectorAll('.spec .row').forEach((r,i)=>setTimeout(()=>{r.classList.add('lit');setTimeout(()=>r.classList.remove('lit'),700)},i*65));
+  const hud=document.querySelector('.carbox .hudtxt');
+  if(hud&&!hud.dataset.dyno){hud.dataset.dyno=hud.innerHTML;hud.innerHTML='◢ DYNO PASS · <b>REDLINE 8,800</b> · EVERY PART HOLDS ◣';setTimeout(()=>{hud.innerHTML=hud.dataset.dyno;delete hud.dataset.dyno},3200)}
+  const pl=document.querySelector('.spec .plate');if(pl){pl.classList.remove('stamp');void pl.offsetWidth;pl.classList.add('stamp')}
+  sfx.blip(1760,.08,'square',.02,1.2);sfx.blip(85,.16,'sawtooth',.07,.45);   // and the backfire
+  runDone('garage');
+}
 
 /* ============ ICE WALL — hex iris ============ */
 const iceCv=$('#iceCv'),ix=iceCv.getContext('2d');
@@ -4059,7 +4321,7 @@ function drawIce(p,t,neon){
   const open=i=>{
     document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
     const f=document.getElementById('fview-'+i);
-    if(f)requestAnimationFrame(()=>f.classList.add('show'));
+    if(f){requestAnimationFrame(()=>f.classList.add('show'));runDone('file')}
   };
   const closeAll=()=>document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
   document.addEventListener('click',e=>{
@@ -4355,7 +4617,7 @@ const HEXC='01<>{}[]#$%&/=?*+~^ネオンサイバー';
 const accents=[...document.querySelectorAll('[data-accent]')].filter(el=>!el.closest('.fstage')).map(el=>({el,c:el.dataset.accent}));
 const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
 let curA=hex2rgb('#FF2E88'),tgtA=curA.slice();
-let lastY=scrollY,velS=0;
+let lastY=scrollY,velS=0,iceThrough=false,glassEnd=false;
 const loadoutSec=$('#implants'),garageSec=$('#garage');
 const iceSec=$('#icewall'),ibIn=$('#ibIn'),iceInt=$('#iceInt'),iceHint=$('#iceHint');
 const iceHud=iceSec?iceSec.querySelector('.ihud'):null,iceLayer=document.getElementById('icelayer');
@@ -4509,6 +4771,7 @@ function loop(t){
         fstage.style.opacity=out.toFixed(3);
         fstage.classList.toggle('on',out>0.5);
       }
+      if(!iceThrough&&(deckStatic?p>0.92:out>=1)){iceThrough=true;runDone('breach');droneBurst()}
     }
   }
   if(carAPI){
@@ -4560,6 +4823,7 @@ function loop(t){
     if(foldersBox) foldersBox.classList.toggle('has', t>0.15 || done);
     const _cta=gigCta||document.getElementById('gigcta');
     if(_cta) _cta.classList.toggle('show', done);
+    if(done&&!glassEnd){glassEnd=true;setTimeout(()=>glassCrash('end'),900)}
 
     dossiers.forEach((d,i)=>{
       const f=folders[i];
@@ -4826,6 +5090,7 @@ function fxEffect(e){
   return null;
 }
 function fxDraft(a){
+  runDone('contact');
   const d=document.createElement('div');d.className='fxdraft';
   d.innerHTML=`<div class="k">DRAFT TO fatiherdogann099@gmail.com · NOT SENT · EDIT FREELY</div>
     <input class="fxs" aria-label="subject" value="${fxEsc(a.subject)}"><textarea class="fxb" aria-label="message">${fxEsc(a.body)}</textarea>
@@ -4867,7 +5132,7 @@ async function ndPost(url,body,on){
 }
 async function askFixer(q){
   if(FX.busy){tprint('<span class="err">FIXER is still answering, one moment.</span>');return}
-  FX.busy=true;FX.hist.push({role:'user',content:q.slice(0,1200)});
+  FX.busy=true;FX.hist.push({role:'user',content:q.slice(0,1200)});runDone('fixer');
   const line=document.createElement('div');line.className='fx wait';
   line.innerHTML='<span class="fxn">FIXER</span><span class="fxdots">on the line</span>';
   tout.appendChild(line);tout.scrollTop=tout.scrollHeight;
@@ -4922,6 +5187,7 @@ function plainOpen(src){
   if(!reduced&&plEl.animate)plEl.animate({clipPath:plSweep(plOrigin)},{duration:700,easing:'cubic-bezier(.65,0,.35,1)'});
   setTimeout(()=>$('#plClose').focus(),40);
   try{history.replaceState(null,'',location.pathname+'?plain'+location.hash)}catch(_){}
+  runDone('plain');
 }
 function plainClose(instant){
   if(plEl.hidden)return;
@@ -4973,7 +5239,7 @@ const XR_WHY=[
   ['Container Apps, not Kubernetes','Managed containers, HTTPS and scaling fit the size of the team and the budget.'],
   ['One codebase for iOS and Android','Expo and React Native, in the same language and mental model as the web app.'],
 ];
-let xrBuilt=false,xrRaf=0,xrY={};
+let xrBuilt=false,xrRaf=0,xrY={},xrRect={},xrP=null;
 const NS='http://www.w3.org/2000/svg';
 const sv=(tag,attrs,parent=xrSvg)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
 function xrShow(rect,title,text){xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));if(rect)rect.classList.add('on');xrCard.innerHTML=`<b>${title}</b><span>${text}</span>`}
@@ -4994,10 +5260,11 @@ function xrBuild(){
       sv('text',{x:SH+20,y:y+f.h/2+4,class:'xlabel'},g).textContent=f.label;
       sv('line',{x1:SH,x2:X1,y1:y,y2:y,class:'slab'});
     }
-    const show=()=>{if(!xrJ)xrShow(r,f.label,f.info)};
+    const show=()=>{if(!xrJ&&!xrP)xrShow(r,f.label,f.info)};
     g.addEventListener('mouseenter',show);g.addEventListener('focus',show);
-    g.addEventListener('click',()=>{xrJ=null;xrShow(r,f.label,f.info)});
-    xrY[f.id]=y+f.h/2;
+    const pick=()=>{if(xrP){xrPuzzlePick(f.id);return}xrJ=null;xrShow(r,f.label,f.info)};
+    g.addEventListener('click',pick);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+    xrY[f.id]=y+f.h/2;xrRect[f.id]=r;
     y+=f.h+3;
     if(f.id==='lobby'){sv('line',{x1:60,x2:460,y1:y-1,y2:y-1,stroke:'#57647E','stroke-dasharray':'2 4'});y+=6}
   });
@@ -5007,8 +5274,9 @@ function xrBuild(){
   const shr=sv('rect',{x:X0+2,y:top,width:SH-X0-4,height:bot-top,class:'xf draw',style:'fill:rgba(255,46,136,.05);stroke:rgba(255,46,136,.6)'},sh);
   const cx=X0+(SH-X0)/2+3,cy=(top+bot)/2;
   sv('text',{x:cx,y:cy,class:'xsub','text-anchor':'middle',transform:`rotate(-90 ${cx} ${cy})`,style:'fill:#FF2E88'},sh).textContent='CONTRACTS · MEDIATR · OUTBOX EVENTS';
-  const showSh=()=>{if(!xrJ)xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)};
-  sh.addEventListener('mouseenter',showSh);sh.addEventListener('focus',showSh);sh.addEventListener('click',()=>{xrJ=null;xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)});
+  const showSh=()=>{if(!xrJ&&!xrP)xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)};
+  xrRect.shaft=shr;
+  sh.addEventListener('mouseenter',showSh);sh.addEventListener('focus',showSh);sh.addEventListener('click',()=>{if(xrP){xrPuzzlePick('shaft');return}xrJ=null;xrShow(shr,'THE SHAFT · CONTRACTS AND OUTBOX',XR_SHAFT.info)});
   xrY.shaftTop=top;
   xrBuilt=true;
 }
@@ -5039,6 +5307,7 @@ const XR_JOURNEYS={
 let xrJ=null;
 function xrJourney(key){
   if(!xrY.lobby)return;
+  xrPuzzleEnd();
   const J=XR_JOURNEYS[key],FX=330,SX=135,OX=436,Y=xrY,top=Y.shaftTop;
   const P=[[FX,Y.lobby,0]];
   const add=(st,...pts)=>pts.forEach(p=>P.push([p[0],p[1],st]));
@@ -5097,7 +5366,7 @@ function xrAnimate(){
   }
   const t0=performance.now(),LEG=520;
   const tick=now=>{
-    const t=now-t0,total=legs.length*LEG+900,lt=t%total,li=Math.floor(lt/LEG);
+    const t=Math.max(0,now-t0),total=legs.length*LEG+900,lt=t%total,li=Math.floor(lt/LEG);   // rAF's stamp can predate t0
     if(xrJourneyTick(now)){p.setAttribute('opacity',0);bad.setAttribute('opacity',0);xrRaf=requestAnimationFrame(tick);return}
     if(li<legs.length){const [x1,y1,x2,y2]=legs[li],k=Math.min(1,(lt-li*LEG)/LEG),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;p.setAttribute('cx',x1+(x2-x1)*e);p.setAttribute('cy',y1+(y2-y1)*e);p.setAttribute('opacity',1)}
     else p.setAttribute('opacity',0);
@@ -5120,7 +5389,62 @@ function xrOpen(){
   xrEl.classList.remove('xr-scan');void xrEl.offsetWidth;xrEl.classList.add('xr-scan');
   xrAnimate();setTimeout(()=>$('#xrClose').focus(),40);
 }
-function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrJ=null;xrEl.hidden=true;$('#xrTower').style.transform='';document.documentElement.classList.remove('brlock')}
+function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrJ=null;xrPuzzleEnd();xrEl.hidden=true;$('#xrTower').style.transform='';document.documentElement.classList.remove('brlock')}
+/* ---- route one yourself: the visitor sends a new bid through the building, floor by floor ---- */
+const XR_PUZ=[
+  {id:'edge',q:'A carrier taps "place bid" in the mobile app. Which floor does the request reach first?',ok:'The edge checks the token, the company the user acts for, and the authorization layers before anything else.',hint:'Every request is checked at the door first: who is calling, and for which company.'},
+  {id:'bids',q:'The request is allowed in. Which module owns a bid?',ok:'Bids owns bids, and only Bids writes them.',hint:'Each module owns its own data. Which floor is named after the thing being placed?'},
+  {id:'data',q:'Bids saves the bid and raises an event about it. Where do the two land, together?',ok:'The bid and its event are written in one transaction, so the event is never lost and never sent for a change that did not happen.',hint:'Both are stored in the same place, in one transaction.'},
+  {id:'notifications',q:'The event leaves the outbox. Which module tells the shipper\'s team?',ok:'Notifications reacts to the event. Bids never calls it directly.',hint:'Someone has to tell the shipper, and it is not Bids.'},
+  {id:'lobby',q:'Last stop: where does the shipper see the new bid?',ok:'Open screens get a signal and re-read through the same authorized endpoints; phones get a push.',hint:'Where people actually look at the platform.'},
+];
+function xrPuzzleStart(){
+  if(xrEl.hidden)xrOpen();
+  xrJ=null;document.querySelectorAll('#xray [data-journey]').forEach(b=>b.classList.remove('on'));
+  xrSvg.querySelectorAll('.jtrail,.jdot,.ptrail').forEach(n=>n.remove());xrSvg.querySelectorAll('.xf.on,.xf.xbad,.xf.xhint').forEach(n=>n.classList.remove('on','xbad','xhint'));
+  const pl=sv('polyline',{class:'jtrail ptrail',points:`330,${xrY.lobby}`});
+  const dot=sv('circle',{class:'jdot ptrail',r:4.5,cx:330,cy:xrY.lobby});
+  xrP={step:0,picks:0,miss:0,pts:[[330,xrY.lobby]],pl,dot,last:''};
+  document.querySelector('#xray [data-xrpuzzle]').classList.add('on');
+  xrPuzzleCard();
+}
+function xrPuzzleEnd(){
+  if(!xrP)return;
+  xrP=null;document.querySelector('#xray [data-xrpuzzle]')?.classList.remove('on');
+  xrSvg.querySelectorAll('.xf.xbad,.xf.xhint').forEach(n=>n.classList.remove('xbad','xhint'));
+}
+function xrPuzzleCard(note){
+  const P=xrP,st=XR_PUZ[P.step];
+  xrCard.innerHTML=`<b>ROUTE A NEW BID · STEP ${P.step+1} OF ${XR_PUZ.length}</b>${note||''}<span class="xq">${st.q}</span><span class="hint">Pick a floor on the tower.</span>`;
+}
+function xrPuzzlePick(id){
+  const P=xrP;if(!P)return;
+  const st=XR_PUZ[P.step];P.picks++;
+  if(id!==st.id){
+    P.miss++;const r=xrRect[id];
+    if(r){r.classList.remove('xbad');void r.getBBox();r.classList.add('xbad');setTimeout(()=>r.classList.remove('xbad'),650)}
+    sfx.blip(180,.12,'square',.02,.6);
+    if(P.miss>=2)xrRect[st.id]?.classList.add('xhint');
+    xrPuzzleCard(`<span class="xno">Not that one. ${st.hint}</span>`);
+    return;
+  }
+  xrRect[st.id]?.classList.remove('xhint');P.miss=0;
+  /* draw the leg: module floors are reached through the shaft, the rest from outside */
+  const Y=xrY,FX=330,SX=135,OX=436,[px,py]=P.pts[P.pts.length-1],ty=Y[id];
+  const leg=id==='bids'?[[SX,py],[SX,ty],[FX,ty]]:[[OX,py],[OX,ty],[FX,ty]];
+  const from=P.pts.length;P.pts.push(...leg);P.pl.setAttribute('points',P.pts.map(p=>p.join(',')).join(' '));
+  const seg=P.pts.slice(from-1),t0=performance.now(),D=reduced?1:650;
+  const run=now=>{if(!P.dot.isConnected)return;const k=Math.min(1,Math.max(0,now-t0)/D),n=seg.length-1,f=k*n,i=Math.min(n-1,Math.floor(f)),e=f-i,a=seg[i],b=seg[i+1];
+    P.dot.setAttribute('cx',a[0]+(b[0]-a[0])*e);P.dot.setAttribute('cy',a[1]+(b[1]-a[1])*e);if(k<1)requestAnimationFrame(run)};
+  requestAnimationFrame(run);
+  xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));xrRect[id]?.classList.add('on');
+  sfx.blip(880+P.step*120,.05,'square',.018,1.3);
+  P.step++;
+  if(P.step<XR_PUZ.length){xrPuzzleCard(`<span class="xok">✓ ${st.ok}</span>`);return}
+  const n=P.picks;xrPuzzleEnd();
+  xrCard.innerHTML=`<b>ROUTED · ${n} PICK${n>1?'S':''} FOR ${XR_PUZ.length} FLOORS</b><span class="xok">✓ ${st.ok}</span><span>Notice that Bids never called Notifications: the bid reached the shipper through an event. That is the rule the whole tower is built on.</span><span class="hint"><button type="button" data-journey="arrive" class="xr-inline">▶ watch the full journey</button></span>`;
+  runDone('xray');
+}
 /* a gentle isometric tilt that follows the mouse */
 (function(){
   const tw=$('#xrTower');let q=0;
@@ -5134,7 +5458,8 @@ function xrClose(){if(xrEl.hidden)return;cancelAnimationFrame(xrRaf);xrJ=null;xr
 $('#xrClose').addEventListener('click',xrClose);
 xrEl.addEventListener('click',e=>{
   const b=e.target.closest('[data-journey]');if(b){xrJourney(b.dataset.journey);return}
-  if(e.target.closest('[data-xrwhy]')){xrJ=null;xrSvg.querySelectorAll('.jtrail,.jdot').forEach(n=>n.remove());xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));
+  if(e.target.closest('[data-xrpuzzle]')){xrPuzzleStart();return}
+  if(e.target.closest('[data-xrwhy]')){xrPuzzleEnd();xrJ=null;xrSvg.querySelectorAll('.jtrail,.jdot').forEach(n=>n.remove());xrSvg.querySelectorAll('.xf.on').forEach(n=>n.classList.remove('on'));
     document.querySelectorAll('#xray [data-journey]').forEach(x=>x.classList.remove('on'));
     xrCard.innerHTML=`<b>WHY IT IS BUILT THIS WAY</b><ol>${XR_WHY.map(([h,t])=>`<li><span style="color:var(--fg)">${h}.</span> ${t}</li>`).join('')}</ol><span class="hint">The rule behind all of them: put what is most expensive to get wrong (identity, tenant isolation, data consistency) in the most solid place, and keep the rest simple to run.</span>`}
 });
@@ -5200,7 +5525,7 @@ function rfBuild(){
     const t=el.dataset.tr,m=SIM.TAGS[t],pts=SIM.series(t,24,96),vs=pts.map(p=>p.v);
     const lim=m.hi??m.lo,lo=Math.min(...vs,lim??Infinity),hi=Math.max(...vs,lim??-Infinity),pad=(hi-lo)*.12||1;
     const Y=v=>54-((v-lo+pad)/(hi-lo+pad*2))*54,X=i=>i/(pts.length-1)*200;
-    const svg=el.querySelector('svg');
+    const svg=el.querySelector('svg');el._Y=Y;
     if(lim!==undefined)sv2('line',{x1:0,x2:200,y1:Y(lim),y2:Y(lim),stroke:'rgba(255,59,59,.55)','stroke-dasharray':'3 3','vector-effect':'non-scaling-stroke'},svg);
     sv2('polyline',{points:pts.map((p,i)=>`${X(i)},${Y(p.v)}`).join(' '),fill:'none',stroke:t==='TI-312'?'#9D4EDD':'#00F0FF','stroke-width':1.5,'vector-effect':'non-scaling-stroke'},svg);
     sv2('line',{x1:200,x2:200,y1:0,y2:54,class:'curl'},svg);
@@ -5215,11 +5540,15 @@ function rfRenderWos(extra){
 let rfWos=[];
 /* time shown by the control room: 0 is live, negative hours rewind the historian */
 let rfT=0;const rfAck=new Set();
+/* the shift drill: the replay stops at the first pump alarm and the call is the visitor's.
+   rfV reads the recorded data, or the what-if once standby P-301B has been started. */
+const rfOp={sw:null,prompted:false,passed:false,acked:false,cum:null,ev:null};
+const rfV=(tag,t)=>rfOp.sw!=null&&SIM.valueWithSwitch?SIM.valueWithSwitch(tag,t,rfOp.sw):SIM.value(tag,t);
 const RF_PRIO={'VI-301A:HI':1,'FI-301:LO':1,'PI-301:LO':2,'II-301A:HI':2};
 function rfActiveAt(t){
   const out=[];
   for(const [tag,m] of Object.entries(SIM.TAGS))for(const [kind,lim] of [['HI',m.hi],['LO',m.lo]]){
-    if(lim===undefined)continue;const v=SIM.value(tag,t);
+    if(lim===undefined)continue;const v=rfV(tag,t);
     if(kind==='HI'?v>lim:v<lim)out.push({tag,kind,lim,eq:m.eq,unit:m.unit,key:`${tag}:${kind}`});
   }
   return out;
@@ -5235,13 +5564,17 @@ function rfAlarmsRender(act){
 function rfTick(){
   const t=rfT,act=rfActiveAt(t),alTags=new Set(act.map(a=>a.tag));
   for(const [tag,m] of Object.entries(SIM.TAGS)){
-    const v=SIM.value(tag,t===0?-Math.random()*0.03:t),g=rfSvg.querySelector(`[data-tag="${tag}"]`),al=alTags.has(tag);
+    const v=rfV(tag,t===0?-Math.random()*0.03:t),g=rfSvg.querySelector(`[data-tag="${tag}"]`),al=alTags.has(tag);
     if(g){g.querySelector('.val').textContent=`${v.toFixed(v>100?0:1)} ${m.unit}`;g.querySelectorAll('.tagv').forEach(n=>n.classList.toggle('alarm',al));g.querySelector('.tagbg').classList.toggle('alarm',al)}
     const tr=document.querySelector(`[data-tr="${tag}"] .cur`);if(tr)tr.innerHTML=`<span class="${al?'al':''}">${v.toFixed(1)} ${m.unit}</span>`;
   }
   /* the process moves at the speed the data says it does */
-  rfSvg.querySelectorAll('.flow').forEach(f=>{const src=f.dataset.flow,nom=src==='FI-301'?420:96,v=SIM.value(src,t);const d=`${(1.4*nom/Math.max(v,1)).toFixed(1)}s`;if(f.style.animationDuration!==d)f.style.animationDuration=d});
+  rfSvg.querySelectorAll('.flow').forEach(f=>{const src=f.dataset.flow,nom=src==='FI-301'?420:96,v=rfV(src,t);const d=`${(1.4*nom/Math.max(v,1)).toFixed(1)}s`;if(f.style.animationDuration!==d)f.style.animationDuration=d});
   document.querySelectorAll('.rf-tr .curl').forEach(l=>{const x=((t+24)/24*200).toFixed(1);l.setAttribute('x1',x);l.setAttribute('x2',x)});
+  const swOn=rfOp.sw!=null&&t>rfOp.sw;
+  rfOpTrends(t);
+  rfSvg.querySelector('[data-eq="P-301B"]')?.classList.toggle('running',swOn);
+  rfSvg.querySelector('[data-eq="P-301A"]')?.classList.toggle('stopped',swOn&&t>rfOp.sw+0.08);
   rfKpis(t);
   const unack=rfAlarmsRender(act),unEq=new Set(unack.map(a=>a.eq)),acEq=new Set(act.map(a=>a.eq));
   rfSvg.querySelectorAll('g[data-eq]').forEach(g=>{const hl=g.classList.contains('hl');g.classList.toggle('alarming',unEq.has(g.dataset.eq)&&!hl);g.classList.toggle('alarm-ack',acEq.has(g.dataset.eq)&&!unEq.has(g.dataset.eq)&&!hl)});
@@ -5268,13 +5601,71 @@ function rfPrecompute(){
   first('FI-301',v=>v<410,'crude feed drops below plan (420 m3/h)');
   first('II-301A',v=>v>190,'P-301A motor current climbing');
   RF_EVENTS=ev.sort((a,b)=>a.t-b.t);
+  const va=SIM.alarms(24).find(a=>a.tag==='VI-301A'&&a.kind==='HI');RF_OPT=va?va.raised_h:null;
 }
+let RF_OPT=null;
+/* integrate the what-if from the switch on, and the beats it produces */
+function rfOpCompute(){
+  const n=RF_CUM.c.length,c=Float64Array.from(RF_CUM.c),na=Float64Array.from(RF_CUM.na),l=Float64Array.from(RF_CUM.l);
+  const i0=Math.max(1,Math.ceil((rfOp.sw+24)/RF_STEP));
+  for(let i=i0;i<n;i++){const t=-24+i*RF_STEP,f=rfV('FI-301',t);c[i]=c[i-1]+f*RF_STEP;na[i]=na[i-1]+rfV('FI-320',t)*RF_STEP;l[i]=l[i-1]+Math.max(0,RF_PLAN-6-f)*RF_STEP}
+  rfOp.cum={c,na,l};
+  const ev=RF_EVENTS.filter(e=>e.t<=rfOp.sw).concat({t:rfOp.sw+0.001,txt:'you started standby P-301B · changeover about 20 min'});
+  const first=(test,txt)=>{for(let t=rfOp.sw;t<=0;t+=RF_STEP/2)if(test(t)){ev.push({t,txt});return}};
+  first(t=>rfV('VI-301A',t)<5,'P-301A stopped: its vibration alarm clears');
+  first(t=>rfV('FI-301',t)>=RF_PLAN-6,'crude feed back on plan, 420 m3/h');
+  rfOp.ev=ev.sort((a,b)=>a.t-b.t);
+  rfOpTrends(rfT);
+}
+/* the trends get your shift drawn over the recorded line, up to the replay's clock */
+function rfOpTrends(now){
+  if(rfOp.sw==null)return;
+  document.querySelectorAll('.rf-tr').forEach(el=>{
+    const svg=el.querySelector('svg'),tag=el.dataset.tr;if(!el._Y||tag==='TI-312')return;
+    let pl=svg.querySelector('.whatif');
+    if(!pl){pl=document.createElementNS(NS,'polyline');pl.setAttribute('class','whatif');svg.appendChild(pl)}
+    const pts=[];for(let t=rfOp.sw;t<=now+1e-4;t+=0.1)pts.push(`${((t+24)/24*200).toFixed(1)},${el._Y(rfV(tag,Math.min(0,t))).toFixed(1)}`);
+    pl.setAttribute('points',pts.join(' '));
+  });
+}
+function rfOpReset(note){
+  if(rfOp.sw==null&&!rfOp.passed&&!rfOp.prompted)return;
+  const had=rfOp.sw!=null;
+  Object.assign(rfOp,{sw:null,prompted:false,passed:false,acked:false,cum:null,ev:null});
+  document.querySelectorAll('.rf-tr .whatif').forEach(n=>n.remove());
+  $('#rfOp').hidden=true;
+  if(had&&note)rfAdd('rf-msg sys','Back to the recorded data, which is what the copilot reads.');
+}
+function rfOpPrompt(){
+  rfOp.prompted=true;rfPlayStop();
+  const el=$('#rfOp');
+  el.innerHTML=`<b>YOUR CALL · T${rfT.toFixed(1)} h</b><p>P-301A's bearing vibration just crossed its limit (5.0 mm/s) and crude feed is sagging. You have the shift.</p>
+    <div class="rf-op-b"><button type="button" data-op="ack">1 · ACK THE ALARM</button><button type="button" data-op="switch" disabled>2 · START STANDBY P-301B</button><button type="button" data-op="pass" class="ghost">let it run</button></div>`;
+  el.hidden=false;sfx.blip(988,.14,'square',.02);
+  setTimeout(()=>el.querySelector('[data-op=ack]')?.focus(),50);
+}
+function rfOpReport(){
+  if(rfOp.sw==null&&!rfOp.passed)return;
+  const rec=rfAt(RF_CUM.l,0);
+  if(rfOp.sw!=null){
+    const mine=rfAt(rfOp.cum.l,0),saved=Math.max(0,rec-mine);
+    rfAdd('rf-msg sys rf-report',`<b>SHIFT REPORT</b> You started P-301B at T${rfOp.sw.toFixed(1)} h and the feed was back on plan about 20 minutes later. Lost to the fault: <b>${rfFmt(mine)} m3</b> on your shift, against <b>${rfFmt(rec)} m3</b> as recorded, so about <b>${rfFmt(saved)} m3</b> of crude kept moving. The copilot still reads the recorded data: ask it what actually happened. <button type="button" data-op="recorded">back to the recorded data</button>`);
+  }else rfAdd('rf-msg sys rf-report',`<b>SHIFT REPORT</b> You let it run: <b>${rfFmt(rec)} m3</b> of crude lost to the fault by now. Replay from the start and try starting standby P-301B when the alarm comes in.`);
+}
+$('#rfOp').addEventListener('click',e=>{
+  const b=e.target.closest('[data-op]');if(!b)return;const op=b.dataset.op,el=$('#rfOp');
+  if(op==='ack'){rfOp.acked=true;b.disabled=true;b.textContent='✓ ACKNOWLEDGED';const sw=el.querySelector('[data-op=switch]');sw.disabled=false;sw.focus();sfx.blip(523,.06,'sine',.02);return}
+  if(op==='switch'){rfOp.sw=rfT;rfOpCompute();el.hidden=true;sfx.blip(392,.25,'sawtooth',.03,2);rfShowEvent({t:rfT,txt:'you started standby P-301B · changeover about 20 min'});rfTick();runDone('refinery');setTimeout(()=>rfPlayStart(false),900);return}
+  if(op==='pass'){rfOp.passed=true;el.hidden=true;runDone('refinery');rfPlayStart(false)}
+});
+rfLog.addEventListener('click',e=>{if(e.target.closest('[data-op=recorded]')){rfOpReset(true);rfSetT(0)}});
 const rfAt=(arr,t)=>{const x=(Math.min(0,Math.max(-24,t))+24)/RF_STEP,i=Math.floor(x),f=x-i;return i>=arr.length-1?arr[arr.length-1]:arr[i]+(arr[i+1]-arr[i])*f};
 const rfFmt=v=>Math.round(v).toLocaleString('en');
 function rfKpis(t){
   if(!RF_CUM)return;
-  $('#rfKpi').innerHTML=`since T-24 h: crude <b>${rfFmt(rfAt(RF_CUM.c,t))} m3</b> · naphtha <b>${rfFmt(rfAt(RF_CUM.na,t))} m3</b> · lost to the fault <b class="lost">${rfFmt(rfAt(RF_CUM.l,t))} m3</b>`;
-  $('#rfMode').innerHTML=t===0?'<span class="live">PROCESS · LIVE</span>':`<span class="rep">${rfPlayOn?'REPLAY':'HISTORIAN'} · T${t.toFixed(1)} h</span>`;
+  const C=rfOp.cum||RF_CUM;
+  $('#rfKpi').innerHTML=`since T-24 h: crude <b>${rfFmt(rfAt(C.c,t))} m3</b> · naphtha <b>${rfFmt(rfAt(C.na,t))} m3</b> · lost to the fault <b class="lost">${rfFmt(rfAt(C.l,t))} m3</b>`;
+  $('#rfMode').innerHTML=rfOp.sw!=null?`<span class="rep">YOUR SHIFT · ${t===0?'NOW':`T${t.toFixed(1)} h`}</span>`:t===0?'<span class="live">PROCESS · LIVE</span>':`<span class="rep">${rfPlayOn?'REPLAY':'HISTORIAN'} · T${t.toFixed(1)} h</span>`;
 }
 let rfPlayOn=false,rfSpeed=1,rfRaf=0,rfLastTick=0,rfEvT=0;
 const RF_SPAN=60000;                                     // 24 h in a minute at x1
@@ -5286,36 +5677,38 @@ function rfShowEvent(e){
 const rfSetT=(t,silent)=>{
   const prev=rfT;rfT=Math.max(-24,Math.min(0,t));if(Math.abs(rfT)<1e-6)rfT=0;
   rfTin.value=rfT;$('#rfTl').textContent=rfT===0?'LIVE':`T${rfT.toFixed(1)} h`;$('#rfLive').classList.toggle('on',rfT===0);
-  if(rfPlayOn&&!silent)RF_EVENTS.forEach(e=>{if(e.t>prev&&e.t<=rfT)rfShowEvent(e)});
+  if(rfPlayOn&&!silent)(rfOp.ev||RF_EVENTS).forEach(e=>{if(e.t>prev&&e.t<=rfT)rfShowEvent(e)});
+  if(rfPlayOn&&!silent&&RF_OPT!=null&&rfOp.sw==null&&!rfOp.passed&&!rfOp.prompted&&SIM.valueWithSwitch&&prev<RF_OPT&&rfT>=RF_OPT){rfT=RF_OPT;rfOpPrompt()}
   const now=performance.now();if(!rfPlayOn||now-rfLastTick>90||rfT===0){rfLastTick=now;rfTick()}
   else{document.querySelectorAll('.rf-tr .curl').forEach(l=>{const x=((rfT+24)/24*200).toFixed(1);l.setAttribute('x1',x);l.setAttribute('x2',x)})}
 };
 function rfPlayStop(){rfPlayOn=false;cancelAnimationFrame(rfRaf);$('#rfPlay').textContent='▶';$('#rfPlay').setAttribute('aria-label','replay the last 24 hours');if(SIM)rfKpis(rfT)}
 function rfPlayStart(fromStart){
   if(!SIM)return;
-  if(fromStart||rfT>=0)rfSetT(-24,true);
+  if(fromStart||rfT>=0){rfOpReset();rfSetT(-24,true)}
+  if(rfOp.prompted&&rfOp.sw==null&&!rfOp.passed){rfOp.passed=true;$('#rfOp').hidden=true}   // pressing play is letting it run
   rfPlayOn=true;$('#rfPlay').textContent='❚❚';$('#rfPlay').setAttribute('aria-label','pause the replay');
   let last=performance.now();
   const step=now=>{
     if(!rfPlayOn||rfEl.hidden)return;
     const dt=Math.min(100,now-last);last=now;
     const next=rfT+dt*24/RF_SPAN*rfSpeed;
-    if(next>=0){rfSetT(0);rfPlayStop();rfShowEvent({t:0,txt:'back to live'});return}
+    if(next>=0){rfSetT(0);rfPlayStop();rfShowEvent({t:0,txt:rfOp.sw!=null?'end of your shift':'back to live'});rfOpReport();return}
     rfSetT(next);rfRaf=requestAnimationFrame(step);
   };
   rfRaf=requestAnimationFrame(step);
 }
 $('#rfPlay').addEventListener('click',()=>{rfPlayOn?rfPlayStop():rfPlayStart(false)});
 $('#rfSpd').addEventListener('click',()=>{rfSpeed=rfSpeed===1?2:rfSpeed===2?4:1;$('#rfSpd').textContent='x'+rfSpeed});
-rfTin.addEventListener('input',()=>{rfPlayStop();rfSetT(+rfTin.value,true)});
-$('#rfLive').addEventListener('click',()=>{rfPlayStop();rfSetT(0)});
+rfTin.addEventListener('input',()=>{rfPlayStop();rfOpReset(true);rfSetT(+rfTin.value,true)});
+$('#rfLive').addEventListener('click',()=>{rfPlayStop();rfOpReset(true);rfSetT(0)});
 async function rfOpen(){
   if(!rfEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
   if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
   rfEl.hidden=false;document.documentElement.classList.add('brlock');
-  if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
+  if(!SIM){try{SIM=await import('/lib/refinery-sim.js?v=shift');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
   rfBuild();if(!RF_CUM)rfPrecompute();rfSetT(0,true);clearInterval(rfTimer);rfTimer=setInterval(()=>{if(rfT===0&&!rfPlayOn)rfTick()},2000);
   if(!reduced)setTimeout(()=>{if(!rfEl.hidden)rfPlayStart(true)},500);
   setTimeout(()=>rfIn.focus(),60);
@@ -5351,6 +5744,7 @@ function rfPulse(ev){
 }
 async function rfAsk(q){
   q=q.trim();if(!q||rfBusy)return;
+  if(rfOp.sw!=null){rfPlayStop();rfOpReset(true);rfSetT(0)}
   rfBusy=true;rfAdd('rf-msg u',fxEsc(q));rfHist.push({role:'user',content:q.slice(0,1200)});
   let w=rfAdd('rf-msg sys rf-wait','copilot is investigating with plant tools');
   let trace=null,msg=null,text='',done=null,off=null,json=null,got=false;
@@ -5524,6 +5918,7 @@ addEventListener('resize',()=>{if(skCity)skPlaceFlags()});
 
 async function skOpen(){
   if(!skEl.hidden)return;
+  runDone('skyline');
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
   if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
@@ -5716,7 +6111,7 @@ async function unpackBrief(t){
 }
 let mMeta=null;
 function mRender(b,meta={}){
-  mMeta=meta;
+  mMeta=meta;runDone('match');
   const cnt={match:0,partial:0,gap:0};b.requirements.forEach(r=>cnt[r.status]++);
   const li=(r,i)=>`<li class="st-${r.status}" style="--i:${i}"><span class="mst">${r.status}</span><div><b>${fxEsc(r.requirement)}</b><small>${fxEsc(r.evidence)}</small>${r.case_file in CASE_IDX?`<a data-fopen="${CASE_IDX[r.case_file]}">case file: ${fxEsc(caseTitle(CASE_IDX[r.case_file]))} ↗</a>`:''}</div></li>`;
   const list=(k,a)=>a.length?`<div class="mlist"><div class="k">${k}</div><ul>${a.map(x=>`<li>${fxEsc(x)}</li>`).join('')}</ul></div>`:'';
@@ -5767,9 +6162,458 @@ mForm.addEventListener('submit',async e=>{
   mOut.innerHTML=`<p class="merr">${data.offline?`The match line is offline (${FX_OFF[data.offline]||data.offline}).`:fxEsc(data.error||'No brief came back.')} The <a href="fatih-erdogan-cv.pdf">CV</a> has the full record, or email <a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a>.</p>`;
 });
 
+/* ============ THE RUN: a guided route through the site ============ */
+/* Three routes over one set of stops. A stop counts when the visitor actually does the thing
+   (revs the car, finds the implants, takes the shift), never for scrolling past it. Progress is
+   a per-browser convenience in localStorage; the page reads the same without it. */
+const RUN_STOPS={
+  plain:{t:'Read the plain version',d:'Everything on one calm page, about two minutes.',go:()=>plainOpen()},
+  match:{t:'Check a job post against my profile',d:'Requirement by requirement, gaps included.',go:()=>mOpen()},
+  contact:{t:'Get my CV or write to me',d:'Email, LinkedIn or the PDF.',go:()=>openContact()},
+  garage:{t:'Rev the engine in the garage',d:'Press and hold the car.',go:()=>runScroll('#garage')},
+  loadout:{t:'Bring the seven implants online',d:'Run the scan lens over the body.',go:()=>runScroll('#implants')},
+  runlog:{t:'Walk the runlog',d:'Point at a commit to see where it happened.',go:()=>runScroll('#runlog')},
+  breach:{t:'Get through the ICE wall',d:'Scroll through it, or solve the breach.',go:()=>runScroll('#icewall')},
+  file:{t:'Open a case file',d:'Six projects, with the numbers.',go:()=>{const a=document.querySelector('[data-fopen]');if(a)a.click()}},
+  refinery:{t:'Take a shift in the control room',d:'A feed pump is failing. Catch it.',go:()=>rfOpen()},
+  xray:{t:'Route a request through the architecture',d:'Pick the floors in the right order.',go:()=>{xrOpen();setTimeout(xrPuzzleStart,250)}},
+  skyline:{t:'See the commit skyline',d:'Every week of the logistics build as a tower.',go:()=>skOpen()},
+  evals:{t:'Read the eval report',d:'How the two agents on this site are tested.',go:()=>{runDone('evals');location.href='/evals'}},
+  fixer:{t:'Ask FIXER a hard question',d:'It knows my gaps too.',go:()=>window._openDock&&window._openDock()},
+};
+const RUN_ROUTES={
+  hiring:{name:'HIRING',stops:['plain','match','contact']},
+  engineer:{name:'ENGINEER',stops:['xray','refinery','skyline','evals','fixer']},
+  explore:{name:'THE FULL RUN',stops:['garage','loadout','runlog','breach','file','refinery','xray']},
+};
+var RUNST=null;   // var, not let: stop hooks elsewhere may fire before this block has run
+function runLoad(){
+  if(RUNST)return RUNST;
+  let s=null;try{s=JSON.parse(localStorage.getItem('fatih.run')||'null')}catch(_){}
+  RUNST={route:s&&RUN_ROUTES[s.route]?s.route:null,done:s&&Array.isArray(s.done)?s.done.filter(k=>k in RUN_STOPS):[]};
+  return RUNST;
+}
+function runSave(){try{localStorage.setItem('fatih.run',JSON.stringify(RUNST))}catch(_){}}
+function runNext(){const s=runLoad(),r=RUN_ROUTES[s.route];return r?r.stops.find(k=>!s.done.includes(k))||null:null}
+function runScroll(sel){const el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})}
+function openContact(){const w=document.getElementById('wreveal');if(w)w.classList.add('show')}
+function runDone(id){
+  if(!RUN_READY){(RUN_Q=RUN_Q||[]).push(id);return}   // fired during the first pass: replay once ready
+  const s=runLoad();
+  if(!(id in RUN_STOPS)||s.done.includes(id))return;
+  s.done.push(id);runSave();
+  const r=RUN_ROUTES[s.route];
+  runUI(!!r&&r.stops.includes(id));
+  if(!r||!r.stops.includes(id))return;
+  const nx=runNext();
+  if(!nx){
+    runToast(`That's the route done, and the whole picture. If it fits, let's talk. <button type="button" data-run-contact>get in touch ▸</button>`,9000);
+    setTimeout(()=>glassCrash('route'),1600);
+    return;
+  }
+  const n=RUN_STOPS[nx];
+  runToast(`✓ ${RUN_STOPS[id].t}. Next: ${n.t.charAt(0).toLowerCase()+n.t.slice(1)}. <button type="button" data-run-go="${nx}">go ▸</button>`);
+}
+let runToastT=0;
+function runToast(html,ms=6500){
+  const el=document.getElementById('runtoast');if(!el)return;
+  if(!document.getElementById('runpop').hidden)return;
+  el.innerHTML=`<b class="fx">FIXER</b>${html}`;el.classList.add('on');
+  clearTimeout(runToastT);runToastT=setTimeout(()=>el.classList.remove('on'),ms);
+  sfx.blip(1320,.05,'square',.014,1.3);
+}
+function runUI(ping){
+  const s=runLoad(),r=RUN_ROUTES[s.route],nx=runNext();
+  const opts=document.getElementById('rpOpts'),line=document.getElementById('rpLine'),seg=document.getElementById('runseg');
+  if(!opts||!seg)return;
+  if(!r){
+    line.textContent="Who's asking? Pick a route and I'll walk you through.";
+    if(!opts.querySelector('[data-route]'))opts.innerHTML=Object.entries({hiring:["I'm hiring",'3 stops · about 2 min'],engineer:["I'm an engineer",'5 stops · the systems'],explore:['Just looking','7 stops · the full run']}).map(([k,[a,b]])=>`<button type="button" data-route="${k}">${a}<small>${b}</small></button>`).join('');
+    seg.hidden=true;
+  }else{
+    const n=r.stops.filter(k=>s.done.includes(k)).length;
+    line.textContent=nx?(n?`Route: ${r.name.toLowerCase()}. ${n} of ${r.stops.length} done.`:`Route: ${r.name.toLowerCase()}. Your progress stays in the bar at the bottom of the screen.`):`Route: ${r.name.toLowerCase()}. All ${r.stops.length} done. Thanks for the walk.`;
+    opts.innerHTML=`<div class="rp-prog"><span class="rp-dots">${r.stops.map(k=>`<i class="${s.done.includes(k)?'on':''}" title="${fxEsc(RUN_STOPS[k].t)}"></i>`).join('')}</span>`+
+      (nx?`<span class="rp-next">Next: <b>${fxEsc(RUN_STOPS[nx].t)}</b></span><button type="button" data-run-go="${nx}">go ▸</button>`:`<button type="button" data-run-contact>get in touch ▸</button>`)+
+      `<button type="button" class="ghost" data-run-reset>change route</button></div>`;
+    seg.hidden=false;
+    seg.innerHTML=`RUN <b>${n}/${r.stops.length}</b>${nx?` <span class="rs-next">· ${fxEsc(RUN_STOPS[nx].t.toLowerCase())}</span>`:' ✓'}`;
+    if(ping){seg.classList.remove('ping');void seg.offsetWidth;seg.classList.add('ping')}
+  }
+  /* each city cam tells you if your next stop is behind it */
+  const BAND_STOPS={garage:['garage'],runlog:['loadout','runlog'],breach:['breach','file']};
+  document.querySelectorAll('.cityband').forEach(b=>{
+    const c=b.querySelector('.cb-run');if(!c)return;
+    const hit=nx&&(BAND_STOPS[b.dataset.band]||[]).includes(nx)&&!(b.dataset.band==='runlog'&&nx==='loadout');
+    c.textContent=hit?`▸ your next stop: ${RUN_STOPS[nx].t.toLowerCase()}. ${RUN_STOPS[nx].d}`:'';
+  });
+  if(!document.getElementById('runpop').hidden)runPopRender();
+}
+function runPopRender(){
+  const s=runLoad(),r=RUN_ROUTES[s.route],pop=document.getElementById('runpop');
+  if(!r){pop.hidden=true;return}
+  const nx=runNext(),n=r.stops.filter(k=>s.done.includes(k)).length;
+  pop.innerHTML=`<h4>YOUR ROUTE · ${r.name}<span>${n}/${r.stops.length}</span></h4><ol>`+
+    r.stops.map((k,i)=>{const d=s.done.includes(k);return `<li class="${d?'done':''} ${k===nx?'next':''}"><button type="button" data-run-go="${k}"><span class="ck">${d?'✓':i+1}</span><span>${fxEsc(RUN_STOPS[k].t)}</span><small>${fxEsc(RUN_STOPS[k].d)}</small></button></li>`}).join('')+
+    `</ol><div class="rpf"><span>The city is clickable: the blimp, the flare, the koi, the drones.</span><button type="button" data-run-reset>change route</button></div>`;
+}
+function runPick(k){
+  const s=runLoad();if(!RUN_ROUTES[k])return;
+  s.route=k;runSave();runUI(true);cityPing();
+  const nx=runNext(),pr=document.getElementById('runpick').getBoundingClientRect();
+  if(pr.top<innerHeight&&pr.bottom>0)return;   // the picker itself already shows the next stop
+  if(nx)runToast(`Route set. First stop: ${RUN_STOPS[nx].t.charAt(0).toLowerCase()+RUN_STOPS[nx].t.slice(1)}. <button type="button" data-run-go="${nx}">go ▸</button> Your progress sits in the bar at the bottom.`,8000);
+  else runToast(`You've already done every stop on this route. <button type="button" data-run-contact>get in touch ▸</button>`);
+}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const pick=t.closest('[data-route]');if(pick){runPick(pick.dataset.route);return}
+  const go=t.closest('[data-run-go]');
+  if(go){const k=go.dataset.runGo;document.getElementById('runpop').hidden=true;document.getElementById('runtoast').classList.remove('on');if(RUN_STOPS[k])RUN_STOPS[k].go();return}
+  if(t.closest('[data-run-reset]')){const s=runLoad();s.route=null;runSave();document.getElementById('runpop').hidden=true;runUI();runScroll('.hero');return}
+  if(t.closest('[data-run-contact]')){document.getElementById('runtoast').classList.remove('on');openContact();return}
+  if(t.closest('#runseg')){const p=document.getElementById('runpop');p.hidden=!p.hidden;if(!p.hidden){document.getElementById('runtoast').classList.remove('on');runPopRender()}return}
+  if(!t.closest('#runpop'))document.getElementById('runpop').hidden=true;
+  /* stops that are a single click somewhere on the page */
+  if(t.closest('a[href^="mailto:"],a[download],a[href*="linkedin.com/in/"]'))runDone('contact');
+  if(t.closest('a[href="/evals"]'))runDone('evals');
+});
+addEventListener('keydown',e=>{if(e.key==='Escape'){const p=document.getElementById('runpop');if(!p.hidden){p.hidden=true;e.stopImmediatePropagation()}}},true);
+/* the contact card counts as getting in touch */
+/* (#wreveal is parsed after this script, so the watcher waits for the DOM) */
+var cardAuto=false;   // the glass brings the card itself: that is not the visitor getting in touch
+const wrWatch=()=>{const w=document.getElementById('wreveal');if(!w)return false;new MutationObserver(()=>{if(!w.classList.contains('show'))return;if(cardAuto){cardAuto=false;return}runDone('contact')}).observe(w,{attributes:true,attributeFilter:['class']});return true};
+if(!wrWatch())addEventListener('DOMContentLoaded',wrWatch);
+/* the runlog: pointing at a commit (fine pointers) or reading to the last one (touch) */
+(function(){
+  const rows=document.querySelectorAll('#runlog .commit');
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){rows.forEach(r=>r.addEventListener('mouseenter',()=>runDone('runlog'),{once:true}))}
+  else if(rows.length){const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();runDone('runlog')}},{threshold:1});io.observe(rows[rows.length-1])}
+})();
+RUN_READY=true;
+runUI();
+(RUN_Q||[]).splice(0).forEach(runDone);
+
+/* ============ THE CITY AS A MENU: point at the blimp, the flare, the koi, a drone ============ */
+/* Only on bare background (no text, no panel under the pointer), so it never steals a click. */
+const HOT_ACT={
+  blimp:{label:'CONTACT',run:()=>openContact()},
+  ref:{label:'CONTROL ROOM',run:()=>vtGo(rfOpen,null,null)},
+  koi:{label:'ARCHITECTURE X-RAY',run:()=>vtGo(xrOpen,null,null)},
+  board:{label:'BREACH',run:()=>runScroll('#icewall')},
+  mono:{label:'RUNLOG',run:()=>runScroll('#runlog')},
+  drone:{label:'SEND ME A MESSAGE',run:()=>{if(window._openDock)window._openDock();setTimeout(()=>{tin.value='I would like to send Fatih a message.';tin.focus()},90)}},
+  inc:{label:'REPLAY THE CHASE',run:()=>resetIncident()},
+};
+const HOT_ORDER=['drone','blimp','mono','koi','ref','board','inc'];
+const isBare=el=>!!el&&(el===document.documentElement||el===document.body||(el.matches&&el.matches('main,main>section,.cityband,.hero,.hero .row2')));
+let cityPtr=null,menuHov=false,pingT=-1e9;
+const hotLbl={};
+function hotBoxes(){
+  const out=[];
+  HOT_ORDER.forEach(k=>{
+    if(k==='drone')HOT.drones.forEach(b=>out.push({k,b}));
+    else if(HOT[k])out.push({k,b:HOT[k]});
+  });
+  return out;
+}
+function hotAt(cx,cy,pad){
+  for(const h of hotBoxes()){const [x,y,w,hh]=h.b;if(cx>=x-pad&&cx<=x+w+pad&&cy>=y-pad&&cy<=y+hh+pad)return h}
+  return null;
+}
+function cityPing(){if(!reduced)pingT=performance.now()}
+addEventListener('pointermove',e=>{cityPtr=e.pointerType==='mouse'&&isBare(e.target)?{x:e.clientX,y:e.clientY}:null},{passive:true});
+document.addEventListener('pointerleave',()=>{cityPtr=null});
+document.addEventListener('click',e=>{
+  if(!isBare(e.target)||!W)return;
+  const fine=e.pointerType==='mouse',h=hotAt(e.clientX*W/innerWidth,e.clientY*H/innerHeight,fine?2:6);
+  if(!h)return;
+  sfx.blip(660,.06,'square',.02,1.6);
+  HOT_ACT[h.k].run();
+});
+function bracket(b,col,a){
+  const [x,y,w,h]=b,L=3;
+  ctx.globalAlpha=a;ctx.fillStyle=col;
+  ctx.fillRect(x-2,y-2,L,1);ctx.fillRect(x-2,y-2,1,L);
+  ctx.fillRect(x+w-L+2,y-2,L,1);ctx.fillRect(x+w+1,y-2,1,L);
+  ctx.fillRect(x-2,y+h+1,L,1);ctx.fillRect(x-2,y+h-L+2,1,L);
+  ctx.fillRect(x+w-L+2,y+h+1,L,1);ctx.fillRect(x+w+1,y+h-L+2,1,L);
+  ctx.globalAlpha=1;
+}
+function hotLabel(h,a){
+  const c=hotLbl[h.k]||(hotLbl[h.k]=ledStrip(HOT_ACT[h.k].label,'#FFB347'));
+  const [x,y,w]=h.b,lx=Math.max(1,Math.min(W-c.width-1,Math.round(x+w/2-c.width/2))),ly=Math.max(1,y-9);
+  ctx.globalAlpha=a*.85;ctx.fillStyle='#05070D';ctx.fillRect(lx-1,ly-1,c.width+1,7);ctx.globalAlpha=a;ctx.drawImage(c,lx,ly);ctx.globalAlpha=1;
+}
+/* called at the end of every city frame, on top of everything it drew */
+function cityMenuDraw(t,par2,yoff2){
+  if(inc&&incT0&&t-incT0>13000)HOT.inc=[inc.bd.x-par2,inc.top+yoff2,inc.bd.w,Math.round(inc.base-inc.top)];
+  const hit=cityPtr?hotAt(cityPtr.x*W/innerWidth,cityPtr.y*H/innerHeight,2):null;
+  const cur=document.getElementById('cursor');
+  if(cur){
+    if(hit){cur.classList.add('hov','city');cur.querySelector('.label').textContent='▸ '+HOT_ACT[hit.k].label;menuHov=true}
+    else if(menuHov){cur.classList.remove('hov','city');menuHov=false}
+  }
+  document.documentElement.classList.toggle('cityhot',!!hit);
+  const pe=t-pingT;
+  if(pe<2600){
+    const a=pe<200?pe/200:pe>2000?(2600-pe)/600:1,seen=new Set();
+    hotBoxes().forEach(h=>{bracket(h.b,'#FFB347',a*(.65+.35*Math.sin(pe*.012)));if(!seen.has(h.k)){seen.add(h.k);hotLabel(h,a)}});
+  }
+  if(hit){bracket(hit.b,'#FFB347',.95);hotLabel(hit,1)}
+}
+/* first visit: once the boot clears and the hero has settled, show what the city can do */
+setTimeout(()=>{if(boot.classList.contains('done')&&scrollY<innerHeight*.5)cityPing()},9000);
+
+/* ============ CITY CAMS: between sections the page steps aside and the city plays a beat ============ */
+let flyer=null;
+function startFlyer(){
+  if(reduced||!W)return;
+  const dir=Math.random()<.5?1:-1;
+  /* touch down on a roof in the middle of the frame: the street is under the next section */
+  const roofs=(layers[2]||[]).filter(b=>b.vt!=='refinery'&&!b.shadowed&&b.w>=24&&b.x>W*.28&&b.x+b.w<W*.72&&b.base-b.h>H*.4&&b.base-b.h<H*.68);
+  const pad=roofs.sort((a,b)=>Math.abs(a.x+a.w/2-W/2)-Math.abs(b.x+b.w/2-W/2))[0]||null;
+  flyer={t0:performance.now(),dir,trail:[],pad};
+}
+/* a spinner comes in over the skyline, flares down onto the street, and pulls away low:
+   the garage is next. Two baked frames (thrusters lit/flickering), facing right. */
+function bakeSpinner(fl){
+  const [c,x]=mkx(26,11),F=(col,a,b,w,h)=>{x.fillStyle=col;x.fillRect(a,b,w,h)};
+  F('#0B1120',3,4,20,4);F('#141C30',5,3,16,1);F('#0B1120',8,2,9,1);           // hull, shoulders, roof
+  F('rgba(120,200,255,.75)',9,2,7,1);F('rgba(70,140,210,.55)',8,3,9,1);       // canopy
+  F('rgba(200,230,255,.35)',10,2,2,1);                                        // canopy glint
+  F('#1E2A44',5,5,15,1);F('#263452',4,6,18,1);                                // panel lines
+  F('rgba(170,215,255,.55)',5,3,3,1);F('rgba(170,215,255,.55)',18,3,3,1);F('rgba(170,215,255,.35)',3,4,2,1);F('rgba(170,215,255,.35)',21,4,2,1);   // rim light on the shoulders
+  F('#FF2E88',3,8,20,1);F('rgba(255,46,136,.35)',2,9,22,1);                   // neon skirt
+  F('#0A0E18',6,8,4,2);F('#0A0E18',16,8,4,2);                                 // thruster pods
+  F(fl?'#7DF9FF':'#3FA9C9',6,10,4,1);F(fl?'#7DF9FF':'#3FA9C9',16,10,4,1);     // downjets
+  F('#F2FAFF',23,5,2,1);F('rgba(242,250,255,.5)',23,6,1,1);                   // headlamp
+  F('#FF3B3B',2,5,1,2);                                                       // tail lamp
+  F(fl?'#FF2E88':'#00F0FF',12,1,1,1);F(fl?'#00F0FF':'#FF2E88',14,1,1,1);      // roof lightbar
+  if(fl){F('#FFB347',0,6,2,1);F('rgba(255,179,71,.5)',0,5,1,1)}               // exhaust flicker
+  return c;
+}
+const spinA=bakeSpinner(1),spinB=bakeSpinner(0);
+function drawFlyer(t){
+  if(!flyer)return;
+  const f=flyer,e=t-f.t0,d=f.dir;
+  if(e>5600){flyer=null;return}
+  /* the pad moves with the front row's parallax, so the roof is read every frame */
+  const par=Math.round(mxr*15),yoff=-Math.min(Math.round(scrollY/PXS*0.02*1.35),Math.round(H*0.05));
+  const xm=f.pad?f.pad.x-par+Math.round(f.pad.w/2)-13:Math.round(W*.5)-13,gy=f.pad?f.pad.base-f.pad.h+yoff:Math.round(H*.58);
+  let x,y,phase;
+  const x0=d>0?-30:W+4;
+  if(e<2300){const k=e/2300,eo=1-Math.pow(1-k,3);x=x0+(xm-x0)*eo;y=H*0.1+(gy-11-H*0.1)*k*k;phase='dive'}
+  else if(e<3200){const k=(e-2300)/900;x=xm+d*k*3;y=gy-11+Math.round(Math.sin(k*Math.PI)*1.5);phase='flare'}
+  else{const k=(e-3200)/2400;x=xm+d*(3+k*k*W*0.75);y=gy-11-k*k*H*0.3;phase='go'}
+  x=Math.round(x);y=Math.round(y);
+  /* streaks behind it */
+  f.trail.push([x,y]);if(f.trail.length>22)f.trail.shift();
+  f.trail.forEach(([tx,ty],i)=>{const a=i/22;ctx.fillStyle=`rgba(255,46,136,${(a*.55).toFixed(2)})`;ctx.fillRect(d>0?tx+2:tx+22,ty+8,1,1);ctx.fillStyle=`rgba(0,240,255,${(a*.25).toFixed(2)})`;ctx.fillRect(d>0?tx+4:tx+20,ty+9,1,1)});
+  /* headlight reach, longer when it flares */
+  const reach=phase==='flare'?18:11;
+  for(let i=1;i<reach;i++){ctx.fillStyle=`rgba(235,245,255,${(.16*(1-i/reach)).toFixed(3)})`;ctx.fillRect(d>0?x+25+i*2:x-1-i*2,y+5+Math.round(i*.35),2,1+Math.round(i*.18))}
+  /* near the street: a shadow, a ground glow, and landing lights */
+  const near=Math.max(0,1-(gy-y-11)/40);
+  if(near>0){ctx.fillStyle=`rgba(0,0,0,${(.4*near).toFixed(2)})`;ctx.fillRect(x+3,gy,20,1);ctx.fillStyle=`rgba(125,249,255,${(.3*near).toFixed(2)})`;ctx.fillRect(x+1,gy-1,24,1)}
+  if(phase==='flare'){
+    if(((e/120)|0)%2){ctx.fillStyle='#F5D90A';ctx.fillRect(x+3,y+10,1,1);ctx.fillRect(x+22,y+10,1,1)}
+    for(let k=0;k<6;k++){const r=((e-2300)*0.02+k*3)%12;ctx.fillStyle=`rgba(190,205,230,${(.22*(1-r/12)).toFixed(2)})`;ctx.fillRect(Math.round(x+12+(k%2?r:-r)*1.4),gy-1-Math.round(r*.3),2,1)}   // grit blown off the roof
+  }
+  ctx.save();
+  if(d<0){ctx.translate(x*2+26,0);ctx.scale(-1,1)}
+  ctx.drawImage(((e/70)|0)%2?spinA:spinB,x,y);
+  ctx.restore();
+}
+/* the next monorail is an express, lit in the runlog's colour */
+function startExpress(){
+  if(reduced||!W)return;
+  const dir=Math.random()<.5?1:-1,n=8;
+  mono={dir,n,x:dir>0?-n*10-12:W+12,v:1.0*dir,vip:true,strip:ledStrip('RUNLOG EXPRESS · SOCAR TURKIYE 2023-NOW · NORM DIGITAL 2022-23 · YATSAN 2022 · DOKUZ EYLUL B.SC. 2022 · ','#C79BFF')};
+}
+/* cargo drones lift the case files off the roofs when the deck opens */
+function droneBurst(){
+  if(reduced||!pads||pads.length<2)return;
+  const now=performance.now();
+  for(let i=0;i<3;i++){const a=(Math.random()*pads.length)|0;drones.push({a,b:a,state:'wait',until:now+i*380,carry:false,t0:now,dur:1,ttl:now+11000})}
+}
+function cityScene(k){
+  if(k==='garage')startFlyer();
+  else if(k==='runlog')startExpress();
+  else if(k==='breach'&&hk&&!DBG_HKT)hkT0=performance.now()+500;   // the signal-jack, from the top
+}
+(function(){
+  const bands=[...document.querySelectorAll('.cityband')];if(!bands.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    const b=e.target;b.classList.toggle('on',e.isIntersecting);
+    document.documentElement.classList.toggle('citycam',!!document.querySelector('.cityband.on'));
+    if(e.isIntersecting&&(!b._at||performance.now()-b._at>25000)){b._at=performance.now();cityScene(b.dataset.band)}
+  }),{rootMargin:'-30% 0px -30% 0px'});
+  bands.forEach(b=>io.observe(b));
+})();
+
+/* ============ THE GLASS: once a visit, a cargo drone from the city hits the screen ============ */
+/* It plays at the end of a route or at the end of the case files, never over an open dialog,
+   never with reduced motion. It brings the contact card, and the cracks fade once that closes. */
+/* the courier: 23x16, two frames so the rotors spin; a crate slung underneath */
+function bakeCourier(fr){
+  const [c,x]=mkx(23,16),F=(col,a,b,w,h)=>{x.fillStyle=col;x.fillRect(a,b,w,h)};
+  const blade='rgba(215,235,255,.9)',blur='rgba(215,235,255,.35)';
+  if(fr){F(blade,0,1,7,1);F(blade,16,1,7,1)}else{F(blur,1,0,5,1);F(blade,2,1,3,1);F(blur,17,0,5,1);F(blade,18,1,3,1)}
+  F('#3A4766',3,2,1,1);F('#3A4766',19,2,1,1);                                 // rotor hubs
+  F('#2A3550',4,3,2,1);F('#2A3550',17,3,2,1);F('#2A3550',6,4,2,1);F('#2A3550',15,4,2,1);   // arms
+  F('#1A2438',6,5,11,4);F('#22304A',7,4,9,1);F('rgba(160,205,255,.7)',7,4,9,1);           // hull + rim light
+  F('#0C121E',9,8,5,1);F('#FF3B3B',11,6,1,1);F('rgba(255,59,59,.45)',10,6,3,1);          // camera dome
+  F(fr?'#00FF9C':'#0A7A4E',6,6,1,1);F(fr?'#FF3B3B':'#7A1A1A',16,6,1,1);                   // nav lights
+  F('#2A3550',7,9,1,2);F('#2A3550',15,9,1,2);F('#2A3550',6,11,3,1);F('#2A3550',14,11,3,1);  // skids
+  F('#3A4766',11,9,1,2);                                                        // sling
+  F('#FF8A3D',7,11,9,5);F('rgba(255,215,170,.75)',7,11,9,1);F('#C2621F',7,15,9,1);         // crate
+  F('#8A3F10',9,13,1,1);F('#8A3F10',11,13,1,1);F('#8A3F10',13,13,2,1);                      // stencil
+  return c;
+}
+const courierA=bakeCourier(1),courierB=bakeCourier(0);
+let glassOn=false;
+function glassCrash(why,force){
+  if(!force&&(glassOn||reduced))return;
+  let seen=false;try{seen=!!sessionStorage.getItem('fatih.glass')}catch(_){}
+  if(seen&&!force)return;
+  /* wait for a clear screen: no dialog, no open file, no plain view */
+  const busy=document.querySelector('.fview.show')||!plEl.hidden||!rfEl.hidden||!xrEl.hidden||!$('#matchbox').hidden||!$('#skyline').hidden||document.getElementById('wreveal')?.classList.contains('show');
+  if(busy&&!force){setTimeout(()=>glassCrash(why),3000);return}
+  try{sessionStorage.setItem('fatih.glass','1')}catch(_){}
+  glassOn=true;
+  const c=$('#glass'),x=c.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2),VW=innerWidth,VH=innerHeight;
+  c.width=Math.round(VW*dpr);c.height=Math.round(VH*dpr);x.setTransform(dpr,0,0,dpr,0,0);x.imageSmoothingEnabled=false;
+  c.style.opacity='1';c.classList.add('on');
+  /* hit off-centre, so the card that comes next sits clear of the worst of it */
+  const side=Math.random()<.5?-1:1,ix=VW*(0.5+side*(0.24+Math.random()*0.08)),iy=VH*(0.2+Math.random()*0.1);
+  const sx=VW*(0.5-side*0.3),sy=VH*0.28;
+  /* the cracks: radial runs with a little wander, a few branches, and rings between them */
+  const rnd=(a,b)=>a+Math.random()*(b-a),cracks=[],N=15+((Math.random()*5)|0);
+  for(let i=0;i<N;i++){
+    const a0=i/N*Math.PI*2+rnd(-.12,.12),len=rnd(120,Math.max(VW,VH)*0.62),pts=[[ix,iy]];
+    let a=a0,d=0;while(d<len){const st=rnd(14,34);d+=st;a+=rnd(-.22,.22);const p=pts[pts.length-1];pts.push([p[0]+Math.cos(a)*st,p[1]+Math.sin(a)*st])}
+    cracks.push({pts,a0});
+    if(Math.random()<.55){const k=2+((Math.random()*(pts.length-3))|0),b=[pts[k]];let ab=a0+(Math.random()<.5?-1:1)*rnd(.4,.8),db=0,lb=rnd(30,110);
+      while(db<lb){const st=rnd(10,22);db+=st;ab+=rnd(-.2,.2);const p=b[b.length-1];b.push([p[0]+Math.cos(ab)*st,p[1]+Math.sin(ab)*st])}cracks.push({pts:b,a0:ab,br:true})}
+  }
+  const rings=[22,48,84].map(R=>{
+    const ps=cracks.filter(k=>!k.br).map(k=>{let acc=0;for(let j=1;j<k.pts.length;j++){acc+=Math.hypot(k.pts[j][0]-k.pts[j-1][0],k.pts[j][1]-k.pts[j-1][1]);if(acc>=R)return k.pts[j]}return k.pts[k.pts.length-1]});
+    /* fixed once: which links break and where they kink, so the rings never shimmer */
+    return ps.map((p,j)=>{const q=ps[(j+1)%ps.length];return Math.random()<.18?null:[p,[(p[0]+q[0])/2+rnd(-3,3),(p[1]+q[1])/2+rnd(-3,3)],q]}).filter(Boolean);
+  });
+  const path=(pts,frac)=>{const n=Math.max(2,Math.ceil(pts.length*frac));x.beginPath();x.moveTo(pts[0][0],pts[0][1]);for(let j=1;j<n;j++)x.lineTo(pts[j][0],pts[j][1])};
+  const drawCracks=(g,dim=1)=>{
+    x.lineCap='round';x.lineJoin='round';
+    rings.forEach((ring,ri)=>{if(g<.35+ri*.2)return;x.beginPath();ring.forEach(([p,m,q])=>{x.moveTo(p[0],p[1]);x.lineTo(m[0],m[1]);x.lineTo(q[0],q[1])});
+      x.strokeStyle=`rgba(225,240,255,${(.4*dim).toFixed(2)})`;x.lineWidth=.8;x.stroke()});
+    cracks.forEach(k=>{path(k.pts,g);x.strokeStyle=`rgba(0,240,255,${(.08*dim).toFixed(3)})`;x.lineWidth=4;x.stroke();x.strokeStyle=`rgba(240,248,255,${((k.br?.45:.7)*dim).toFixed(2)})`;x.lineWidth=k.br?.7:1;x.stroke()});
+    /* the impact: a frosted star around a small dark hole */
+    const rg=x.createRadialGradient(ix,iy,2,ix,iy,40);rg.addColorStop(0,'rgba(255,255,255,.28)');rg.addColorStop(.25,'rgba(220,235,255,.12)');rg.addColorStop(1,'rgba(220,235,255,0)');
+    x.fillStyle=rg;x.beginPath();x.arc(ix,iy,40,0,Math.PI*2);x.fill();
+    x.fillStyle='rgba(3,5,9,.55)';x.beginPath();x.arc(ix,iy,6,0,Math.PI*2);x.fill();
+    x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=1;x.stroke();
+  };
+  const T0=performance.now(),HIT=720;let hitDone=false;
+  const frame=now=>{
+    const e=now-T0;x.clearRect(0,0,VW,VH);
+    if(e<HIT){
+      /* incoming: grows from a speck over the skyline to the size of a fist, wobbling */
+      const k=e/HIT,ease=k*k*k,s=0.9+ease*9.5,px=sx+(ix-sx)*ease+Math.sin(e*.03)*6*(1-k),py=sy+(iy-sy)*ease+Math.cos(e*.025)*4*(1-k);
+      x.save();x.translate(px,py);x.rotate(Math.sin(e*.02)*.18*(1-k));x.drawImage(((e/45)|0)%2?courierA:courierB,-11.5*s,-8*s,23*s,16*s);x.restore();
+    }else{
+      if(!hitDone){hitDone=true;sfx.shatter();document.documentElement.classList.add('quake');setTimeout(()=>document.documentElement.classList.remove('quake'),460);
+        if(why!=='test'||force)setTimeout(()=>{cardAuto=true;openContact()},420)}
+      const g=Math.min(1,(e-HIT)/260);drawCracks(g);
+      if(e-HIT<140){x.fillStyle=`rgba(235,245,255,${(.35*(1-(e-HIT)/140)).toFixed(3)})`;x.fillRect(0,0,VW,VH)}
+      /* the drone drops away down the glass */
+      const f=(e-HIT)/900;
+      if(f<1){const s=10.4*(1-f*.3);x.save();x.globalAlpha=1-f;x.translate(ix,iy+f*f*VH*.7);x.rotate(f*2.2);x.drawImage(courierB,-11.5*s,-8*s,23*s,16*s);x.restore()}
+      else return glassHold()
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+  /* the cracks stay while the card is up, then fade */
+  function glassHold(){
+    const w=document.getElementById('wreveal');let left=false;
+    /* while the card is up the cracks step back so it reads cleanly */
+    x.clearRect(0,0,VW,VH);drawCracks(1,w&&w.classList.contains('show')?.5:1);
+    const fade=()=>{if(left)return;left=true;c.style.opacity='0';setTimeout(()=>{c.classList.remove('on');x.clearRect(0,0,VW,VH);glassOn=false},1300)};
+    const mo=new MutationObserver(()=>{if(!w.classList.contains('show')){mo.disconnect();setTimeout(fade,500)}});
+    if(w&&w.classList.contains('show'))mo.observe(w,{attributes:true,attributeFilter:['class']});else setTimeout(fade,2500);
+    setTimeout(()=>{mo.disconnect();fade()},14000);
+  }
+}
+
+/* ============ RAIN ON THE GLASS: drops gather while it rains; a fast scroll wipes them ============ */
+(function(){
+  if(reduced)return;
+  const c=$('#drops'),x=c.getContext('2d');
+  let drops=[],VW=0,VH=0,nextSpawn=0,lastDraw=0,wipe=null,lastWipe=0,lastY=scrollY,trailN=0;
+  const size=()=>{VW=innerWidth;VH=innerHeight;c.width=VW;c.height=VH;x.imageSmoothingEnabled=false};
+  size();addEventListener('resize',size);
+  const target=()=>rainMode==='off'?0:rainMode==='storm'?64:(typeof WXNOW!=='undefined'&&WXNOW&&WXNOW.wet?42:Math.round(10+rain.length/9));
+  addEventListener('scroll',()=>{
+    const dy=scrollY-lastY;lastY=scrollY;
+    const now=performance.now();
+    if(Math.abs(dy)>90&&!wipe&&now-lastWipe>1400&&drops.length>3){wipe={t0:now,dir:dy>0?1:-1};lastWipe=now}
+  },{passive:true});
+  const PIV=()=>[VW/2,VH+60];
+  function frame(now){
+    requestAnimationFrame(frame);
+    if(document.hidden||cityHold||now-lastDraw<42)return;   // ~24 fps is plenty for water
+    lastDraw=now;
+    const want=target();
+    if(!want&&!drops.length){if(c.dataset.clear!=='1'){x.clearRect(0,0,VW,VH);c.dataset.clear='1'}return}
+    c.dataset.clear='';
+    if(drops.length<want&&now>nextSpawn){nextSpawn=now+(rainMode==='storm'?120:380)+Math.random()*500;drops.push({x:Math.random()*VW,y:Math.random()*VH*.92,r:1.8+Math.random()*3,g:.0006+Math.random()*.0014,vy:0,run:false})}
+    /* the wiper: an arc from a pivot under the screen sweeps the drops off */
+    let wa=null;
+    if(wipe){const k=(now-wipe.t0)/520;if(k>=1)wipe=null;else{const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;wa=wipe.dir>0?Math.PI*(1.06+e*.88):Math.PI*(1.94-e*.88)}}
+    const [pvx,pvy]=PIV();
+    drops=drops.filter(d=>{
+      if(wa!==null){const a=Math.atan2(d.y-pvy,d.x-pvx)+Math.PI*2;const aa=a>Math.PI*2?a-Math.PI*2:a;const ang=aa<Math.PI?aa+Math.PI*2:aa;if(wipe.dir>0?ang<wa:ang>wa)return false}
+      d.r=Math.min(d.max||(d.max=6+Math.random()*4),d.r+d.g*42);
+      if(!d.run&&d.r>6.5&&Math.random()<.015)d.run=true;
+      if(d.run){d.vy=Math.min(5,d.vy+.18);d.y+=d.vy;d.x+=Math.sin(d.y*.05)*.4;if(++trailN%3===0&&drops.length<want+30)drops.push({x:d.x,y:d.y-d.r*2,r:.9+Math.random()*.6,g:0,vy:0,run:false,tr:1});d.r=Math.max(2.6,d.r-.012)}
+      return d.y<VH+10&&!(d.tr&&Math.random()<.004);
+    });
+    x.clearRect(0,0,VW,VH);
+    const kx=W/VW,ky=H/VH;
+    for(const d of drops){
+      const r=d.r;
+      if(r>2.2&&W){
+        /* a drop is a lens: the city behind it, magnified and upside down */
+        const sw=r*2.2*kx,sh=r*2.2*ky;
+        x.save();x.beginPath();x.ellipse(d.x,d.y,r,r*1.12,0,0,Math.PI*2);x.clip();
+        x.translate(d.x,d.y);x.scale(1,-1);
+        try{x.drawImage(cv,Math.max(0,d.x*kx-sw/2),Math.max(0,d.y*ky-sh/2),sw,sh,-r,-r*1.12,r*2,r*2.24)}catch(_){}
+        x.restore();
+      }
+      x.beginPath();x.ellipse(d.x,d.y,r,r*1.12,0,0,Math.PI*2);
+      x.fillStyle='rgba(200,225,255,.07)';x.fill();
+      x.strokeStyle='rgba(0,0,0,.5)';x.lineWidth=1.2;x.stroke();
+      /* light gathers along the lower rim, the sky glints off the top */
+      x.beginPath();x.ellipse(d.x,d.y,r*.86,r*.96,0,Math.PI*.15,Math.PI*.85);x.strokeStyle='rgba(200,230,255,.38)';x.lineWidth=1;x.stroke();
+      x.fillStyle='rgba(255,255,255,.85)';x.fillRect(Math.round(d.x-r*.45),Math.round(d.y-r*.6),r>3.5?2:1,r>5?2:1);
+    }
+    if(wa!==null){
+      const L=Math.hypot(VW,VH)*1.1;
+      x.strokeStyle='rgba(5,6,10,.55)';x.lineWidth=5;x.beginPath();x.moveTo(pvx,pvy);x.lineTo(pvx+Math.cos(wa)*L,pvy+Math.sin(wa)*L);x.stroke();
+      x.strokeStyle='rgba(200,225,255,.18)';x.lineWidth=1;x.stroke();
+    }
+  }
+  requestAnimationFrame(frame);
+})();
+
 /* dev hook: ?devx exposes a read/exec seam for automated verification (everything else lives
    inside this IIFE, out of evaluate's reach) — inert without the param */
 if(/[?&]devx/.test(location.search))window.__dev={
+  open:k=>({refinery:rfOpen,xray:xrOpen,skyline:skOpen,plain:plainOpen,match:mOpen,contact:openContact}[k]||(()=>{}))(),
+  run:()=>JSON.stringify(runLoad()),
+  hot:()=>JSON.stringify(HOT),
+  glass:k=>glassCrash(k||'test',true),
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
   cmd:s=>{const p2=s.split(/\s+/),fn=CMDS[s.toLowerCase()];if(fn)return fn();const af=ARGCMDS[p2[0].toLowerCase()];return af?af(p2.slice(1)):null},
@@ -5854,6 +6698,30 @@ const sfx=(()=>{
     if(glide)o.frequency.exponentialRampToValueAtTime(Math.max(40,freq*glide),t0+dur);
     g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
     o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.02);
+  };
+  /* the garage engine: two detuned oscillators through a low-pass that opens with the revs */
+  let eng=null;
+  api.engine=rev=>{
+    if(!ac||(!on&&!eng))return;
+    const t0=ac.currentTime;
+    if(!on||rev<=0.004){if(eng){const e=eng;eng=null;e.g.gain.setTargetAtTime(0.0001,t0,.06);setTimeout(()=>{try{e.o1.stop();e.o2.stop()}catch(_){}},500)}return}
+    if(!eng){const o1=ac.createOscillator(),o2=ac.createOscillator(),f=ac.createBiquadFilter(),g=ac.createGain();
+      o1.type='sawtooth';o2.type='square';f.type='lowpass';g.gain.value=0.0001;
+      o1.connect(f);o2.connect(f);f.connect(g);g.connect(master);o1.start();o2.start();eng={o1,o2,f,g}}
+    const hz=36+rev*165;
+    eng.o1.frequency.setTargetAtTime(hz,t0,.04);eng.o2.frequency.setTargetAtTime(hz*1.505,t0,.04);
+    eng.f.frequency.setTargetAtTime(420+rev*2600,t0,.05);eng.g.gain.setTargetAtTime(.016+rev*.034,t0,.05);
+  };
+  /* glass: a bright noise burst and a few falling shards */
+  api.shatter=()=>{
+    if(!on||!ac)return;
+    const t0=ac.currentTime,len=Math.round(ac.sampleRate*.45),buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
+    const src=ac.createBufferSource(),hp=ac.createBiquadFilter(),g=ac.createGain();
+    src.buffer=buf;hp.type='highpass';hp.frequency.value=2400;g.gain.value=.22;
+    src.connect(hp);hp.connect(g);g.connect(master);src.start(t0);
+    for(let k=0;k<7;k++)setTimeout(()=>api.blip(2600+Math.random()*3400,.05+Math.random()*.08,'sine',.02),60+k*45+Math.random()*60);
+    api.blip(70,.35,'sine',.09,.5);
   };
   return api;
 })();
@@ -5968,7 +6836,7 @@ function brEnd(){
   if(!n){brMsg.innerHTML=`<span style="color:#FF6B6B">ICE holds. buffer burned.</span> run <b>breach</b> again — the grid re-deals.`;return}
   brMsg.innerHTML=`<span style="color:var(--cyan)">${n===2?'FLATLINED THE ICE — both daemons uploaded.':'ICE BREACHED — daemon uploaded.'}</span> new protocol unlocked: <b>classified</b>`;
   try{localStorage.setItem('fatih.breach',String(n))}catch(_){}
-  brBadge();
+  brBadge();runDone('breach');
   tprint(`<span class="cy">■ BREACH CERT</span> — ${n===2?'full flatline':'partial breach'} logged. protocol <span class="ps">classified</span> unlocked.`);
 }
 function brBadge(){
