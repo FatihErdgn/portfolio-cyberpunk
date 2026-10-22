@@ -10,7 +10,7 @@ export const PROFILE = {
   location: 'İzmir, Türkiye',
   availability:
     'Open to Software Engineer, Product Engineer, Forward Deployed Engineer and Applied AI Engineer roles. Remote, or on-site/hybrid in Europe.',
-  experience_years: '4+ years of professional experience (since June 2022); 3+ years inside a live refinery at SOCAR Türkiye.',
+  experience_years: '4+ years of professional experience (since June 2022); 3+ years inside a live refinery at SOCAR Türkiye, promoted twice there (Specialist in 2025, Senior Specialist in 2026).',
   contact: {
     email: 'fatiherdogann099@gmail.com',
     linkedin: 'https://linkedin.com/in/fatiherdogan09',
@@ -24,9 +24,9 @@ export const PROFILE = {
 
   experience: [
     {
-      role: 'OT MOM/MES Specialist (software engineering for industrial process operations)',
+      role: 'Senior OT MOM/MES Specialist (software engineering for industrial process operations)',
       org: 'SOCAR Türkiye, İzmir',
-      period: 'May 2023 to present',
+      period: 'May 2023 to present: Assistant Specialist from May 2023, Specialist from June 2025, Senior Specialist from July 2026',
       highlights: [
         'Led and built end to end (excluding the ML model itself) an executive-sponsored procurement cost-optimization platform that estimates target reference prices for materials and services; used by purchasing teams in tenders, bid evaluation and supplier-discount negotiations; running in production.',
         'Designed the human-in-the-loop model-execution interface: it surfaces meaningful outputs at each stage, asks users targeted questions when model confidence is low at critical milestones, and lets them intervene at any point.',
@@ -102,7 +102,7 @@ export const PROFILE = {
     'No Kubernetes or Terraform/Bicep in production; deployments have been Docker on Azure Container Apps.',
     'No OPC UA / MQTT / ISA-95 listed on the CV.',
     'The logistics platform is in QA and not yet live with customers.',
-    'About 4 years of professional experience, so he does not claim a Senior title; strongest fit is roles asking 3-5 years with real ownership.',
+    'About 4 years of professional experience. Senior is the job title at SOCAR (since July 2026); for software engineering roles the strongest fit is roles asking 3-5 years with real ownership, not Staff or Principal roles.',
   ],
 };
 

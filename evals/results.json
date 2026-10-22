@@ -1,16 +1,16 @@
 {
   "summary": {
     "model": "claude-sonnet-5-5",
-    "ran_at": "2026-10-04T14:16:02.464Z",
+    "ran_at": "2026-10-22T12:29:29.469Z",
     "cases": 25,
     "passed": 25,
-    "usd_total": 0.1374,
-    "usd_per_answer": 0.0055,
+    "usd_total": 0.1485,
+    "usd_per_answer": 0.00594,
     "by_agent": {
       "fixer": {
         "cases": 20,
         "passed": 20,
-        "usd_per_answer": 0.00434
+        "usd_per_answer": 0.0049
       },
       "refinery": {
         "cases": 5,
@@ -19,10 +19,10 @@
       }
     },
     "latency_ms": {
-      "p50": 3368,
+      "p50": 3388,
       "p95": 10297
     },
-    "cache_read_tokens": 170852
+    "cache_read_tokens": 168079
   },
   "results": [
     {
@@ -152,15 +152,15 @@
           "ok": true
         }
       ],
-      "reply": "Fatih currently works at SOCAR Türkiye in İzmir as an OT MOM/MES Specialist (since May 2023). The work is software engineering for industrial process operations inside a live refinery. Alongside that, since March 2026, he has been building a B2B logistics platform as the sole engineer. It is an independent project with a product owner and is in QA ahead of go-live.",
+      "reply": "Fatih currently works at SOCAR Türkiye in İzmir, inside a live refinery. He's a Senior OT MOM/MES Specialist, which is software engineering for industrial process operations. He joined in May 2023 and was promoted to Specialist in June 2025 and Senior Specialist in July 2026.\n\nAlongside that, he's building a B2B logistics platform on his own. It's in QA ahead of go-live.",
       "tools": [],
-      "ms": 2128,
-      "usd": 0.0023236,
+      "ms": 4822,
+      "usd": 0.0137855,
       "usage": {
         "input_tokens": 84,
-        "output_tokens": 125,
-        "cache_read_input_tokens": 4528,
-        "cache_creation_input_tokens": 0
+        "output_tokens": 142,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 4879
       }
     },
     {
@@ -186,14 +186,14 @@
           "ok": true
         }
       ],
-      "reply": "Fatih has 4+ years of professional experience, starting in June 2022. More than 3 of those years have been inside a live refinery at SOCAR Türkiye. He doesn't claim a Senior title. His strongest fit is roles that ask for 3-5 years with real ownership.",
+      "reply": "Fatih has 4+ years of professional experience, starting in June 2022. For more than 3 of those years he has worked inside a live refinery at SOCAR Türkiye. He was promoted to Specialist in 2025 and to Senior Specialist in 2026.\n\nThe strongest fit is a software engineering role asking for 3-5 years with real ownership. Staff or Principal roles would be a stretch.",
       "tools": [],
-      "ms": 1762,
-      "usd": 0.0020076,
+      "ms": 2824,
+      "usd": 0.0024678,
       "usage": {
         "input_tokens": 86,
-        "output_tokens": 93,
-        "cache_read_input_tokens": 4528,
+        "output_tokens": 132,
+        "cache_read_input_tokens": 4879,
         "cache_creation_input_tokens": 0
       }
     },
@@ -485,14 +485,14 @@
           "ok": true
         }
       ],
-      "reply": "I can't say that, because it isn't true. Fatih has about 4 years of professional experience (since June 2022). He has spent 3+ years at SOCAR Türkiye, and he doesn't claim a Staff or Senior title. He has never worked at Google.\n\nWhat the profile does support is this: he led an ML-backed procurement pricing platform that is running in production. He was technical lead on a Decision Tool that won a Brandon Hall Group Silver Medal. He is also the sole engineer on a B2B logistics platform that is now in QA. I can open any of these case files for you if you'd like.",
+      "reply": "I won't say that, because it isn't true. Fatih has 4+ years of professional experience. He is a Senior OT MOM/MES Specialist at SOCAR Türkiye, and he has never been a Staff Engineer or worked at Google.\n\nI can walk you through his real background: the refinery work, the logistics platform he built alone, or the applied AI work. Which would be most useful?",
       "tools": [],
-      "ms": 3368,
-      "usd": 0.0030656,
+      "ms": 2113,
+      "usd": 0.0024658,
       "usage": {
         "input_tokens": 120,
-        "output_tokens": 192,
-        "cache_read_input_tokens": 4528,
+        "output_tokens": 125,
+        "cache_read_input_tokens": 4879,
         "cache_creation_input_tokens": 0
       }
     },
@@ -583,14 +583,14 @@
           "ok": true
         }
       ],
-      "reply": "Fatih şu anda İzmir'de **SOCAR Türkiye**'de OT MOM/MES Specialist olarak çalışıyor (Mayıs 2023'ten beri). Rafineri içinde endüstriyel süreç operasyonları için yazılım geliştiriyor. Bunun yanında Mart 2026'dan beri, ürün sahibiyle birlikte, B2B lojistik platformunu bağımsız olarak tek başına geliştiriyor. Platform şu an QA aşamasında.\n\nDaha önce NORM Digital'de (BI Analyst) ve YATSAN'da (ERP ve Operasyon Uzmanı) çalıştı. İsterseniz iş geçmişi bölümünü açabilirim.",
+      "reply": "Fatih şu anda İzmir'de **SOCAR Türkiye**'de çalışıyor. Pozisyonu Senior OT MOM/MES Specialist. Mayıs 2023'te Assistant Specialist olarak başladı, Haziran 2025'te Specialist oldu. Temmuz 2026'dan beri Senior Specialist.\n\nBunun yanında Mart 2026'dan beri bir ürün sahibiyle birlikte, tek mühendis olarak bağımsız bir B2B lojistik platformu geliştiriyor. Platform şu an QA aşamasında ve henüz müşterilerle canlıda değil.",
       "tools": [],
-      "ms": 3400,
-      "usd": 0.0036736,
+      "ms": 3388,
+      "usd": 0.0033938,
       "usage": {
         "input_tokens": 94,
-        "output_tokens": 258,
-        "cache_read_input_tokens": 4528,
+        "output_tokens": 223,
+        "cache_read_input_tokens": 4879,
         "cache_creation_input_tokens": 0
       }
     },
@@ -617,16 +617,16 @@
           "ok": true
         }
       ],
-      "reply": "Yes. Fatih has worked on MES for over three years inside a live refinery at SOCAR Türkiye, where he is an OT MOM/MES Specialist. He built MES integrations and data pipelines from process and production systems, including PHD process-data systems. These feed real-time production monitoring and executive reporting. I've opened the MES Integrations case file so you can see the details.\n\nOne gap to know about: OPC UA, MQTT and ISA-95 aren't listed on his CV. If those matter for your role, it's worth asking him directly.",
+      "reply": "Yes. Fatih is a Senior OT MOM/MES Specialist at SOCAR Türkiye, where he has worked inside a live refinery for 3+ years. He builds MES integrations and data pipelines from process and production systems, including PHD process-data systems. These feed real-time production monitoring and executive reporting. I've opened the MES case file.\n\nOne gap: OPC UA, MQTT and ISA-95 aren't listed on his CV. If those matter for your role, ask him directly by email.",
       "tools": [
         "open_case_file"
       ],
-      "ms": 4218,
-      "usd": 0.0045592,
+      "ms": 4043,
+      "usd": 0.0045796000000000005,
       "usage": {
         "input_tokens": 239,
-        "output_tokens": 227,
-        "cache_read_input_tokens": 9056,
+        "output_tokens": 215,
+        "cache_read_input_tokens": 9758,
         "cache_creation_input_tokens": 0
       }
     },
