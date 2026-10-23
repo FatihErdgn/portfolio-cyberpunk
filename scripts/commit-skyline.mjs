@@ -1,7 +1,8 @@
 /* Builds lib/commit-skyline.json: weekly commit totals for the commit-skyline view.
    Privacy by construction: only the Monday of each week and a count per repo group leave
    this script. No times of day, messages, paths, branches or author names.
-   Usage: node scripts/commit-skyline.mjs backend=/path/a web=/path/b mobile=/path/c */
+   Usage: node scripts/commit-skyline.mjs backend=/path/a web=/path/b@origin/dev mobile=/path/c
+   An optional @ref counts that branch instead of HEAD, so a stale checkout doesn't undercount. */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 
@@ -9,8 +10,9 @@ const groups = process.argv.slice(2).map(a => a.split('='));
 const weeks = new Map();
 const monday = d => { const x = new Date(`${d}T00:00:00Z`); x.setUTCDate(x.getUTCDate() - ((x.getUTCDay() + 6) % 7)); return x.toISOString().slice(0, 10); };
 
-for (const [group, dir] of groups) {
-  const out = execFileSync('git', ['-C', dir, 'log', 'HEAD', '--no-merges', '--author=Fatih', '--format=%ad', '--date=short'], { encoding: 'utf8' });
+for (const [group, spec] of groups) {
+  const [dir, ref = 'HEAD'] = spec.split('@');
+  const out = execFileSync('git', ['-C', dir, 'log', ref, '--no-merges', '--author=Fatih', '--format=%ad', '--date=short'], { encoding: 'utf8' });
   for (const d of out.split('\n').filter(Boolean)) {
     const w = monday(d);
     if (!weeks.has(w)) weeks.set(w, {});

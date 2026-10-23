@@ -13,7 +13,7 @@ export const PROFILE = {
   experience_years: '4+ years of professional experience (since June 2022); 3+ years inside a live refinery at SOCAR Türkiye, promoted twice there (Specialist in 2025, Senior Specialist in 2026).',
   contact: {
     email: 'fatiherdogann099@gmail.com',
-    linkedin: 'https://linkedin.com/in/fatiherdogan09',
+    linkedin: 'https://www.linkedin.com/in/fatih-erdogan09',
     site: 'https://fatiherdogan.dev',
     cv_pdf: 'https://fatiherdogan.dev/fatih-erdogan-cv.pdf',
   },
