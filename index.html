@@ -1542,6 +1542,30 @@ html.hx-on #term{z-index:960}
 .hx-vault .bmsg{font-size:12.5px;color:#C9D6EA}
 .hx-iceup{position:absolute;z-index:4;right:clamp(16px,4vw,56px);top:50%;transform:translateY(-50%);width:min(420px,92%);padding:20px;background:rgba(7,10,18,.95);border:1px solid rgba(255,59,59,.6);display:flex;flex-direction:column;gap:8px;font-family:'Geist',sans-serif;font-size:15px;color:#C9D6EA}
 .hx-iceup[hidden]{display:none}
+/* a wrong run: the wall says no, and the panel offers the two ways back in */
+.bfail{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(20,2,6,.8);animation:bfIn .35s steps(3) both}
+.bfail[hidden]{display:none}
+.bf-card{width:min(340px,100%);padding:18px 18px 16px;background:#0A0508;border:1px solid #FF3B3B;box-shadow:0 0 30px rgba(255,59,59,.35);text-align:center;font-family:'Geist',sans-serif;animation:bfCard .45s cubic-bezier(.2,.8,.2,1) .08s both}
+.bf-card b{display:block;font:700 22px 'Chakra Petch',sans-serif;letter-spacing:.14em;color:#FF4D4D;text-shadow:0 0 14px #FF3B3B,2px 0 rgba(0,240,255,.4),-2px 0 rgba(255,46,136,.4)}
+.bf-card p{margin:8px 0 14px;font-size:13.5px;line-height:1.5;color:#C9D6EA}
+.bf-b{display:flex;gap:10px;justify-content:center}
+.bf-b button{font:12px 'Share Tech Mono',monospace;letter-spacing:.14em;padding:10px 16px;cursor:pointer;background:none;border:1px solid var(--line);color:var(--fg)}
+.bf-b button:hover{background:rgba(255,255,255,.07)}
+.bf-b .au{border-color:var(--yellow);color:var(--yellow);background:rgba(245,217,10,.06)}
+@keyframes bfIn{0%{opacity:0}40%{opacity:1}60%{opacity:.4}100%{opacity:1}}
+@keyframes bfCard{0%{transform:scale(1.15);opacity:0}60%{transform:scale(.97);opacity:1}100%{transform:none}}
+.ice-denied{position:absolute;z-index:3;left:calc(var(--icx,.5) * 100%);top:calc(var(--icy,.5) * 100%);transform:translate(-50%,-50%);text-align:center;pointer-events:none;white-space:nowrap}
+.ice-denied[hidden]{display:none}
+.ice-denied::before{content:"";position:absolute;left:50%;top:50%;z-index:-1;width:min(60vw,560px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,30,50,.34),transparent 62%);transform:translate(-50%,-50%);animation:idPulse 1.1s ease-out both}
+.ice-denied b{display:block;font:700 clamp(30px,3.2vw,58px)/.92 'Chakra Petch',sans-serif;letter-spacing:.12em;color:#FF3B3B;
+  text-shadow:0 0 24px #FF3B3B,3px 0 rgba(0,240,255,.55),-3px 0 rgba(255,46,136,.55);animation:idIn .6s steps(6) both,idFlk 2.4s steps(1) .6s infinite}
+.ice-denied span{display:inline-block;margin-top:10px;font:11px 'Share Tech Mono',monospace;letter-spacing:.24em;color:#FFB0B0;background:rgba(40,0,8,.72);border:1px solid rgba(255,59,59,.6);padding:5px 12px;animation:idIn .5s steps(5) .25s both}
+.icelayer.denied #iceCv{animation:idShake .45s linear}
+@keyframes idIn{0%{opacity:0;clip-path:inset(45% 0 45% 0);transform:translateX(-6px)}50%{opacity:1;transform:translateX(5px)}100%{opacity:1;clip-path:inset(0 0 0 0);transform:none}}
+@keyframes idFlk{0%,46%,50%,84%,100%{opacity:1}48%{opacity:.35}82%{opacity:.6}}
+@keyframes idPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}30%{opacity:1}100%{opacity:.55;transform:translate(-50%,-50%) scale(1)}}
+@keyframes idShake{20%{transform:translate(-7px,2px)}40%{transform:translate(6px,-2px)}60%{transform:translate(-4px,1px)}80%{transform:translate(2px,0)}}
 .hx-iceup b{font:700 20px 'Chakra Petch',sans-serif;letter-spacing:.12em;color:#FF6B6B}
 .hx-iceup div{display:flex;gap:10px;margin-top:8px}
 .hx-iceup button{font:12px 'Share Tech Mono',monospace;letter-spacing:.14em;padding:10px 14px;cursor:pointer;background:none;border:1px solid var(--line);color:var(--fg)}
@@ -1662,6 +1686,11 @@ html.hx-on #term{z-index:960}
   .hx-vault #breach{align-items:flex-end;justify-content:center;padding:0 6px 6px}
   .hx-vault .ihud{font-size:9px;padding:0 10px;top:10px}
   .hx-iceup{right:auto;left:50%;top:auto;bottom:10px;transform:translateX(-50%)}
+  /* on a phone the iris sits behind the panel, so the verdict takes the strip above it */
+  .ice-denied{top:30px;transform:translateX(-50%)}
+  .ice-denied b{font-size:26px;line-height:1}.ice-denied b br{display:none}
+  .ice-denied span{margin-top:6px;font-size:10px;padding:4px 10px}
+  .ice-denied::before{width:300px}
   .hx-vault .fstage{overflow-y:auto;display:flex;flex-direction:column}
   .hx-vault .fstage>*{flex:none}
   .hx-vault .fslabel{order:-2}.hx-vault .folders{order:-1}
@@ -1697,6 +1726,7 @@ html.hx-on #term{z-index:960}
   .hs-glow.on,.hs-glow.on .hxstart,.hs-glow.on .hxstart::after,.hxstart .hs-k i,.hx-shell::after,.hx-tear i,.hxv.in,.hi-scan,.hmap .ed.live,.hmap .mn.open .hx,.hmap .you .r,.hmap .mn.next .ring,.hm-next,.hx-go,.lscan.hint .lg,.mem-frame.bd,.hf-alert,.hf-card,.glock.on{animation:none!important}
   .hi-mesh line{animation:none;stroke-dashoffset:0}.hi-mesh circle{animation:none;opacity:.95}
   .hf-card{opacity:1}.hf-alert{display:none}
+  .bfail,.bf-card,.ice-denied b,.ice-denied span,.ice-denied::before,.icelayer.denied #iceCv{animation:none}
   .fstage.on .hx-extract,.fstage.on .hx-extract.urge,.hx-extract::before{animation:none}
   html.hx-on #city{transform:none}
 }
@@ -1935,6 +1965,7 @@ html.hx-on #term{z-index:960}
       <p>SIX CASE FILES · OPEN ANY ONE</p>
     </div></div>
     <canvas id="iceCv"></canvas>
+    <div class="ice-denied" id="iceDenied" hidden aria-hidden="true"><b>ACCESS <br>DENIED</b><span>ICE HELD · TRACE SPIKE</span></div>
     <div class="ihud">
       <span>◢ ICE WALL // HEX-IRIS TIER-3 ◣</span>
       <span id="iceInt">KEYMATCH <b>0%</b></span>
@@ -1944,14 +1975,14 @@ html.hx-on #term{z-index:960}
   <div class="bpanel">
     <i class="bc tl"></i><i class="bc tr"></i><i class="bc bl"></i><i class="bc br"></i>
     <div class="bhd"><span>BREACH PROTOCOL <b>// TIER-3 ICE</b></span><button id="brClose" aria-label="close">✕</button></div>
-    <div class="bsub">One daemon opens the vault; land both for a clean flatline. Stuck? <b>AUTO-FIX</b> runs it for you.</div>
+    <div class="bsub">Land <b>both</b> daemons to open the vault. Stuck? <b>AUTO-FIX</b> runs it for you.</div>
     <div class="bfoot"><button id="brAuto" type="button">⚡ AUTO-FIX — let a daemon run it</button></div>
     <details class="bhow" open><summary>how to solve</summary>
       <ol>
         <li>pick any byte in the highlighted <b>row</b> — your first pick arms the 45s timer.</li>
         <li>your pick locks that <b>column</b>: the next byte comes from it. row → column → row…</li>
         <li>chain picks so each <b>daemon sequence</b> appears, in order, in the 6-slot buffer.</li>
-        <li>land a sequence before the buffer or the clock runs out: one opens the vault, both flatline it. sequences may overlap.</li>
+        <li>land both sequences before the buffer or the clock runs out. sequences may overlap.</li>
       </ol>
     </details>
     <div class="btimer"><i id="brBar"></i></div>
@@ -1959,9 +1990,13 @@ html.hx-on #term{z-index:960}
     <div class="bdaemons" id="brDae"></div>
     <div class="bgrid" id="brGrid"></div>
     <div class="bmsg" id="brMsg"></div>
+    <div class="bfail" id="brFail" hidden role="alertdialog" aria-labelledby="brFailT" aria-describedby="brFailP"><div class="bf-card">
+      <b id="brFailT">⚠ ACCESS DENIED</b><p id="brFailP"></p>
+      <div class="bf-b"><button type="button" data-br-retry>↻ RETRY</button><button type="button" class="au" data-br-auto>⚡ AUTO-FIX</button></div>
+    </div></div>
   </div>
 </div>
-    <div class="hx-iceup" id="hxIceUp" hidden><b>THE ICE IS STILL UP.</b><span>The vault opens the moment one daemon lands.</span><div><button type="button" data-br-retry>TRY AGAIN</button><button type="button" data-br-auto>⚡ AUTO-FIX</button></div></div>
+    <div class="hx-iceup" id="hxIceUp" hidden><b>THE ICE IS STILL UP.</b><span>The vault opens when both daemons land.</span><div><button type="button" data-br-retry>TRY AGAIN</button><button type="button" data-br-auto>⚡ AUTO-FIX</button></div></div>
 <div class="fstage" id="fstage">
 <div class="fslabel"><b>04</b> <span>decrypt ./dossiers --clearance=granted # pick a file</span><span class="jp">機密ファイル</span></div>
 <section class="dossier" data-accent="#9D4EDD">
@@ -5071,7 +5106,7 @@ HX_ENTER.vault=()=>{
   VA.phase='ice';VA.p=0;VA.key=0;
   iceLayer.style.opacity=1;iceLayer.style.visibility='visible';ibIn.style.opacity=0;
   fstage.classList.remove('on');fstage.style.opacity='';iceUp.hidden=true;
-  hxLogs(['vault located behind <b>TIER-3 HEX-IRIS ICE</b>',['breach protocol loaded — land a daemon to open it','warn']]);
+  hxLogs(['vault located behind <b>TIER-3 HEX-IRIS ICE</b>',['breach protocol loaded — land both daemons to open it','warn']]);
   setTimeout(()=>{if(HX.view==='vault'&&VA.phase==='ice'&&brEl.hidden&&iceUp.hidden)brOpen(true)},reduced?0:650);
 };
 HX_LEAVE.vault=()=>{cancelAnimationFrame(VA.raf);if(!brEl.hidden)brClosed(true)};
@@ -5079,7 +5114,7 @@ function vaBreached(n){
   if(VA.phase!=='ice')return;
   brClosed(true);iceUp.hidden=true;
   VA.phase='open';VA.t0=performance.now();VA.key=1;HX.acc='#00FF9C';
-  hxLogs([['ICE flatlined — <b>'+(n>=2?'both daemons':'one daemon')+' uploaded</b>','ok'],'hex-iris opening…',['clearance granted: <b>CLASSIFIED</b>','ok']],420);
+  hxLogs([['ICE flatlined — <b>both daemons uploaded</b>','ok'],'hex-iris opening…',['clearance granted: <b>CLASSIFIED</b>','ok']],420);
   sfx.blip(90,.7,'sawtooth',.05,.3);setTimeout(()=>hxChord(392),900);
 }
 function vaFrame(t,neon){
@@ -6445,6 +6480,8 @@ const BYTES=['1C','55','BD','E9','7A'];
 const brEl=$('#breach'),brGrid=$('#brGrid'),brBuf=$('#brBuf'),brDae=$('#brDae'),brMsg=$('#brMsg'),brBar=$('#brBar');
 const brTimerEl=brEl.querySelector('.btimer');
 let br=null,brTick=0,brFx=0,brPrompted=false;
+const brFail=$('#brFail'),iceDenied=$('#iceDenied');
+function brDenyClear(){brFail.hidden=true;iceDenied.hidden=true;iceLayer.classList.remove('denied')}
 const HXD='0123456789ABCDEF';
 /* one cell briefly loses its plaintext to cycling cipher bytes, then settles back —
    the decrypt happens IN the cells; the panel itself holds still. Survives re-renders
@@ -6490,6 +6527,7 @@ function brOpen(intro){
     {name:'ICEPICK_EX',seq:d2,done:false},
   ]};
   brBar.style.width='100%';brTimerEl.classList.remove('low');
+  brDenyClear();
   brEl.hidden=false;brRender();
   if(!reduced){
     /* the grid deals in like a hand of cards, one byte at a time */
@@ -6504,7 +6542,7 @@ function brOpen(intro){
     let cert=null;try{cert=localStorage.getItem('fatih.breach')}catch(_){}
     brMsg.innerHTML=cert
       ?`<span style="color:var(--cyan)">ICE re-armed.</span> you've flatlined this wall before. Run it again, or hand it to <b>AUTO-FIX</b>.`
-      :`<span style="color:#FF6B6B">▲ TIER-3 ICE.</span> Pick a byte in the glowing row to start. One daemon is enough to open the vault.`;
+      :`<span style="color:#FF6B6B">▲ TIER-3 ICE.</span> Pick a byte in the glowing row to start. Land both daemons to open the vault.`;
   }else brMsg.textContent='the timer arms on your first byte. good hunting.';
   /* the rules fold away when they'd push the grid out of the panel */
   const how=brEl.querySelector('.bhow'),pn=brEl.querySelector('.bpanel');
@@ -6530,17 +6568,35 @@ function hasRun(buf,seq){
   for(let i=0;i+seq.length<=buf.length;i++)if(seq.every((v,j)=>buf[i+j]===v))return true;
   return false;
 }
-function brEnd(){
+function brEnd(why){
   if(!br||br.over)return;
   br.over=true;clearInterval(brTick);brTick=0;
   const n=br.daemons.filter(d=>d.done).length;
   brRender();
-  if(!n){brMsg.innerHTML=`<span style="color:#FF6B6B">ICE holds. Buffer burned.</span> <button type="button" class="brx" data-br-retry>TRY AGAIN</button> or hand it to <b>AUTO-FIX</b>.`;return}
-  brMsg.innerHTML=`<span style="color:var(--cyan)">${n===2?'FLATLINED THE ICE — both daemons uploaded.':'ICE BREACHED — daemon uploaded.'}</span> the vault is opening…`;
-  setTimeout(()=>vaBreached(n),900);
-  try{localStorage.setItem('fatih.breach',String(n))}catch(_){}
+  if(n<2){brDenied(n,why);return}
+  br.won=true;
+  brMsg.innerHTML=`<span style="color:var(--cyan)">FLATLINED THE ICE — both daemons uploaded.</span> the vault is opening…`;
+  setTimeout(()=>vaBreached(2),900);
+  try{localStorage.setItem('fatih.breach','2')}catch(_){}
   brBadge();
-  tprint(`<span class="cy">■ BREACH CERT</span> — ${n===2?'full flatline':'partial breach'} logged. protocol <span class="ps">classified</span> unlocked.`);
+  tprint(`<span class="cy">■ BREACH CERT</span> — full flatline logged. protocol <span class="ps">classified</span> unlocked.`);
+}
+/* a wrong run never opens the vault: the wall says no, the panel offers the way back in */
+function brDenied(n,why){
+  const got=br.daemons.filter(d=>d.done).map(d=>d.name)[0];
+  $('#brFailP').textContent=why==='time'
+    ?(n?`The clock ran out with only ${got} uploaded. The vault needs both daemons.`:'The clock ran out before a daemon landed.')
+    :(n?`Only ${got} made it in. The vault needs both daemons.`:'Buffer burned. Neither daemon made it in.');
+  brMsg.innerHTML='<span style="color:#FF6B6B">ACCESS DENIED.</span> the ICE held.';
+  brFail.hidden=false;
+  VA.key=0;HX.trace=Math.min(99,HX.trace+12);
+  if(HX.view==='vault'){
+    iceDenied.style.setProperty('--icx',iceCX);iceDenied.style.setProperty('--icy',iceCY);iceDenied.hidden=false;
+    iceLayer.classList.remove('denied');void iceLayer.offsetWidth;iceLayer.classList.add('denied');
+  }
+  sfx.blip(110,.5,'sawtooth',.05,.4);setTimeout(()=>sfx.blip(80,.4,'square',.04,.5),180);
+  if(HX.open)hxLog('access denied — <b>the ICE held</b>','bad');
+  setTimeout(()=>{const r=brFail.querySelector('[data-br-retry]');if(r&&!brFail.hidden)r.focus({preventScroll:true})},140);
 }
 function brBadge(){
   if($('#pwned'))return;
@@ -6548,7 +6604,8 @@ function brBadge(){
   const rhs=document.querySelector('#deck .rhs');rhs&&rhs.prepend(s);
 }
 function brClosed(silent){
-  brEl.hidden=true;
+  brEl.hidden=true;brFail.hidden=true;
+  if(silent){iceDenied.hidden=true;iceLayer.classList.remove('denied')}
   /* closed by hand with the wall still up: say so, and offer the two ways through */
   if(!silent&&HX.view==='vault'&&VA.phase==='ice')iceUp.hidden=false;
   if(brTick){clearInterval(brTick);brTick=0}
@@ -6571,7 +6628,7 @@ brGrid.addEventListener('click',e=>{
       const rem=1-(performance.now()-br.t0)/45000;
       brBar.style.width=Math.max(0,rem*100)+'%';
       brTimerEl.classList.toggle('low',rem>0&&rem<.28);
-      if(rem<=0)brEnd();
+      if(rem<=0)brEnd('time');
     },200);
   }
   brStep(+b.dataset.r,+b.dataset.c);
@@ -6580,7 +6637,8 @@ brGrid.addEventListener('click',e=>{
    then drives the page down through the ICE so the CLASSIFIED reveal plays out to file 01 */
 $('#brAuto').addEventListener('click',()=>{
   if(!br||brEl.hidden||br.auto)return;
-  if(br.over){vaBreached(2);return}   /* game already settled: the daemon forces the wall */
+  /* a settled run: a lost one is dealt again and the daemon plays it on camera */
+  if(br.over){if(!br.won){brOpen(false);setTimeout(()=>$('#brAuto').click(),250)}return}
   br.auto=true;
   if(brTick){clearInterval(brTick);brTick=0}
   brBar.style.width='100%';brTimerEl.classList.remove('low');
