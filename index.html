@@ -126,7 +126,6 @@ header.top .cmdk kbd{border:none;background:none;padding:0}
 /* every hour wears its own light, even at rest — the switch reads as four skies, not four glyphs */
 #todSwitch button[data-tod="night"]{color:var(--purple)}
 #todSwitch button[data-tod="dawn"]{color:#FFB661}
-#todSwitch button[data-plain]{color:var(--yellow)}
 #todSwitch button[data-tod="dusk"]{color:#FF7A45}
 #todSwitch button:hover{opacity:1;text-shadow:0 0 8px currentColor}
 #todSwitch button.on{opacity:1;background:color-mix(in srgb,currentColor 14%,transparent);text-shadow:0 0 10px currentColor;box-shadow:inset 0 0 12px color-mix(in srgb,currentColor 20%,transparent)}
@@ -870,72 +869,6 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 body.fx-file #term{z-index:9600}
 body.fx-file .fview-in{margin-left:clamp(24px,5vw,80px);margin-right:calc(min(430px,92vw) + 48px)}
 
-/* ============ PLAIN VIEW: noon, when the city tells it straight ============ */
-#plain{--p-bg:rgba(245,247,250,.94);--p-fg:#151A24;--p-dim:#556074;--p-line:#D9DEE7;--p-acc:#C8155F;--p-card:#FFFFFF;
-  position:fixed;inset:0;z-index:9400;overflow-y:auto;overscroll-behavior:contain;background:var(--p-bg);backdrop-filter:blur(7px) saturate(.9);
-  color:var(--p-fg);font:16px/1.65 'Geist',system-ui,sans-serif;cursor:auto}
-#plain[hidden]{display:none}
-#plain *{cursor:auto}
-#plain a,#plain button{cursor:pointer}
-#plain a{color:var(--p-acc);text-underline-offset:3px}
-.pl-bar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px max(16px,calc((100vw - 880px)/2 + 16px));background:rgba(245,247,250,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--p-line)}
-.pl-name{font-family:'Chakra Petch',sans-serif;font-weight:700;letter-spacing:.04em;font-size:15px}
-.pl-bar nav{display:flex;gap:18px;align-items:center;font-size:14px}
-.pl-bar nav a{color:var(--p-fg);text-decoration:none}
-.pl-bar nav a:hover{color:var(--p-acc)}
-.pl-btn{font:500 14px/1 'Geist',sans-serif;padding:11px 18px;border:1px solid var(--p-fg);background:var(--p-fg);color:#F5F7FA;text-decoration:none;display:inline-block;transition:transform .15s}
-.pl-btn.ghost{background:transparent;color:var(--p-fg)}
-.pl-btn:active{transform:translateY(1px)}
-#plain .pl-btn{color:#F5F7FA}#plain .pl-btn.ghost{color:var(--p-fg)}
-.pl{max-width:880px;margin:0 auto;padding:56px 16px 96px}
-.pl-hero{margin-bottom:64px}
-.pl-hero h1{font:600 clamp(32px,5vw,52px)/1.08 'Geist',sans-serif;letter-spacing:-.02em;margin:0 0 18px;max-width:18ch}
-.pl-lede{font-size:19px;color:var(--p-dim);max-width:52ch;margin:0 0 26px}
-.pl-ctas{display:flex;gap:12px;flex-wrap:wrap}
-.pl h2{font:600 22px/1.2 'Geist',sans-serif;letter-spacing:-.01em;margin:0 0 20px}
-.pl section{margin-bottom:64px}
-.pl-proof{display:grid;grid-template-columns:1.25fr 1fr;gap:1px;background:var(--p-line);border:1px solid var(--p-line)}
-.pl-proof>div{background:var(--p-card);padding:22px 24px}
-.pl-proof>div:first-child{grid-row:span 2}
-.pl-proof b{display:block;font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.02em;margin-bottom:8px;color:var(--p-acc)}
-.pl-proof p{margin:0;color:var(--p-dim);font-size:15px}
-.pl-exp{display:grid;gap:22px}
-.pl-exp article{display:grid;grid-template-columns:150px 1fr;gap:20px}
-.pl-exp time{font-size:13px;color:var(--p-dim);padding-top:3px;font-variant-numeric:tabular-nums}
-.pl-exp h3{font:600 17px/1.35 'Geist',sans-serif;margin:0 0 4px}
-.pl-exp p{margin:0;color:var(--p-dim);font-size:15px}
-.pl-files{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pl-files button{all:unset;box-sizing:border-box;display:block;background:var(--p-card);border:1px solid var(--p-line);padding:18px 20px;transition:border-color .2s,transform .2s}
-.pl-files button:hover,.pl-files button:focus-visible{border-color:var(--p-acc);transform:translateY(-1px);outline:none}
-.pl-files strong{display:block;font-weight:600;margin-bottom:4px}
-.pl-files span{display:block;color:var(--p-dim);font-size:14.5px;line-height:1.55}
-.pl-files em{display:block;font-style:normal;font-size:13px;color:var(--p-acc);margin-top:10px}
-.pl-skills{display:grid;grid-template-columns:1fr 1fr;gap:14px 32px;font-size:15px}
-.pl-skills div{border-top:1px solid var(--p-line);padding-top:10px}
-.pl-skills b{display:block;font-weight:600;margin-bottom:2px}
-.pl-skills span{color:var(--p-dim)}
-.pl-proofs{display:grid;gap:10px;font-size:15px}
-.pl-proofs a,.pl-proofs button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--p-line);color:var(--p-fg)}
-#plain .pl-proofs a{color:var(--p-fg)}
-.pl-proofs a:hover,.pl-proofs button:hover{color:var(--p-acc)}
-.pl-proofs small{color:var(--p-dim);text-align:right}
-.pl-foot{border-top:1px solid var(--p-line);padding-top:28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--p-dim);font-size:14px}
-html.plainlock{overflow:hidden}
-/* the plain view drops the CRT glass and the reticle: native cursor, no scanlines */
-html.plainlock body.crt::before,html.plainlock body.crt::after,html.plainlock #cursor{display:none}
-html.plainlock body,html.plainlock body *{cursor:auto!important}
-html.plainlock #plain a,html.plainlock #plain button{cursor:pointer!important}
-.pl section{padding:0}
-.pl-foot{padding:28px 0 0;margin:0;text-align:left}
-html.plainlock #matchbox{z-index:9700}
-@media (max-width:720px){
-  .pl-proof,.pl-files,.pl-skills{grid-template-columns:1fr}
-  .pl-proof>div:first-child{grid-row:auto}
-  .pl-exp article{grid-template-columns:1fr;gap:2px}
-  .pl-bar nav a.pl-hide{display:none}
-  .pl{padding-top:36px}
-}
-
 /* ============ ARCHITECTURE X-RAY ============ */
 #xray{position:fixed;inset:0;z-index:1300;display:grid;grid-template-columns:minmax(280px,380px) minmax(0,560px);justify-content:center;align-items:center;gap:clamp(20px,4vw,64px);padding:72px 24px 60px;
   background:radial-gradient(70% 80% at 62% 50%,rgba(0,240,255,.07),transparent 60%),rgba(3,5,9,.86);backdrop-filter:blur(3px)}
@@ -1089,46 +1022,8 @@ html.plainlock #matchbox{z-index:9700}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
 @media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 
-/* ---- plain view: scroll reveal (pure CSS, scroll-driven where supported) ---- */
+/* rise-in, used by the match box requirement rows */
 @keyframes plRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@supports (animation-timeline: view()){
-  @media (prefers-reduced-motion:no-preference){
-    #plain .pl section h2,#plain .pl-proof>div,#plain .pl-exp article,#plain .pl-files button,#plain .pl-skills div,#plain .pl-proofs>*{
-      animation:plRise linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
-  }
-}
-@media (prefers-reduced-motion:no-preference){
-  #plain.pl-in .pl-hero>*{animation:plRise .7s cubic-bezier(.16,1,.3,1) both}
-  #plain.pl-in .pl-hero>*:nth-child(2){animation-delay:.08s}
-  #plain.pl-in .pl-hero>*:nth-child(3){animation-delay:.16s}
-}
-.pl-printonly{display:none}
-/* ---- plain view: print / save as PDF, from anywhere on the site ---- */
-@media print{
-  @page{margin:14mm 16mm}
-  html,body{background:#fff!important;padding:0!important}
-  body>*:not(#plain){display:none!important}
-  body.crt::before,body.crt::after{display:none!important}
-  #plain,#plain[hidden]{display:block!important;position:static!important;overflow:visible!important;background:#fff!important;backdrop-filter:none!important;color:#111!important;font-size:11pt;line-height:1.5}
-  #plain *{animation:none!important;transform:none!important;opacity:1!important}
-  .pl-bar,.pl-ctas,.pl-noprint,.pl-files em{display:none!important}
-  .pl{max-width:none;padding:0}
-  .pl-hero{margin-bottom:18pt}
-  .pl-hero h1{font-size:24pt;max-width:none;margin-bottom:6pt}
-  .pl-lede{font-size:12pt;color:#333;margin-bottom:6pt}
-  .pl-printonly{display:block;font-size:10pt;color:#333}
-  .pl section{margin-bottom:16pt;break-inside:auto}
-  .pl h2{font-size:13pt;margin-bottom:8pt;break-after:avoid}
-  .pl-proof{background:#ccc;border-color:#ccc}
-  .pl-proof>div{padding:8pt 10pt}
-  .pl-proof b{font-size:15pt;color:#111}
-  .pl-proof p,.pl-exp p,.pl-files span,.pl-skills span{color:#333!important;font-size:10pt}
-  .pl-exp{gap:8pt}.pl-exp article{break-inside:avoid;grid-template-columns:90pt 1fr;gap:10pt}
-  .pl-files{gap:6pt}.pl-files button{padding:8pt 10pt;border-color:#ccc;break-inside:avoid}
-  .pl-skills{gap:6pt 18pt}
-  .pl-foot{border-color:#ccc}
-  #plain a{color:#111;text-decoration:none}
-}
 
 /* ---- streaming ---- */
 .fxcaret{display:inline-block;width:7px;height:12px;background:var(--cyan);margin-left:2px;vertical-align:-1px;animation:fxBlink 1s steps(2) infinite}
@@ -1734,7 +1629,6 @@ html.hx-on #term{z-index:960}
   <p>Core strengths: C# / .NET 10 backend architecture (modular monolith, DDD, CQRS with MediatR, domain events, PostgreSQL, RabbitMQ, Redis, SignalR); React / TypeScript and React Native front ends; applied AI on the Anthropic Messages API (agentic tool-use loops, model routing, prompt caching, token and cost accounting); industrial data and MES/OT integration inside a live refinery since 2023. Testing: xUnit, Testcontainers, NetArchTest. Cloud: Docker, GitHub Actions, Azure. Security: Keycloak (OAuth 2.0, OIDC, RBAC). Recognition: Brandon Hall Group Silver Medal, Excellence in Technology, as technical lead of a decision-support platform.</p>
   <p>Highlight projects: an executive-sponsored procurement platform around an ML price-estimation model, with a workflow engine and a human-in-the-loop interface that asks users targeted questions when model confidence is low, running in production; and a multi-tenant B2B logistics platform built as its sole engineer: a .NET modular monolith with 13 domain modules and 3,000+ tests, web and mobile apps, and an LLM assistant that calls live routing tools.</p>
   <p>
-    <a href="?plain">Read the plain version</a> ·
     <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">Download CV (PDF)</a> ·
     <a href="https://linkedin.com/in/fatiherdogan09">LinkedIn</a> ·
     <a href="mailto:fatiherdogann099@gmail.com">Contact</a>
@@ -1756,7 +1650,7 @@ html.hx-on #term{z-index:960}
 <header class="top">
   <div class="brand">FATIH<b>.EXE</b><small id="topclock">--:--:-- NIGHT CITY / İZMİR GRID</small>
     <span id="todSwitch" role="radiogroup" aria-label="time of day" title="grid clock — dealt at random each visit; override here">
-      <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button type="button" data-plain title="plain version: a quick, calm read">☀</button><button data-tod="dusk" title="dusk">◖</button>
+      <button data-tod="night" title="night">☾</button><button data-tod="dawn" title="dawn">◗</button><button data-tod="dusk" title="dusk">◖</button>
     </span>
   </div>
   <nav>
@@ -1800,7 +1694,7 @@ html.hx-on #term{z-index:960}
       <span class="hs-k"><i>▶</i> START BREACH</span>
       <span class="hs-s">Hack into my files · about 2 minutes</span>
     </button></span>
-    <p class="hint">▸ In a hurry? <a href="?plain" data-plain>Read the plain version</a>. Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>.</p>
+    <p class="hint">▸ Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>.</p>
   </div>
 </section>
 
@@ -2148,87 +2042,6 @@ html.hx-on #term{z-index:960}
 
 </main>
 
-<div id="plain" hidden role="dialog" aria-modal="true" aria-label="Plain version of this portfolio">
-  <div class="pl-bar">
-    <span class="pl-name">FATIH ERDOGAN</span>
-    <nav>
-      <a class="pl-hide" href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">CV (PDF)</a>
-      <a class="pl-hide" href="https://linkedin.com/in/fatiherdogan09" target="_blank" rel="noopener">LinkedIn</a>
-      <button type="button" class="pl-btn ghost pl-hide" id="plPrint" title="a clean one-page version, ready to print or save as PDF">Save as PDF</button>
-      <button type="button" class="pl-btn ghost" id="plClose">Back to the city</button>
-    </nav>
-  </div>
-  <main class="pl">
-    <header class="pl-hero">
-      <h1>Software for complex real-world operations.</h1>
-      <p class="pl-lede">Software engineer for industrial and logistics systems, with LLM features in production. Based in İzmir, open to remote or Europe.</p>
-      <p class="pl-printonly">fatiherdogann099@gmail.com · linkedin.com/in/fatiherdogan09 · fatiherdogan.dev</p>
-      <div class="pl-ctas"><a class="pl-btn" href="mailto:fatiherdogann099@gmail.com">Email me</a><button type="button" class="pl-btn ghost" data-match>Check a job post</button></div>
-    </header>
-
-    <section aria-labelledby="pl-shipped">
-      <h2 id="pl-shipped">What I have shipped</h2>
-      <div class="pl-proof">
-        <div><b>In production</b><p>An executive-sponsored procurement platform around an ML pricing model at SOCAR Türkiye. I led and built it end to end, including a human-in-the-loop interface that asks users targeted questions when the model is unsure.</p></div>
-        <div><b>Silver Medal</b><p>Brandon Hall Group Excellence in Technology, as technical lead of a refinery decision-support platform.</p></div>
-        <div><b>One engineer</b><p>A B2B logistics platform: 13 domain modules, 3,000+ tests, web and mobile apps, and an LLM assistant that calls live routing tools.</p></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="pl-exp">
-      <h2 id="pl-exp">Experience</h2>
-      <div class="pl-exp">
-        <article><time>2023 to now</time><div><h3>Senior OT MOM/MES Specialist, SOCAR Türkiye</h3><p>Promoted to Specialist in 2025 and Senior Specialist in 2026. Software for refinery operations: the ML-backed procurement platform and its workflow engine, technical lead of the award-winning Decision Tool, and MES integrations for real-time production monitoring.</p></div></article>
-        <article><time>2026 to now</time><div><h3>Sole engineer, B2B logistics platform</h3><p>Independent build with a product owner. .NET 10 modular monolith, React and React Native apps, an agentic AI layer on the Anthropic API. In QA ahead of go-live.</p></div></article>
-        <article><time>2022 to 2023</time><div><h3>Business Intelligence Analyst, NORM Digital</h3><p>ERP reporting pipelines, Power BI dashboards, AI forecasting, and supply-chain planning on ICRON and SAP data.</p></div></article>
-        <article><time>2022</time><div><h3>ERP and Operations Specialist, YATSAN</h3><p>Production planning and inventory in Microsoft Dynamics.</p></div></article>
-        <article><time>2022</time><div><h3>B.Sc. Industrial Engineering, Dokuz Eylül University</h3><p>Turkish (native), English (B2), German (A2), Japanese (A1).</p></div></article>
-      </div>
-    </section>
-
-    <section aria-labelledby="pl-files">
-      <h2 id="pl-files">Case files</h2>
-      <div class="pl-files">
-        <button type="button" data-fopen="0"><strong>Procurement pricing platform</strong><span>Target reference prices for tenders and negotiations, with human-in-the-loop checkpoints. In production.</span><em>Read the full file</em></button>
-        <button type="button" data-fopen="1"><strong>Decision Support System</strong><span>Real-time analysis and risk scoring on refinery process data. Technical lead, Brandon Hall Silver.</span><em>Read the full file</em></button>
-        <button type="button" data-fopen="2"><strong>Logistics platform</strong><span>RFQs, bids, deals and shared operations across road, sea, air and rail. Built as the only engineer.</span><em>Read the full file</em></button>
-        <button type="button" data-fopen="3"><strong>Applied AI layer</strong><span>Tool-use assistant, model routing, prompt caching and per-tenant cost accounting, plus eight LLM features.</span><em>Read the full file</em></button>
-        <button type="button" data-fopen="4"><strong>MES integrations</strong><span>Refinery-wide data pipelines for real-time monitoring and executive reporting.</span><em>Read the full file</em></button>
-        <button type="button" data-fopen="5"><strong>BI pipelines</strong><span>ERP data to Power BI, ETL, and AI forecasting.</span><em>Read the full file</em></button>
-      </div>
-    </section>
-
-    <section aria-labelledby="pl-skills">
-      <h2 id="pl-skills">Skills</h2>
-      <div class="pl-skills">
-        <div><b>Backend and architecture</b><span>C#, .NET 10, EF Core, MediatR, DDD, modular monolith, PostgreSQL, Redis, SignalR</span></div>
-        <div><b>Applied AI</b><span>Anthropic API, tool-use agents, model routing, prompt caching, cost accounting</span></div>
-        <div><b>Frontend and mobile</b><span>TypeScript, React, Next.js, React Native, three.js</span></div>
-        <div><b>Industrial and data</b><span>MES/MOM, PHD process data, ERP, SQL, Power BI, Python</span></div>
-        <div><b>Quality and delivery</b><span>xUnit, Testcontainers, NetArchTest, Docker, GitHub Actions, Azure</span></div>
-        <div><b>Security</b><span>Keycloak (OAuth 2.0, OIDC, RBAC), ClamAV, OCR pipelines</span></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="pl-inspect" class="pl-noprint">
-      <h2 id="pl-inspect">Things you can inspect</h2>
-      <div class="pl-proofs">
-        <button type="button" data-refinery><span>Industrial ops copilot on a synthetic refinery unit</span><small>live AI demo</small></button>
-        <button type="button" data-xray><span>Architecture X-ray of the logistics platform</span><small>interactive</small></button>
-        <button type="button" data-skyline><span>The logistics platform, built week by week</span><small>commit skyline</small></button>
-        <a href="/evals"><span>Eval report for this site's AI agents</span><small>pass rate, latency, cost</small></a>
-        <button type="button" data-postmortem data-pm="fixer"><span>Postmortem: the agent that invented an email address</span><small>what the score missed</small></button>
-        <button type="button" data-match><span>Run a job post against my record</span><small>honest fit check</small></button>
-        <a href="/llms.txt"><span>Profile for AI agents</span><small>/llms.txt and /mcp</small></a>
-      </div>
-    </section>
-
-    <footer class="pl-foot">
-      <span><a href="mailto:fatiherdogann099@gmail.com">fatiherdogann099@gmail.com</a></span>
-      <span><a href="https://linkedin.com/in/fatiherdogan09" target="_blank" rel="noopener">LinkedIn</a> · <a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">CV (PDF)</a></span>
-    </footer>
-  </main>
-</div>
 <div id="xray" hidden role="dialog" aria-modal="true" aria-labelledby="xrTitle">
   <button type="button" class="xr-close" id="xrClose">✕ CLOSE X-RAY [X]</button>
   <div class="xr-info">
@@ -2644,13 +2457,13 @@ const TOD_PROFILES={
     road:['#232E48','rgba(200,220,255,.22)','#2A3752'],dark:'#182238',
     sky:['rgba(130,170,235,.07)','rgba(130,155,215,.08)']},
 };
-/* noon was retired (Oct 2026): it read flat. The ☀ on the switch now opens the plain version. */
+/* noon was retired (Oct 2026): it read flat. */
 delete TOD_PROFILES.day;
 let todName=(()=>{
   const m=(location.search.match(/[?&]tod=(\w+)/)||[])[1];
   if(m&&TOD_PROFILES[m])return m;
   /* the hour is dealt at the door, not read off your clock — night, dusk or dawn.
-     noon is gone entirely; the ☀ on the switch is the plain version's door. */
+     noon is gone entirely. */
   const deal=['night','dusk','dawn'];
   return deal[Math.floor(Math.random()*deal.length)];
 })();
@@ -4726,7 +4539,7 @@ function hxRailRender(){
     const st=hxDone(nd.id)?'done':hxOpenable(nd.id)?'open':'locked';
     return `<button type="button" class="hr-n ${st}${HX.view===nd.id?' cur':''}" data-hx-node="${nd.id}" style="--na:${nd.acc}" aria-label="${nd.name}, ${nd.path}: ${st==='done'?'breached':st}">`
       +`<span class="hr-c">${nd.no}</span><span class="hr-m"><b>${nd.name}</b><small>${nd.path} · ${nd.what}</small></span><span class="hr-s">${st==='done'?'✓':st==='open'?'OPEN':'LOCKED'}</span></button>`}).join('')
-    +`<div class="hr-exits"><small>SHORTCUTS</small><a href="?plain" data-plain>☀ One-page summary</a><a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">▾ My CV (PDF)</a><a href="mailto:fatiherdogann099@gmail.com">✉ Email me</a></div>`;
+    +`<div class="hr-exits"><small>SHORTCUTS</small><a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">▾ My CV (PDF)</a><a href="mailto:fatiherdogann099@gmail.com">✉ Email me</a></div>`;
   $('#hxAcc').textContent=n+'/4';
   hxEl.querySelectorAll('.hx-pips i').forEach((p,i)=>p.classList.toggle('on',i<n));
   const bs=$('#buildseg');if(bs)bs.innerHTML=n>=4?'breach: <b>FULL ACCESS</b>':`breach: <b>${n}/4 nodes</b>`;
@@ -5264,7 +5077,7 @@ hxEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.
 let hxEscBlocked=false;
 addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
-  hxEscBlocked=!!(e.target.closest&&e.target.closest('input,textarea'))||!!document.querySelector('.fview.show,#wreveal.show,#palette.open,#plain:not([hidden]),#matchbox:not([hidden]),#xray:not([hidden]),#refinery:not([hidden]),#skyline:not([hidden]),#pmbox:not([hidden]),#skPop:not([hidden]),#hx #breach:not([hidden])');
+  hxEscBlocked=!!(e.target.closest&&e.target.closest('input,textarea'))||!!document.querySelector('.fview.show,#wreveal.show,#palette.open,#matchbox:not([hidden]),#xray:not([hidden]),#refinery:not([hidden]),#skyline:not([hidden]),#pmbox:not([hidden]),#skPop:not([hidden]),#hx #breach:not([hidden])');
 },true);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&HX.open&&!hxEscBlocked)hxClose()});
 (function hxInit(){
@@ -5333,7 +5146,7 @@ const NEOFETCH=
                <span class="ps">Achievements</span>: Brandon Hall Silver ★
                <span class="ps">Contact</span>: fatiherdogann099@gmail.com</pre>`;
 const CMDS={
- help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from my record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">skyline</span> · <span class="ps">postmortem</span> · <span class="ps">xray</span> · <span class="ps">plain</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
+ help:()=>`ask anything in plain words and <span class="cy">FIXER</span> (a Claude agent) answers from my record.<br>available protocols:<br>&nbsp;&nbsp;<span class="ps">match</span> · <span class="ps">refinery</span> · <span class="ps">skyline</span> · <span class="ps">postmortem</span> · <span class="ps">xray</span> · <span class="ps">whoami</span> · <span class="ps">neofetch</span> · <span class="ps">garage</span> · <span class="ps">gigs</span> · <span class="ps">runlog</span> · <span class="ps">contact</span> · <span class="ps">scan</span> · <span class="ps">clear</span> · <span class="ps">sudo hire-me</span><br>city protocols:<br>&nbsp;&nbsp;<span class="ps">seed &lt;n|word|random&gt;</span> · <span class="ps">rain on|off|storm</span> · <span class="ps">replay incident|hack|all</span> · <span class="ps">snd on|off</span> · <span class="ps">tod night|dawn|dusk</span> · <span class="ps">director</span>`,
  whoami:()=>`Fatih ErdoGan · software engineer with an industrial engineering background.<br>I build software for complex real-world operations: refinery systems, a B2B logistics platform, and the LLM features inside them. Based in İzmir, open to remote or Europe.`,
  neofetch:()=>NEOFETCH,
  garage:()=>`FE-08 "QUADRA STACK" — hand-built, no parts bin.<br>chassis: modular monolith (DDD, CQRS) · powerplant: .NET 10/C# · drive-by-wire: TypeScript/React/React Native<br>autopilot: Anthropic API, tool-use agents · ICE: Keycloak · pit crew: Docker → GitHub Actions → Azure<br><span class="cy">scroll up to the garage to spin it</span>`,
@@ -5361,7 +5174,6 @@ const CMDS={
  postmortem:()=>{pmReel();pmOpen();return `postmortem FIXER-001 open. the director panel replays it over the incident footage.`},
  skyline:()=>{skOpen();return `commit skyline up. one tower per week, two commits per window.`},
  refinery:()=>{rfOpen();return `control room open. unit 300 is synthetic; the copilot's tools are real.`},
- plain:()=>{plainOpen();return `plain version open. the neon waits.`},
 };
 /* protocols that take arguments — the plain lookup below stays fast for everything else */
 const ARGCMDS={
@@ -5528,40 +5340,6 @@ async function askFixer(q){
   document.querySelectorAll('.fview').forEach(f=>mo.observe(f,{attributes:true,attributeFilter:['class']}));
   mo.observe(term,{attributes:true,attributeFilter:['class']});
 })();
-
-/* ============ PLAIN VIEW: the ☀ on the switch; back to the city at sunset ============ */
-const plEl=$('#plain');
-let plOrigin=null;
-const plCircle=(o,r)=>`circle(${r}px at ${o[0]}px ${o[1]}px)`;
-function plSweep(o){
-  const r=Math.hypot(Math.max(o[0],innerWidth-o[0]),Math.max(o[1],innerHeight-o[1]));
-  return [plCircle(o,0),plCircle(o,r)];
-}
-function plainOpen(src){
-  if(!plEl.hidden)return;
-  const b=src&&src.getBoundingClientRect?src.getBoundingClientRect():null;
-  plOrigin=b&&b.width?[b.left+b.width/2,b.top+b.height/2]:[innerWidth/2,innerHeight*.35];
-  plEl.hidden=false;plEl.scrollTop=0;document.documentElement.classList.add('plainlock');
-  plEl.classList.remove('pl-in');void plEl.offsetWidth;plEl.classList.add('pl-in');
-  if(!reduced&&plEl.animate)plEl.animate({clipPath:plSweep(plOrigin)},{duration:700,easing:'cubic-bezier(.65,0,.35,1)'});
-  setTimeout(()=>$('#plClose').focus(),40);
-  try{history.replaceState(null,'',location.pathname+'?plain'+location.hash)}catch(_){}
-}
-function plainClose(instant){
-  if(plEl.hidden)return;
-  if(!instant&&!reduced&&plEl.animate&&plOrigin){
-    const a=plEl.animate({clipPath:plSweep(plOrigin).reverse()},{duration:520,easing:'cubic-bezier(.65,0,.35,1)'});
-    a.onfinish=()=>plainClose(true);return;
-  }
-  plEl.hidden=true;document.documentElement.classList.remove('plainlock');
-  setTod('dusk');                         // back to the city at sunset
-  try{history.replaceState(null,'',location.pathname+location.hash)}catch(_){}
-}
-$('#plClose').addEventListener('click',()=>plainClose());
-document.addEventListener('click',e=>{const t=e.target.closest('[data-plain]');if(t){e.preventDefault();plainOpen(t)}});
-$('#plPrint').addEventListener('click',()=>print());
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!plEl.hidden&&!document.querySelector('.fview.show')&&$('#matchbox').hidden)plainClose()});
-if(/[?&]plain/.test(location.search)){endBoot();plainOpen()}
 
 /* ============ ARCHITECTURE X-RAY: the logistics platform as a tower ============ */
 /* Everything drawn here is on the CV. Six modules are named there; the other seven are
@@ -5739,7 +5517,6 @@ function xrAnimate(){
 function xrOpen(){
   if(!xrEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose(true);
   xrJ=null;xrBuild();xrEl.hidden=false;document.documentElement.classList.add('brlock');
   xrEl.classList.remove('xr-scan');void xrEl.offsetWidth;xrEl.classList.add('xr-scan');
   xrAnimate();setTimeout(()=>$('#xrClose').focus(),40);
@@ -5769,7 +5546,7 @@ addEventListener('keydown',e=>{
     const a=document.activeElement;
     if(a&&(a.matches('input,textarea,select,[contenteditable="true"]')))return;
     if(!xrEl.hidden){xrClose();return}
-    if(!plEl.hidden||!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!$('#skyline').hidden||!$('#pmbox').hidden||!boot.classList.contains('done'))return;
+    if(!$('#matchbox').hidden||!brEl.hidden||!$('#refinery').hidden||!$('#skyline').hidden||!$('#pmbox').hidden||!boot.classList.contains('done'))return;
     xrOpen();
   }
 });
@@ -5936,7 +5713,6 @@ $('#rfLive').addEventListener('click',()=>{rfPlayStop();rfSetT(0)});
 async function rfOpen(){
   if(!rfEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
   rfEl.hidden=false;document.documentElement.classList.add('brlock');
   if(!SIM){try{SIM=await import('/lib/refinery-sim.js');rfWos=SIM.WORK_ORDERS.map(w=>({...w}))}catch(_){rfLog.innerHTML='<div class="rf-msg sys">The simulation failed to load. Try again in a moment.</div>';return}}
@@ -6149,7 +5925,6 @@ addEventListener('resize',()=>{if(skCity)skPlaceFlags()});
 async function skOpen(){
   if(!skEl.hidden)return;
   document.querySelectorAll('.fview.show').forEach(f=>f.classList.remove('show'));
-  if(!plEl.hidden)plainClose(true);
   if(!xrEl.hidden)xrClose();
   if(!rfEl.hidden)rfClose();
   skEl.hidden=false;document.documentElement.classList.add('brlock');
@@ -6176,7 +5951,7 @@ function vtGo(open,src,target){
 /* one observer watches every overlay: it parks the city while something opaque covers it,
    and gives the open/close a tick of sound when the ambient feed is on */
 (function(){
-  const ids=['plain','refinery','skyline','pmbox','matchbox','xray','wreveal'];
+  const ids=['refinery','skyline','pmbox','matchbox','xray','wreveal'];
   const els=ids.map(i=>document.getElementById(i)).filter(Boolean);
   const isOpen=el=>el.id==='wreveal'?el.classList.contains('show'):!el.hidden;
   let prev=new Map(els.map(e=>[e,isOpen(e)]));
@@ -6742,7 +6517,7 @@ function pmTimeline(id){
 }
 function pmOpen(id='fixer'){pmTimeline(id);pmEl.querySelectorAll('[data-pm]').forEach(a=>a.hidden=a.dataset.pm!==id);pmEl.hidden=false;document.documentElement.classList.add('brlock');pmEl.scrollTop=0;setTimeout(()=>{const x=pmEl.querySelector(`[data-pm="${id}"] .pmx`);if(x)x.focus()},40)}
 function pmClose(){pmEl.hidden=true;document.documentElement.classList.remove('brlock')}
-function pmReel(){if(!plEl.hidden)plainClose(true);dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
+function pmReel(){dirScene='postmortem';dirOpen();dirSlider.value=0;dirApply(1)}
 pmEl.addEventListener('click',e=>{if(e.target.closest('.pmx'))pmClose()});
 pmEl.addEventListener('click',e=>{if(e.target===pmEl)pmClose()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!pmEl.hidden)pmClose()});
@@ -6764,7 +6539,6 @@ const ACTIONS=[
  {t:'Toggle ambient sound',k:'♪',f:()=>sfx.toggle()},
  {t:"Director's cut (scene scrubber)",k:'🎬',f:()=>dirOpen()},
  {t:'Contract match: check a job post',k:'⚖',f:()=>mOpen()},
- {t:'Plain version (for a quick read)',k:'☀',f:()=>plainOpen()},
  {t:'Architecture X-ray (logistics platform)',k:'X',f:()=>xrOpen()},
  {t:'Refinery control room: industrial ops copilot (AI demo)',k:'⛽',f:()=>rfOpen()},
  {t:'Commit skyline: the logistics platform, week by week',k:'▥',f:()=>skOpen()},
