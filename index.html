@@ -1217,6 +1217,12 @@ body.sk-city.crt::before,body.sk-city.crt::after{visibility:visible}
 .hero .charslot{height:100%;max-height:260px;aspect-ratio:1/1;width:auto}
 .hero .charslot .imgwrap{height:100%;aspect-ratio:1/1}
 .hero-go{display:flex;align-items:center;gap:clamp(16px,2.6vw,34px);margin-top:clamp(12px,2.4vh,24px);flex:none}
+/* a returning visitor can wipe the run and go in clean; it only shows once START does */
+.hg-l{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.hs-over{font:10.5px 'Share Tech Mono',monospace;letter-spacing:.16em;color:#8A98B4;background:rgba(5,6,10,.72);
+  border:1px solid var(--line);padding:5px 10px;cursor:pointer;transition:color .2s,border-color .2s}
+.hs-over:hover{color:#fff;border-color:var(--neon)}
+.hero-go:has(.hs-glow:not(.on)) .hs-over{visibility:hidden}
 .hero-go .hint{margin:0;max-width:48ch;line-height:1.6;color:#8A98B4;background:rgba(5,6,10,.72);padding:6px 10px;border-left:1px solid var(--line)}
 /* START: the one thing to press. Its glow lives on a wrapper because clip-path would cut it */
 .hs-glow{flex:none;display:inline-block;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--neon) 55%,transparent));visibility:hidden}
@@ -1314,6 +1320,8 @@ html.hx-on #term{z-index:960}
 .hr-exits small{font-family:'Share Tech Mono',monospace;font-size:9.5px;letter-spacing:.2em;color:var(--dim)}
 .hr-exits a{color:#C9D6EA}
 .hr-exits a:hover{color:var(--neon)}
+.hr-over{all:unset;cursor:pointer;color:#8A98B4}
+.hr-over:hover,.hr-over:focus-visible{color:var(--neon)}
 
 .hx-stage{grid-area:stage;position:relative;min-height:0;overflow:hidden}
 .hxv{position:absolute;inset:0;padding:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--neon) 40%,transparent) transparent}
@@ -1368,6 +1376,8 @@ html.hx-on #term{z-index:960}
 /* ---- map: the target's subnet ---- */
 .hx-map{display:flex;flex-direction:column;padding:20px 22px 14px}
 .hmap-head{text-align:center;flex:none}
+.hmap-over{margin-top:10px;font:11px 'Share Tech Mono',monospace;letter-spacing:.18em;color:#8A98B4;background:rgba(5,6,10,.6);border:1px solid var(--line);padding:6px 12px;cursor:pointer;transition:color .2s,border-color .2s}
+.hmap-over:hover{color:#fff;border-color:var(--neon)}
 .hmap-k{font-size:11px;letter-spacing:.24em;color:var(--dim)}
 .hmap-t{font-family:'Geist',sans-serif;font-size:18px;color:#EAF2FF;margin-top:6px}
 .hmap{flex:1;min-height:0;width:100%;overflow:visible}
@@ -1677,6 +1687,8 @@ html.hx-on #term{z-index:960}
   .hero-go{flex-direction:column;align-items:stretch;gap:8px}
   .hs-glow,.hxstart{width:100%}
   .hero-go .hint{font-size:11px;line-height:1.5}
+  .hg-l{align-items:stretch;gap:6px}
+  .hs-over{padding:5px 10px;font-size:10px}
   #deck{white-space:nowrap;overflow:hidden;padding:7px 12px}
   #deck .dk-deco,#deck .rhs>*:not(#wxseg){display:none}
   #term{bottom:38px}
@@ -1760,7 +1772,10 @@ html.hx-on #term{z-index:960}
     </div>
   </div>
   <div class="hero-go">
-    <p class="hint">▸ Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>.</p>
+    <div class="hg-l">
+      <p class="hint">▸ Hiring? <a href="#match" data-match>Paste a job post</a> for an honest fit check, or ask FIXER in the <a href="#term" data-dock>terminal</a>.</p>
+      <button type="button" class="hs-over" id="hxOver" hidden>↺ START OVER — wipe my progress</button>
+    </div>
     <span class="hs-glow"><button type="button" id="hxStart" class="hxstart" aria-label="Start: hack into my files">
       <span class="hs-k"><i>▶</i> START BREACH</span>
       <span class="hs-s">Hack into my files · about 2 minutes</span>
@@ -1797,7 +1812,7 @@ html.hx-on #term{z-index:960}
    </section>
 
    <section class="hxv hx-map" data-v="map" hidden>
-    <div class="hmap-head"><div class="hmap-k">TARGET SUBNET // FATIH.EXE · 4 NODES</div><div class="hmap-t" id="hxMapT"></div></div>
+    <div class="hmap-head"><div class="hmap-k">TARGET SUBNET // FATIH.EXE · 4 NODES</div><div class="hmap-t" id="hxMapT"></div><button type="button" class="hmap-over" data-hx-restart hidden>↺ START THE RUN OVER</button></div>
     <svg class="hmap" id="hxMap" aria-label="the target's nodes"></svg>
     <div class="hmap-lock" id="hxLock" hidden></div>
    </section>
@@ -4641,6 +4656,7 @@ function hxChord(base=523){[1,1.26,1.5].forEach((m,i)=>setTimeout(()=>sfx.blip(b
 function hxStartLabel(){
   const b=$('#hxStart');if(!b)return;const n=hxCount();
   b.querySelector('.hs-k').innerHTML='<i>▶</i> '+(n===0?'START BREACH':n<4?'RESUME BREACH':'RE-ENTER');
+  const o=$('#hxOver');if(o)o.hidden=n===0;
   b.querySelector('.hs-s').textContent=n===0?'Hack into my files · about 2 minutes':n<4?`${n} of 4 nodes breached · pick up where you left off`:'Full access · every file is open';
 }
 function hxRailRender(){
@@ -4649,7 +4665,7 @@ function hxRailRender(){
     const st=hxDone(nd.id)?'done':hxOpenable(nd.id)?'open':'locked';
     return `<button type="button" class="hr-n ${st}${HX.view===nd.id?' cur':''}" data-hx-node="${nd.id}" style="--na:${nd.acc}" aria-label="${nd.name}, ${nd.path}: ${st==='done'?'breached':st}">`
       +`<span class="hr-c">${nd.no}</span><span class="hr-m"><b>${nd.name}</b><small>${nd.path} · ${nd.what}</small></span><span class="hr-s">${st==='done'?'✓':st==='open'?'OPEN':'LOCKED'}</span></button>`}).join('')
-    +`<div class="hr-exits"><small>SHORTCUTS</small><a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">▾ My CV (PDF)</a><a href="mailto:fatiherdogann099@gmail.com">✉ Email me</a></div>`;
+    +`<div class="hr-exits"><small>SHORTCUTS</small><a href="fatih-erdogan-cv.pdf" download="Fatih Erdogan - Software Engineer CV.pdf">▾ My CV (PDF)</a><a href="mailto:fatiherdogann099@gmail.com">✉ Email me</a>${n?'<button type="button" class="hr-over" data-hx-restart>↺ Start the run over</button>':''}</div>`;
   $('#hxAcc').textContent=n+'/4';
   hxEl.querySelectorAll('.hx-pips i').forEach((p,i)=>p.classList.toggle('on',i<n));
   const bs=$('#buildseg');if(bs)bs.innerHTML=n>=4?'breach: <b>FULL ACCESS</b>':`breach: <b>${n}/4 nodes</b>`;
@@ -4798,6 +4814,7 @@ HX_ENTER.map=opt=>{
   $('#hxLock').hidden=true;
   hxMapRender(opt.unlock);
   const nx=hxNext(),n=hxCount();
+  hxView('map').querySelector('.hmap-over').hidden=n===0;
   $('#hxMapT').textContent=n===0?'Pick a node to breach. CORTEX is the softest way in.':nx?`${n} of 4 breached. ${nx.name} is open: ${nx.what}.`:'Every node is breached. The vault stays open for you.';
   if(opt.lock)hxLockMsg(opt.lock);
   else if(opt.unlock&&nx)hxLog(`new route open: <b>${nx.name}</b> ${nx.path}`,'ok');
@@ -5163,6 +5180,11 @@ HX_ENTER.final=()=>{
   [880,660,880,660,880,660].forEach((f,i)=>setTimeout(()=>sfx.blip(f,.16,'sawtooth',.03),i*170));
 };
 
+/* START OVER: forget the run (not the terminal's breach cert) and go back to the target scan */
+function hxRestart(){
+  HX.st={done:{},fin:0};HX.introSeen=0;HX.files.clear();HX.trace=0;HX.finThen=null;VA.cur=-1;
+  xtBtn.classList.remove('urge');hxSave();hxRailRender();
+}
 /* ---- the deck itself: unfolds out of START, folds back into it ---- */
 function hxRect(r,sr){return `inset(${r.top-sr.top}px ${sr.right-r.right}px ${sr.bottom-r.bottom}px ${r.left-sr.left}px)`}
 function hxOpen(target,opt){
@@ -5221,8 +5243,10 @@ function hxFrame(t,neon){
 document.addEventListener('click',e=>{
   const t=e.target;
   if(t.closest('#hxStart')){e.preventDefault();hxOpen();return}
+  if(t.closest('#hxOver')){e.preventDefault();hxRestart();hxOpen();return}
   const nav=t.closest('[data-hx]');if(nav){e.preventDefault();hxOpen(nav.dataset.hx);return}
   if(!HX.open||!hxEl.contains(t))return;
+  if(t.closest('[data-hx-restart]')){hxRestart();HX.introSeen=1;hxShow('intro');hxLog('run wiped — <b>starting clean</b>','warn');return}
   const nd=t.closest('[data-hx-node]');
   if(nd){
     const id=nd.dataset.hxNode;if(!id||HX.view===id)return;
