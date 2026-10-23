@@ -800,6 +800,13 @@ body.deck-static .fstage .dossier .dopen{display:inline-block}
 #cursor.hov .dot{width:2px;height:2px}
 #cursor.hov .label{opacity:1}
 #cursor.dn{width:18px;height:18px}
+/* over a hot implant the reticle locks onto it and asks for the click */
+#cursor.tgt{width:34px;height:34px}
+#cursor.tgt .ret{transform:none;animation:curLock .3s steps(3)}
+#cursor.tgt .ret i{width:12px;height:12px;border-color:#FF3B3B;filter:drop-shadow(0 0 6px #FF3B3B)}
+#cursor.tgt .dot{width:6px;height:6px;background:#FF3B3B;box-shadow:0 0 12px #FF3B3B}
+#cursor.tgt .label{opacity:1;color:#FF6B6B;text-shadow:0 0 8px #FF3B3B,0 0 2px #000;font-size:11px;font-weight:700;animation:pulse .5s infinite}
+@keyframes curLock{0%{transform:scale(1.9)}100%{transform:none}}
 #cursor.dn .dot{width:7px;height:7px}
 @media(hover:hover) and (pointer:fine){
   body,body *{cursor:none!important}
@@ -1457,6 +1464,7 @@ html.hx-on #term{z-index:960}
 .hx-lo .banchor.hot::before{content:"";position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px;border-radius:50%;border:2px solid var(--neon);
   box-shadow:0 0 10px var(--neon);pointer-events:none;animation:lhRing var(--win,1600ms) linear forwards}
 .hx-lo .banchor.hot::after{inset:-20px;border:none;opacity:0;animation:none}
+.hx-lo .banchor.hot:hover{background:#fff}
 .hx-lo .banchor.cold{opacity:1;border-color:#FF3B3B;box-shadow:0 0 16px #FF3B3B;animation:lhCold .5s steps(4)}
 @keyframes lhRing{0%{transform:scale(5.5);opacity:.25}15%{opacity:1}78%{border-color:var(--neon)}100%{transform:scale(1);opacity:1;border-color:#FF3B3B}}
 @keyframes lhCore{to{transform:scale(1.25)}}
@@ -1876,7 +1884,7 @@ html.hx-on #term{z-index:960}
 
    <section class="hxv hx-lo" data-v="loadout" id="implants" hidden>
   <div class="hx-mis">
-    <div class="hm-l"><div class="hm-k">NODE 01 // CORTEX · ./loadout</div><div class="hm-t" data-hm-t>Implants light up one at a time. Hit each one before its ring closes to pull its skills.</div></div>
+    <div class="hm-l"><div class="hm-k">NODE 01 // CORTEX · ./loadout</div><div class="hm-t" data-hm-t>Implants light up one at a time. Click each glowing one before its ring closes to pull its skills.</div></div>
     <div class="hm-p" data-hm-p><b>0/7</b> IMPLANTS</div>
     <button type="button" class="hm-auto" data-hx-auto>⚡ AUTO-SCAN</button>
     <button type="button" class="hm-next" data-hx-next hidden>NEXT ▸</button>
@@ -4899,7 +4907,7 @@ function loSet(f){
 /* the scanner still follows the hand for the x-ray; the skills come from the game below */
 function loScanAt(f){
   if(hxDone('loadout'))return;
-  loSet(clamp(f,0,1));
+  loSet(clamp(f,0,1));loScanEl.classList.remove('hint');   // the instruction must not ride over the targets
 }
 /* the game: implants run hot one at a time in a shuffled order and each must be hit before
    its ring closes. A miss re-encrypts it and sends it to the back of the queue; the window
@@ -4971,8 +4979,8 @@ HX_ENTER.loadout=()=>{
   statRows.forEach(r=>r.segs.forEach(s=>s.classList.remove('f')));
   bodybox.querySelectorAll('.banchor').forEach(a=>a.classList.remove('on'));
   loScanEl.className='lscan hint';
-  loScanEl.querySelector('.lg').textContent=(matchMedia('(pointer:coarse)').matches?'TAP':'HIT')+' EACH IMPLANT BEFORE ITS RING CLOSES';
-  loSet(.04);loView.classList.add('scanning');
+  loScanEl.querySelector('.lg').textContent=(matchMedia('(pointer:coarse)').matches?'TAP':'CLICK')+' THE GLOWING IMPLANTS';
+  loSet(.86);loView.classList.add('scanning');   // the hint waits at the feet, clear of every implant
   hxMisReset('loadout','<b>0/7</b> IMPLANTS');
   hxLogs(['cortex located: <b>7 implant groups</b>, encrypted','implants will run hot one by one — hit them before they cool']);
   loStop();LO.miss=0;LO.q=statGroups.map((g,i)=>i).sort(()=>Math.random()-.5);
@@ -7157,10 +7165,17 @@ const HOLO_OBJ={
   if(!cur)return;
   if(!matchMedia('(hover:hover) and (pointer:fine)').matches){cur.remove();return}
   const lab=cur.querySelector('.label');
-  let cmx=innerWidth/2,cmy=innerHeight/2,ccx=cmx,ccy=cmy;
+  let cmx=innerWidth/2,cmy=innerHeight/2,ccx=cmx,ccy=cmy,hovLab='▸ EXEC',tgt=false;
   addEventListener('mousemove',e=>{cmx=e.clientX;cmy=e.clientY});
   (function cl(){
-    ccx+=(cmx-ccx)*.22;ccy+=(cmy-ccy)*.22;
+    /* CORTEX: within reach of the hot implant, the reticle snaps onto it */
+    let tx=cmx,ty=cmy,on=false;
+    if(LO.hot>=0&&HX.view==='loadout'){
+      const r=loAnchors()[LO.hot].getBoundingClientRect(),ax=r.left+r.width/2,ay=r.top+r.height/2;
+      if(Math.hypot(cmx-ax,cmy-ay)<26){on=true;tx=ax;ty=ay}
+    }
+    if(on!==tgt){tgt=on;cur.classList.toggle('tgt',on);lab.textContent=on?'▸ CLICK!':hovLab}
+    ccx+=(tx-ccx)*(on?.45:.22);ccy+=(ty-ccy)*(on?.45:.22);
     cur.style.transform=`translate(${ccx}px,${ccy}px) translate(-50%,-50%)`;
     requestAnimationFrame(cl);
   })();
@@ -7168,11 +7183,12 @@ const HOLO_OBJ={
     const t=e.target.closest('a,button,summary,input,label,[data-fopen],[data-fclose],[data-fnext],#palette .item,.cmdk,.bodyview,.bodybox');
     cur.classList.toggle('hov',!!t);
     if(t){
-      lab.textContent=t.matches('input')?'▸ TYPE'
+      hovLab=t.matches('input')?'▸ TYPE'
         :t.matches('a[href^="mailto:"]')?'▸ UPLINK'
         :t.matches('[data-fopen],[data-fclose],[data-fnext]')?'▸ DECRYPT'
-        :t.matches('.bodyview,.bodybox')?'▸ SCAN'
+        :t.matches('.bodyview,.bodybox')?(HX.view==='loadout'&&!hxDone('loadout')?'▸ AIM':'▸ SCAN')
         :'▸ EXEC';
+      if(!tgt)lab.textContent=hovLab;
     }
   });
   addEventListener('mousedown',()=>cur.classList.add('dn'));
