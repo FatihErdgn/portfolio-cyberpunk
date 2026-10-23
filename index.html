@@ -1451,6 +1451,16 @@ html.hx-on #term{z-index:960}
 .hx-lo .banchor{opacity:.35;transition:opacity .3s}
 .hx-lo .banchor.on{opacity:1;animation:anchorHit .7s var(--ease)}
 @keyframes anchorHit{0%{transform:scale(3);box-shadow:0 0 22px var(--neon)}100%{transform:none}}
+/* the game: one implant runs hot at a time; hit it before its ring closes */
+.hx-lo .banchor.hot{opacity:1;z-index:6;pointer-events:auto;cursor:crosshair;width:13px;height:13px;margin:-6.5px;border:2px solid #fff;background:var(--neon);
+  box-shadow:0 0 14px var(--neon),0 0 30px var(--neon);animation:lhCore .45s ease-in-out infinite alternate}
+.hx-lo .banchor.hot::before{content:"";position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px;border-radius:50%;border:2px solid var(--neon);
+  box-shadow:0 0 10px var(--neon);pointer-events:none;animation:lhRing var(--win,1600ms) linear forwards}
+.hx-lo .banchor.hot::after{inset:-20px;border:none;opacity:0;animation:none}
+.hx-lo .banchor.cold{opacity:1;border-color:#FF3B3B;box-shadow:0 0 16px #FF3B3B;animation:lhCold .5s steps(4)}
+@keyframes lhRing{0%{transform:scale(5.5);opacity:.25}15%{opacity:1}78%{border-color:var(--neon)}100%{transform:scale(1);opacity:1;border-color:#FF3B3B}}
+@keyframes lhCore{to{transform:scale(1.25)}}
+@keyframes lhCold{0%,50%{transform:translateX(-3px)}25%,75%{transform:translateX(3px)}100%{transform:none}}
 .lscan{position:absolute;left:0;right:0;top:var(--sy,4%);height:0;z-index:5;pointer-events:none}
 .lscan::before{content:"";position:absolute;left:3%;right:3%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--neon) 20%,#fff 50%,var(--neon) 80%,transparent);box-shadow:0 0 14px var(--neon),0 0 34px var(--neon)}
 .lscan::after{content:"";position:absolute;left:3%;right:3%;bottom:0;height:46px;background:linear-gradient(0deg,color-mix(in srgb,var(--neon) 22%,transparent),transparent)}
@@ -1476,6 +1486,7 @@ html.hx-on #term{z-index:960}
 .tw-row b{min-width:48px;text-align:right;color:var(--pink);font-weight:400;font-size:14px}
 .tuner.near .tw-row b{color:var(--yellow)}
 .tuner.lock .tw-row b{color:var(--green)}
+.tw-lk{display:block;height:3px;margin-top:6px;background:linear-gradient(90deg,var(--green) calc(var(--lk,0) * 100%),rgba(255,255,255,.08) 0);box-shadow:0 0 calc(var(--lk,0) * 12px) var(--green)}
 .hx-ga.locked .tuner,.hx-ga.done .tuner{opacity:0;transform:translateY(12px);pointer-events:none}
 .hx-ga .carbox .drag{opacity:0;transition:opacity .5s}
 .hx-ga.done .carbox .drag{opacity:1}
@@ -1511,6 +1522,21 @@ html.hx-on #term{z-index:960}
 .ms-mark.got{background:var(--neon);box-shadow:0 0 10px var(--neon)}
 .ms-mark.got span{color:var(--neon)}
 .ms-mark em{font-style:normal}
+/* corrupted tape: red blocks fire on and off; slip through while one is dark */
+.ms-icebox{position:absolute;left:11px;right:11px;top:0;bottom:0;pointer-events:none}
+.ms-ice{position:absolute;top:14px;height:20px;width:6%;border:1px solid #FF3B3B;box-shadow:0 0 12px rgba(255,59,59,.6);
+  background:repeating-linear-gradient(90deg,rgba(255,59,59,.6) 0 3px,rgba(255,59,59,.16) 3px 6px);animation:msGl .18s steps(2) infinite;transition:opacity .25s}
+.ms-ice.off{background:rgba(0,255,156,.05);border:1px dashed rgba(0,255,156,.6);box-shadow:none;animation:none}
+.ms-ice.off.warn{animation:msWarn .12s steps(2) infinite}
+.ms-ice.hit{animation:msHit .4s steps(4)}
+.ms-ice.clr{opacity:0}
+@keyframes msGl{50%{transform:translateX(1px);filter:brightness(1.5)}}
+@keyframes msWarn{50%{border-color:#FF3B3B;border-style:solid}}
+@keyframes msHit{50%{background:#FF3B3B;box-shadow:0 0 22px #FF3B3B}}
+.mem-stage.torn::after{content:"TAPE TORN";position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;
+  font:700 clamp(20px,3vw,30px) 'Chakra Petch',sans-serif;letter-spacing:.24em;color:#FF3B3B;text-shadow:0 0 18px #FF3B3B;
+  background:repeating-linear-gradient(0deg,rgba(255,40,60,.22) 0 2px,transparent 2px 5px),rgba(14,2,6,.9);animation:msTorn .55s steps(4) forwards}
+@keyframes msTorn{0%,60%{opacity:1}100%{opacity:0}}
 #hxScrub{position:absolute;left:0;right:0;top:8px;width:100%;height:32px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:ew-resize}
 #hxScrub::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,#2A3550,color-mix(in srgb,var(--neon) 60%,#2A3550))}
 #hxScrub::-moz-range-track{height:4px;background:#2A3550}
@@ -1727,6 +1753,7 @@ html.hx-on #term{z-index:960}
   .hi-mesh line{animation:none;stroke-dashoffset:0}.hi-mesh circle{animation:none;opacity:.95}
   .hf-card{opacity:1}.hf-alert{display:none}
   .bfail,.bf-card,.ice-denied b,.ice-denied span,.ice-denied::before,.icelayer.denied #iceCv{animation:none}
+  .hx-lo .banchor.hot,.ms-ice,.ms-ice.off.warn{animation:none}
   .fstage.on .hx-extract,.fstage.on .hx-extract.urge,.hx-extract::before{animation:none}
   html.hx-on #city{transform:none}
 }
@@ -1849,7 +1876,7 @@ html.hx-on #term{z-index:960}
 
    <section class="hxv hx-lo" data-v="loadout" id="implants" hidden>
   <div class="hx-mis">
-    <div class="hm-l"><div class="hm-k">NODE 01 // CORTEX · ./loadout</div><div class="hm-t" data-hm-t>Move down the body to scan it. Every implant you pass gives up a set of skills.</div></div>
+    <div class="hm-l"><div class="hm-k">NODE 01 // CORTEX · ./loadout</div><div class="hm-t" data-hm-t>Implants light up one at a time. Hit each one before its ring closes to pull its skills.</div></div>
     <div class="hm-p" data-hm-p><b>0/7</b> IMPLANTS</div>
     <button type="button" class="hm-auto" data-hx-auto>⚡ AUTO-SCAN</button>
     <button type="button" class="hm-next" data-hx-next hidden>NEXT ▸</button>
@@ -1901,7 +1928,7 @@ html.hx-on #term{z-index:960}
 
    <section class="hxv hx-ga" data-v="garage" id="garage" hidden>
   <div class="hx-mis">
-    <div class="hm-l"><div class="hm-k">NODE 02 // GARAGE · ./garage</div><div class="hm-t" data-hm-t>Drag the tuner until the two waves line up. The car is the stack; lock its signal to read the spec sheet.</div></div>
+    <div class="hm-l"><div class="hm-k">NODE 02 // GARAGE · ./garage</div><div class="hm-t" data-hm-t>The carrier drifts. Track it with the tuner and keep the two waves together until the lock bar fills.</div></div>
     <div class="hm-p" data-hm-p><b>0%</b> SIGNAL</div>
     <button type="button" class="hm-auto" data-hx-auto>⚡ AUTO-TUNE</button>
     <button type="button" class="hm-next" data-hx-next hidden>NEXT ▸</button>
@@ -1915,7 +1942,7 @@ html.hx-on #term{z-index:960}
       <div class="rpm" id="rpm">RPM <b>0000</b></div>
       <div class="drag">MOVE THE MOUSE TO LOOK AROUND</div>
       <div class="tuner" id="hxTuner">
-        <svg class="tw" viewBox="0 0 400 64" preserveAspectRatio="none" aria-hidden="true"><path class="tw-t" id="hxWaveT"/><path class="tw-u" id="hxWaveU"/></svg>
+        <svg class="tw" viewBox="0 0 400 64" preserveAspectRatio="none" aria-hidden="true"><path class="tw-t" id="hxWaveT"/><path class="tw-u" id="hxWaveU"/></svg><i class="tw-lk" aria-hidden="true"></i>
         <label class="tw-row"><span>TUNER</span><input type="range" id="hxFreq" min="0" max="1000" value="80" aria-label="tune the receiver: drag until the two waves line up"><b id="hxSig">0%</b></label>
       </div>
       <div class="glock" id="hxGlock" aria-hidden="true">SIGNAL LOCKED</div>
@@ -1940,7 +1967,7 @@ html.hx-on #term{z-index:960}
 
    <section class="hxv hx-me" data-v="runlog" id="runlog" hidden>
   <div class="hx-mis">
-    <div class="hm-l"><div class="hm-k">NODE 03 // MEMORY · ./runlog</div><div class="hm-t" data-hm-t>Drag the playhead back to 2022. Each stop on the way is a job I held.</div></div>
+    <div class="hm-l"><div class="hm-k">NODE 03 // MEMORY · ./runlog</div><div class="hm-t" data-hm-t>Rewind to 2022. Red blocks are corrupted tape: wait for one to go dark, then slip through before it fires.</div></div>
     <div class="hm-p" data-hm-p><b>0/4</b> MEMORIES</div>
     <button type="button" class="hm-auto" data-hx-auto>⚡ AUTO-REWIND</button>
     <button type="button" class="hm-next" data-hx-next hidden>NEXT ▸</button>
@@ -4860,7 +4887,7 @@ HX_LEAVE.map=()=>clearTimeout(HX.diveT);
 addEventListener('resize',()=>{if(HX.view==='map')hxMapRender()});
 
 /* ---- CORTEX (./loadout): sweep the scan line down the body; each implant gives up its skills ---- */
-const LO={got:new Set(),f:.04,auto:0,ending:false};
+const LO={got:new Set(),f:.04,auto:0,ending:false,q:[],hot:-1,hotT:0,miss:0,autoT:[]};
 const loView=hxView('loadout');
 const loScanEl=document.createElement('div');loScanEl.className='lscan hint';loScanEl.innerHTML='<span class="lg"></span>';
 const loHost=()=>(bodyAPI&&bodyAPI.view)||bodybox;
@@ -4869,12 +4896,43 @@ function loSet(f){
   LO.f=f;loHost().style.setProperty('--sy',(f*100).toFixed(2)+'%');
   if(bodyAPI&&!hxDone('loadout'))bodyAPI.band(f);
 }
+/* the scanner still follows the hand for the x-ray; the skills come from the game below */
 function loScanAt(f){
   if(hxDone('loadout'))return;
-  f=clamp(f,0,1);loSet(f);loScanEl.classList.remove('hint');
-  const vr=loHost().getBoundingClientRect(),br=bodybox.getBoundingClientRect(),y=vr.top+f*vr.height;
-  statGroups.forEach((g,i)=>{if(!LO.got.has(i)&&y>=br.top+g.ay*br.height-4)loWake(i)});
+  loSet(clamp(f,0,1));
 }
+/* the game: implants run hot one at a time in a shuffled order and each must be hit before
+   its ring closes. A miss re-encrypts it and sends it to the back of the queue; the window
+   tightens as the cortex wakes up. */
+const loAnchors=()=>bodybox.querySelectorAll('.banchor');
+const loWin=()=>Math.max(950,1750-LO.got.size*115);
+function loNext(){
+  clearTimeout(LO.hotT);
+  if(HX.view!=='loadout'||hxDone('loadout')||LO.autoT.length||!LO.q.length)return;
+  const i=LO.q.shift(),a=loAnchors()[i],w=reduced?2600:loWin();LO.hot=i;
+  a.style.setProperty('--win',w+'ms');a.classList.remove('hot','cold');void a.offsetWidth;a.classList.add('hot');
+  sfx.blip(980,.05,'square',.015,1.3);
+  LO.hotT=setTimeout(()=>loMiss(i),w);
+}
+function loHit(i){
+  if(LO.hot!==i)return;
+  clearTimeout(LO.hotT);LO.hot=-1;loAnchors()[i].classList.remove('hot');
+  loScanEl.classList.remove('hint');
+  loSet(statGroups[i].ay);        // the x-ray band snaps onto the implant it just pulled
+  loWake(i);
+  if(!hxDone('loadout'))LO.hotT=setTimeout(loNext,reduced?120:420);
+}
+function loMiss(i){
+  if(LO.hot!==i)return;
+  LO.hot=-1;const a=loAnchors()[i];a.classList.remove('hot');
+  void a.offsetWidth;a.classList.add('cold');setTimeout(()=>a.classList.remove('cold'),520);
+  LO.q.push(i);LO.miss++;HX.trace=Math.min(95,HX.trace+3);
+  hxLog(`sync lost — <b>${LOADOUT[i].g.split(' //')[0]}</b> re-encrypted`,'bad');
+  sfx.blip(140,.16,'sawtooth',.03,.6);
+  LO.hotT=setTimeout(loNext,560);
+}
+function loStop(){clearTimeout(LO.hotT);LO.autoT.forEach(clearTimeout);LO.autoT=[];LO.hot=-1;loAnchors().forEach(a=>a.classList.remove('hot','cold'))}
+loAnchors().forEach((a,i)=>a.addEventListener('pointerdown',e=>{if(HX.view==='loadout'&&a.classList.contains('hot')){e.preventDefault();loHit(i)}}));
 function loWake(i){
   LO.got.add(i);const g=statGroups[i];
   g.el.classList.remove('enc');g.el.classList.add('woke');
@@ -4888,7 +4946,7 @@ function loWake(i){
   if(LO.got.size===statGroups.length)loDone();
 }
 function loDone(){
-  cancelAnimationFrame(LO.auto);
+  cancelAnimationFrame(LO.auto);loStop();
   const f0=LO.f,t0=performance.now();
   hxComplete('loadout',[['cortex dumped: <b>7 implant groups · 30 skills</b>','ok'],'tip: tap any skill to see where I used it']);
   (function sw(now){const p=clamp((now-t0)/450,0,1);loHost().style.setProperty('--sy',((f0+(1-f0)*p)*100).toFixed(2)+'%');
@@ -4913,17 +4971,20 @@ HX_ENTER.loadout=()=>{
   statRows.forEach(r=>r.segs.forEach(s=>s.classList.remove('f')));
   bodybox.querySelectorAll('.banchor').forEach(a=>a.classList.remove('on'));
   loScanEl.className='lscan hint';
-  loScanEl.querySelector('.lg').textContent=matchMedia('(pointer:coarse)').matches?'DRAG YOUR FINGER DOWN THE BODY ↓':'MOVE YOUR MOUSE DOWN THE BODY ↓';
+  loScanEl.querySelector('.lg').textContent=(matchMedia('(pointer:coarse)').matches?'TAP':'HIT')+' EACH IMPLANT BEFORE ITS RING CLOSES';
   loSet(.04);loView.classList.add('scanning');
   hxMisReset('loadout','<b>0/7</b> IMPLANTS');
-  hxLogs(['cortex located: <b>7 implant groups</b>, encrypted','scanner armed — it follows your hand']);
+  hxLogs(['cortex located: <b>7 implant groups</b>, encrypted','implants will run hot one by one — hit them before they cool']);
+  loStop();LO.miss=0;LO.q=statGroups.map((g,i)=>i).sort(()=>Math.random()-.5);
+  LO.hotT=setTimeout(loNext,reduced?300:1400);
 };
-HX_LEAVE.loadout=()=>{cancelAnimationFrame(LO.auto);if(bodyAPI)bodyAPI.band(null)};
+HX_LEAVE.loadout=()=>{cancelAnimationFrame(LO.auto);loStop();if(bodyAPI)bodyAPI.band(null)};
 function loAuto(){
-  if(hxDone('loadout'))return;
-  hxLog('daemon: auto-scan engaged','warn');
-  const f0=LO.f,t0=performance.now(),dur=reduced?10:2100;
-  (function a(now){const p=clamp((now-t0)/dur,0,1);loScanAt(f0+(.99-f0)*p);if(p<1&&!hxDone('loadout'))LO.auto=requestAnimationFrame(a)})(t0);
+  if(hxDone('loadout')||LO.autoT.length)return;
+  loStop();hxLog('daemon: auto-sync engaged','warn');
+  /* the daemon hits whatever is left, top to bottom, faster than any hand */
+  const rest=statGroups.map((g,i)=>i).filter(i=>!LO.got.has(i)).sort((a,b)=>statGroups[a].ay-statGroups[b].ay);
+  LO.autoT=rest.map((i,k)=>setTimeout(()=>{if(HX.view!=='loadout'||hxDone('loadout'))return;loScanEl.classList.remove('hint');loSet(statGroups[i].ay);loWake(i)},(reduced?20:260)*(k+1)));
 }
 (function(){
   let drag=false;
@@ -4934,7 +4995,8 @@ function loAuto(){
 })();
 
 /* ---- GARAGE: tune the receiver to the car's carrier wave, then read the spec sheet ---- */
-const GA={fT:640,u:80,lockMs:0,locked:false,auto:0,last:0,pct:-1};
+const GA={fT:640,u:80,lockMs:0,locked:false,auto:0,last:0,pct:-1,base:500,ph:0,amp:70,autoOn:0,prog:''};
+const GA_HOLD=reduced?600:1400;   // how long the waves must stay together
 const gaView=hxView('garage'),tuner=$('#hxTuner'),freq=$('#hxFreq'),sigB=$('#hxSig'),wT=$('#hxWaveT'),wU=$('#hxWaveU'),glock=$('#hxGlock');
 const specRows=[...gaView.querySelectorAll('.spec .row')];
 const GA_DONE='Spec sheet decrypted. The car is my stack: every part is a tool I ship with.';
@@ -4945,7 +5007,8 @@ HX_ENTER.garage=()=>{
     specRows.forEach(r=>{r.classList.remove('enc');const sp=r.querySelector('span');if(sp._orig!=null)sp.textContent=sp._orig});
     hxMisDone('garage',GA_DONE);return;
   }
-  GA.locked=false;GA.lockMs=0;GA.pct=-1;GA.fT=560+Math.random()*340;GA.u=40+Math.random()*120;
+  GA.locked=false;GA.lockMs=0;GA.pct=-1;GA.prog='';GA.autoOn=0;GA.base=300+Math.random()*400;GA.ph=Math.random()*6.28;GA.amp=reduced?0:85;
+  GA.fT=GA.base;GA.u=GA.base>500?40+Math.random()*120:840+Math.random()*120;tuner.style.setProperty('--lk',0);
   freq.value=GA.u;freq.disabled=false;
   gaView.classList.remove('locked','done');tuner.className='tuner';
   specRows.forEach(r=>{r.classList.add('enc');hxScramble(r.querySelector('span'))});
@@ -4956,10 +5019,13 @@ HX_ENTER.garage=()=>{
   hxLogs(['telemetry found on <b>FE-08 "QUADRA STACK"</b>','spec sheet encrypted — match the receiver to its carrier wave']);
 };
 HX_LEAVE.garage=()=>cancelAnimationFrame(GA.auto);
-freq.addEventListener('input',()=>{GA.u=+freq.value;cancelAnimationFrame(GA.auto)});
+freq.addEventListener('input',()=>{GA.u=+freq.value;GA.autoOn=0;cancelAnimationFrame(GA.auto)});
 function gaFrame(t){
   if(GA.locked||hxDone('garage'))return;
   const dt=Math.min(50,t-(GA.last||t));GA.last=t;
+  /* the carrier wanders, so the lock has to be held, not just found */
+  GA.fT=clamp(GA.base+GA.amp*Math.sin(t*.0006+GA.ph)+GA.amp*.45*Math.sin(t*.0014+GA.ph*2),40,960);
+  if(GA.autoOn){GA.u+=(GA.fT-GA.u)*.25;freq.value=GA.u}
   const cyc=v=>1.6+v/1000*7.4,ct=cyc(GA.fT),cu=cyc(GA.u);
   const d=Math.abs(GA.u-GA.fT),m=clamp(1-d/440,0,1),jit=(1-m)*9;
   let pt='',pu='';
@@ -4970,11 +5036,15 @@ function gaFrame(t){
   }
   wT.setAttribute('d',pt);wU.setAttribute('d',pu);
   const pct=Math.round(m*100);
-  if(pct!==GA.pct){GA.pct=pct;sigB.textContent=pct+'%';hxMis('garage').p.innerHTML=`<b>${pct}%</b> SIGNAL`}
-  const near=d<36;
+  if(pct!==GA.pct){GA.pct=pct;sigB.textContent=pct+'%'}
+  const near=d<28;
   tuner.classList.toggle('near',m>.78&&!near);
-  if(near){GA.lockMs+=dt;tuner.classList.add('lock');if(GA.lockMs>650)gaLock()}
-  else{GA.lockMs=0;tuner.classList.remove('lock')}
+  if(near){GA.lockMs+=dt;tuner.classList.add('lock')}
+  else{GA.lockMs=Math.max(0,GA.lockMs-dt*1.5);tuner.classList.remove('lock')}
+  const lk=Math.min(1,GA.lockMs/GA_HOLD);tuner.style.setProperty('--lk',lk.toFixed(3));
+  const prog=GA.lockMs>0?`<b>LOCK ${Math.round(lk*100)}%</b>`:`<b>${pct}%</b> SIGNAL`;
+  if(prog!==GA.prog){GA.prog=prog;hxMis('garage').p.innerHTML=prog}
+  if(GA.lockMs>=GA_HOLD)gaLock();
 }
 function gaLock(){
   GA.locked=true;freq.disabled=true;gaView.classList.add('locked');
@@ -4998,9 +5068,8 @@ function gaUnlock(instant){
 }
 function gaAuto(){
   if(GA.locked||hxDone('garage'))return;
-  hxLog('daemon: auto-tune engaged','warn');
-  const u0=GA.u,t0=performance.now(),dur=reduced?10:1100;
-  (function a(now){const p=clamp((now-t0)/dur,0,1),e=1-Math.pow(1-p,3);GA.u=u0+(GA.fT-u0)*e;freq.value=GA.u;if(p<1&&!GA.locked)GA.auto=requestAnimationFrame(a)})(t0);
+  hxLog('daemon: auto-tune engaged — tracking the carrier','warn');
+  GA.autoOn=1;   // gaFrame steers the tuner onto the drifting carrier until the lock holds
 }
 
 /* ---- MEMORY (./runlog): rewind the tape back to 2022; every stop is a job ---- */
@@ -5012,6 +5081,35 @@ const MEMS=[...meView.querySelectorAll('.gitlog .commit')].map((c,i)=>Object.ass
   desc:c.querySelector('.desc').textContent.trim()},ME_META[c.dataset.obj]||{co:'',when:'',yr:''}));
 const ME={v:1000,got:new Set(),q:[],playing:false,auto:0,vel:0,st:[],D:1};
 $('#hxMarks').innerHTML=MEMS.map(m=>`<i class="ms-mark" style="left:${m.at/10}%"><span><em>${m.yr} · </em>${m.co.split(' ')[0].toUpperCase()}</span></i>`).join('');
+/* corrupted tape: one block guards the stretch just before each memory. It fires on and off;
+   crossing or sitting inside it while it is lit tears the tape and throws the playhead back. */
+const meStage=meView.querySelector('.mem-stage'),iceBox=document.createElement('div');
+iceBox.className='ms-icebox';iceBox.innerHTML=MEMS.map(()=>'<i class="ms-ice"></i>').join('');$('#hxMarks').after(iceBox);
+ME.ice=[];ME.patched=0;ME.tears=0;ME.lastTear=0;
+function meIceInit(){
+  ME.patched=0;ME.tears=0;const now=performance.now();
+  ME.ice=MEMS.map((m,i)=>{const el=iceBox.children[i];el.className='ms-ice';el.style.left=((m.at+22)/10)+'%';
+    return{lo:m.at+22,hi:m.at+82,on:true,next:now+700+i*380,off:[950,800,650,520][i],onDur:[1100,1250,1400,1500][i],clr:false,el}});
+}
+function meIceClear(){ME.ice.forEach(b=>{b.clr=true;b.el.classList.add('clr')})}
+function meTear(b,t){
+  const back=Math.min(1000,b.hi+40);scrub.value=back;ME.v=back;
+  b.el.classList.remove('hit');void b.el.offsetWidth;b.el.classList.add('hit');
+  if(t-ME.lastTear<450)return;
+  ME.lastTear=t;ME.tears++;HX.trace=Math.min(95,HX.trace+3);
+  meStage.classList.remove('torn');void meStage.offsetWidth;meStage.classList.add('torn');
+  hxLog('tape torn — wait for the block to go <b>dark</b>','bad');
+  sfx.blip(120,.2,'sawtooth',.035,.5);
+}
+function meIceTick(t){
+  if(ME.patched||hxDone('runlog'))return;
+  ME.ice.forEach(b=>{
+    if(b.clr)return;
+    if(t>=b.next){b.on=!b.on;b.next=t+(b.on?b.onDur*(.8+Math.random()*.4):b.off);b.el.classList.toggle('off',!b.on);b.el.classList.remove('warn')}
+    else if(!b.on&&b.next-t<260)b.el.classList.add('warn');
+    if(b.on&&ME.v>b.lo&&ME.v<b.hi)meTear(b,t);      // caught inside when it fired
+  });
+}
 const ME_DONE='Memory recovered. The full log is below; hover a line to see what I worked on there.';
 function meSize(){
   const r=tunCv.getBoundingClientRect(),D=Math.min(devicePixelRatio||1,1.5);
@@ -5043,6 +5141,7 @@ function meAt(v){
 }
 function meDone(){
   if(meView.classList.contains('done'))return;
+  meIceClear();
   meView.classList.add('done');scrub.disabled=true;
   meView.querySelector('.gitlog').classList.add('drawn');
   MEMS.forEach((m,i)=>setTimeout(()=>m.el.classList.add('on'),reduced?0:200+i*130));
@@ -5050,33 +5149,45 @@ function meDone(){
   hxMisDone('runlog',ME_DONE);
   setTimeout(()=>{const g=meView.querySelector('.gitlog');meView.scrollTo({top:meView.scrollTop+g.getBoundingClientRect().top-meView.getBoundingClientRect().top-90,behavior:reduced?'auto':'smooth'})},600);
 }
-scrub.addEventListener('input',()=>{cancelAnimationFrame(ME.auto);meAt(+scrub.value)});
+scrub.addEventListener('input',()=>{
+  cancelAnimationFrame(ME.auto);
+  const v=+scrub.value,prev=ME.v;
+  if(v<prev&&!ME.patched)for(const b of ME.ice){     // blocks run right to left, like the tape
+    if(b.clr||!(v<b.hi&&prev>b.lo))continue;
+    if(b.on){meTear(b,performance.now());return}
+    if(v<=b.lo){b.clr=true;b.el.classList.add('clr');sfx.blip(620,.05,'square',.015,1.4)}
+  }
+  meAt(v);
+});
 HX_ENTER.runlog=()=>{
   requestAnimationFrame(meSize);
   ME.q=[];ME.playing=false;
   if(hxDone('runlog')){
     meView.classList.add('done');scrub.value=0;scrub.disabled=true;
     MEMS.forEach((m,i)=>{ME.got.add(i);m.el.classList.add('on');$('#hxMarks').children[i].classList.add('got')});
-    meView.querySelector('.gitlog').classList.add('drawn');meCard(0);
+    meView.querySelector('.gitlog').classList.add('drawn');meCard(0);meIceInit();meIceClear();
     hxMis('runlog').p.innerHTML='<b>4/4</b> MEMORIES';hxMisDone('runlog',ME_DONE);return;
   }
+  meIceInit();
   ME.got.clear();ME.v=1000;scrub.value=1000;scrub.disabled=false;meView.classList.remove('done');
   MEMS.forEach(m=>m.el.classList.remove('on'));
   [...$('#hxMarks').children].forEach(x=>x.classList.remove('got'));
   memFrame.className='mem-frame empty';
-  memFrame.innerHTML='<div class="mf-wait">◀◀ REWIND THE TAPE<small>Drag the playhead below to the left, back to 2022.</small></div>';
+  memFrame.innerHTML='<div class="mf-wait">◀◀ REWIND THE TAPE<small>Drag the playhead left. Slip through each red block while it is dark.</small></div>';
   hxMisReset('runlog','<b>0/4</b> MEMORIES');
   hxLogs(['memory bank mounted: <b>4 entries</b>, newest first','playback is stuck in the present — rewind to read']);
 };
 HX_LEAVE.runlog=()=>cancelAnimationFrame(ME.auto);
 function meAuto(){
   if(hxDone('runlog'))return;
-  hxLog('daemon: auto-rewind engaged','warn');
+  hxLog('daemon: tape patched — auto-rewind engaged','warn');
+  ME.patched=1;meIceClear();
   const v0=ME.v,t0=performance.now(),dur=reduced?10:2600;
   (function a(now){const p=clamp((now-t0)/dur,0,1),v=v0*(1-p);scrub.value=v;meAt(v);if(p<1)ME.auto=requestAnimationFrame(a)})(t0);
 }
 /* the tunnel behind the memory: streaks rush toward the centre as the tape rewinds */
 function meFrame(t,neon){
+  meIceTick(t);
   const W=tunCv.width,H=tunCv.height;if(W<2)return;
   ME.vel*=.9;
   const sp=.0022+Math.min(.05,Math.abs(ME.vel)*.0011);
@@ -6366,6 +6477,9 @@ if(/[?&]devx/.test(location.search))window.__dev={
   hx:()=>({open:HX.open,view:HX.view,st:HX.st,phase:VA.phase,files:[...HX.files],trace:Math.round(HX.trace)}),
   hxOpen:(t,o)=>hxOpen(t,o),
   hxReset:()=>{HX.st={done:{},fin:0};HX.introSeen=0;hxSave();hxRailRender()},
+  ga:()=>({fT:GA.fT,u:GA.u,lockMs:GA.lockMs,locked:GA.locked}),
+  me:()=>({v:ME.v,ice:ME.ice.map(b=>({lo:b.lo,hi:b.hi,on:b.on,clr:b.clr})),got:[...ME.got],tears:ME.tears}),
+  lo:()=>({hot:LO.hot,got:[...LO.got],miss:LO.miss,q:LO.q.slice()}),
   hxAuto:()=>{const f={loadout:loAuto,garage:gaAuto,runlog:meAuto}[HX.view];if(f)f();else if(HX.view==='vault'&&!brEl.hidden)$('#brAuto').click()},
   city:()=>JSON.stringify(layers),
   seed:()=>SEED,
